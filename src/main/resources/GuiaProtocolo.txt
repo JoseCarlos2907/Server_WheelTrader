@@ -1,0 +1,4 @@
+OBTENER_SALT;usuario (Usuario -> Servidor)
+ENVIAR_SALT;salt (Servidor -> Usuario)
+INICIAR_SESION;usuario;contra (Usuario -> Servidor)
+INICIA_SESION;si/no;{JSON_DATOS_USUARIO} (Servidor -> Usuario)
