@@ -1,5 +1,6 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.handlers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Mensaje;
@@ -33,6 +34,7 @@ public class InicioDeSesionHandler implements Runnable {
         DataOutputStream dos = null;
 
         boolean iniciaSesion = false;
+        boolean peticionUsuarioJSON = false;
 
         // Usuario usuario = new Usuario("joseca", "a1889f685d85d43486198234645c3d06680156d285ec8f1fc511def9a578df29e3a505cbba5790d2b34228d1ac208db16b69dd0f1b370261417dbfcc7da0e4ab");
 
@@ -40,7 +42,7 @@ public class InicioDeSesionHandler implements Runnable {
             dis = new DataInputStream(socket.getInputStream());
             dos = new DataOutputStream(socket.getOutputStream());
 
-            while (!iniciaSesion) {
+            while (!iniciaSesion || !peticionUsuarioJSON) {
                 String linea = dis.readUTF();
                 Mensaje msgUsuario = Serializador.decodificarMensaje(linea);
 
@@ -67,6 +69,9 @@ public class InicioDeSesionHandler implements Runnable {
                             iniciaSesion = true;
 
                             msgRespuesta.addParam("si");
+                            // Eso convierte el objeto Usuario a una cadena con formato JSON
+                            ObjectMapper mapper = new ObjectMapper();
+                            msgRespuesta.addParam(mapper.writeValueAsString(usuario.get()));
                         } else {
                             msgRespuesta.addParam("no");
                         }
