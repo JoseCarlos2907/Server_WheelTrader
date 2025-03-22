@@ -23,10 +23,7 @@ public class WheelTraderApplication {
         return args -> {
             byte[] salt = SecureUtils.getSalt();
 
-            Usuario usuario = new Usuario();
-            usuario.setNombreUsuario("joseca");
-            usuario.setSalt(Base64.getEncoder().encodeToString(salt));
-            usuario.setContrasenia(SecureUtils.generate512("joseca", salt));
+            Usuario usuario = new Usuario("joseca","perez","12345678A","joseca",SecureUtils.generate512("joseca", salt),"correo@a.com","correopp@a.com","ACTIVO",Base64.getEncoder().encodeToString(salt),false);
 
             usuarioRepository.save(usuario);
         };

@@ -4,6 +4,7 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Mensaje;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Serializador;
+import org.springframework.context.ApplicationContext;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,19 +12,23 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Base64;
+import java.util.Optional;
 
 public class InicioDeSesionHandler implements Runnable {
     private Socket socket;
     private UsuarioRepository usuarioRepository;
+    private ApplicationContext context;
 
-    public InicioDeSesionHandler(Socket socket, UsuarioRepository usuarioRepository) {
+    public InicioDeSesionHandler(Socket socket, ApplicationContext context) {
         this.socket = socket;
-        this.usuarioRepository = usuarioRepository;
+        this.context = context;
     }
 
 
     @Override
     public void run() {
+        this.usuarioRepository = context.getBean(UsuarioRepository.class);
+
         DataInputStream dis = null;
         DataOutputStream dos = null;
 
@@ -40,27 +45,25 @@ public class InicioDeSesionHandler implements Runnable {
                 Mensaje msgUsuario = Serializador.decodificarMensaje(linea);
 
                 Mensaje msgRespuesta;
-                Usuario usuario;
+                Optional<Usuario> usuario;
                 switch (msgUsuario.getTipo()) {
                     case "OBTENER_SALT":
-                        System.out.println("OBTENER_SALT");
+//                        System.out.println("OBTENER_SALT");
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_SALT");
-                        usuario = this.usuarioRepository.findByNombreUsuario(msgRespuesta.getParams().get(0)).get();
-                        System.out.println(usuario == null);
-                        System.out.println(usuario.getSalt());
-                        msgRespuesta.addParam(usuario.getSalt());
+                        usuario = this.usuarioRepository.findByNombreUsuario(msgUsuario.getParams().get(0));
+                        msgRespuesta.addParam(usuario.isPresent() ? usuario.get().getSalt(): "nada");
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;
                     case "INICIAR_SESION":
-                        System.out.println("INICIAR_SESION");
+//                        System.out.println("INICIAR_SESION");
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("INICIA_SESION");
 
-                        usuario = this.usuarioRepository.findByNombreUsuario(msgRespuesta.getParams().get(0)).get();
+                        usuario = this.usuarioRepository.findByNombreUsuario(msgUsuario.getParams().get(0));
 
-                        if (usuario.getNombreUsuario().equals(msgUsuario.getParams().get(0)) && usuario.getContrasenia().equals(msgUsuario.getParams().get(1))) {
+                        if (usuario.isPresent() && usuario.get().getNombreUsuario().equals(msgUsuario.getParams().get(0)) && usuario.get().getContrasenia().equals(msgUsuario.getParams().get(1))) {
                             iniciaSesion = true;
 
                             msgRespuesta.addParam("si");
