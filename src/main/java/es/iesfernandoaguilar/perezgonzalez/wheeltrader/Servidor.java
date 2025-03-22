@@ -24,16 +24,18 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
-public class Servidor {
+public class Servidor implements Runnable {
     private ServerSocket server;
     private Properties serverProperties;
     private ExecutorService executor;
-//    private boolean parar;
+    private boolean parar;
 
     public Servidor() {
         this.serverProperties = new Properties();
+        this.parar = false;
         try {
             this.serverProperties.load(new FileInputStream("src/main/resources/conf.properties"));
 
@@ -51,44 +53,20 @@ public class Servidor {
     @Bean
     CommandLineRunner commandLineRunner(ApplicationContext context) {
         return args -> {
-
+            new Thread(this).start();
             this.listen(context);
-//            Servidor servidor = null;
-//            Thread serverThread = null;
-//            try(Scanner sc = new Scanner(System.in)) {
-//                servidor = new Servidor(usuarioRepository);
-//                serverThread = new Thread(this);
-//                serverThread.start();
-//
-//                System.out.println("Escriba 'S' para detener el servidor.");
-//                while (true) {
-//                    String input = sc.next();
-//                    if (input.equalsIgnoreCase("S")) {
-//                        break;
-//                    }
-//                }
-//
-//                servidor.stop();
-//                serverThread.join(); // Espera a que el hilo del servidor termine
-//                System.out.println("Servidor detenido correctamente.");
-//            }catch (InterruptedException e) {
-//                System.out.println("Interrumpido mientras se esperaba la finalización del servidor.");
-//                Thread.currentThread().interrupt();
-//            }
         };
     }
 
 
     public void listen(ApplicationContext context) {
-        while (true){
+        while (!parar){
             try {
                 Socket socket = this.server.accept();
 
                 this.executor.submit(new InicioDeSesionHandler(socket, context));
 
                 System.out.println("Usuario conectado: " + socket.getPort());
-            } catch (SocketTimeoutException ex) {
-                continue;
             } catch (IOException e) {
                 System.err.println(e.getMessage());
                 break;
@@ -97,19 +75,42 @@ public class Servidor {
         System.out.println("Servidor apagado.");
     }
 
-//    private void stop() {
-//        System.out.println("Apagando el servidor...");
-//        parar = true;
-//        try {
-//            if (server != null && !server.isClosed()) {
-//                server.close();
-//            }
-//        } catch (IOException e) {
-//            System.out.println("Error al cerrar el servidor: " + e.getMessage());
-//        }
-//    }
+    private void stop() {
+        System.out.println("Apagando el servidor...");
+        parar = true;
+        try {
+            if (server != null && !server.isClosed()) {
+                server.close();
+            }
+
+            this.executor.shutdown();
+
+            this.executor.awaitTermination(3, TimeUnit.SECONDS);
+        } catch (IOException e) {
+            System.out.println("Error al cerrar el servidor: " + e.getMessage());
+        } catch (InterruptedException e) {
+            System.out.println("Error al cerrar el servidor: " + e.getMessage());
+        }
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(Servidor.class, args);
+    }
+
+    @Override
+    public void run() {
+        try(Scanner sc = new Scanner(System.in)) {
+
+            System.out.println("Escriba 'S' para detener el servidor.");
+            while (true) {
+                String input = sc.next();
+                if (input.equalsIgnoreCase("S")) {
+                    break;
+                }
+            }
+
+            this.stop();
+            System.out.println("Servidor detenido correctamente.");
+        }
     }
 }
