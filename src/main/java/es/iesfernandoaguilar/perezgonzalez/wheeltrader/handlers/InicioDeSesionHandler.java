@@ -50,7 +50,7 @@ public class InicioDeSesionHandler implements Runnable {
                 Optional<Usuario> usuario;
                 switch (msgUsuario.getTipo()) {
                     case "OBTENER_SALT":
-//                        System.out.println("OBTENER_SALT");
+                        System.out.println("OBTENER_SALT");
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_SALT");
                         usuario = this.usuarioRepository.findByNombreUsuario(msgUsuario.getParams().get(0));
@@ -59,7 +59,7 @@ public class InicioDeSesionHandler implements Runnable {
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;
                     case "INICIAR_SESION":
-//                        System.out.println("INICIAR_SESION");
+                        System.out.println("INICIAR_SESION");
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("INICIA_SESION");
 
@@ -80,7 +80,7 @@ public class InicioDeSesionHandler implements Runnable {
                 }
             }
         } catch (EOFException e) {
-            System.out.println("Se cerro el flujo de inicio de sesion");
+            System.out.println("Se cerro el flujo de inicio de sesión");
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
