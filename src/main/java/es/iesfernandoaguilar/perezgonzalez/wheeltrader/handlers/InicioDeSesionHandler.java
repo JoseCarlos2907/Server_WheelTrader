@@ -50,7 +50,7 @@ public class InicioDeSesionHandler implements Runnable {
                 Optional<Usuario> usuario;
                 switch (msgUsuario.getTipo()) {
                     case "OBTENER_SALT":
-                        System.out.println("OBTENER_SALT");
+                        //System.out.println("OBTENER_SALT");
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_SALT");
                         usuario = this.usuarioRepository.findByNombreUsuario(msgUsuario.getParams().get(0));
@@ -59,7 +59,9 @@ public class InicioDeSesionHandler implements Runnable {
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;
                     case "INICIAR_SESION":
-                        System.out.println("INICIAR_SESION");
+                        //System.out.println("INICIAR_SESION");
+                        //System.out.println(msgUsuario.getParams().get(0));
+                        //System.out.println(msgUsuario.getParams().get(1));
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("INICIA_SESION");
 
