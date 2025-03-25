@@ -42,18 +42,18 @@ public class InicioDeSesionHandler implements Runnable {
             dis = new DataInputStream(socket.getInputStream());
             dos = new DataOutputStream(socket.getOutputStream());
 
+            Optional<Usuario> usuario = null;
             while (!iniciaSesion || !peticionUsuarioJSON) {
                 String linea = dis.readUTF();
                 Mensaje msgUsuario = Serializador.decodificarMensaje(linea);
 
                 Mensaje msgRespuesta;
-                Optional<Usuario> usuario;
                 switch (msgUsuario.getTipo()) {
                     case "OBTENER_SALT":
                         //System.out.println("OBTENER_SALT");
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_SALT");
-                        usuario = this.usuarioRepository.findByNombreUsuario(msgUsuario.getParams().get(0));
+                        usuario = this.usuarioRepository.inicioSesion(msgUsuario.getParams().get(0));
                         msgRespuesta.addParam(usuario.isPresent() ? usuario.get().getSalt(): "nada");
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
@@ -64,8 +64,6 @@ public class InicioDeSesionHandler implements Runnable {
                         //System.out.println(msgUsuario.getParams().get(1));
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("INICIA_SESION");
-
-                        usuario = this.usuarioRepository.findByNombreUsuario(msgUsuario.getParams().get(0));
 
                         if (usuario.isPresent() && usuario.get().getNombreUsuario().equals(msgUsuario.getParams().get(0)) && usuario.get().getContrasenia().equals(msgUsuario.getParams().get(1))) {
                             iniciaSesion = true;

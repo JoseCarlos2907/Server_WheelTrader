@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Usuario findById(long id);
 
-    @Query("SELECT u from Usuario u where u.nombreUsuario = ?1")
+    @Query("SELECT u from Usuario u where u.nombreUsuario = ?1 OR u.correo = ?1")
     @Transactional(readOnly = true)
-    Optional<Usuario> findByNombreUsuario(String nombreUsuario);
+    Optional<Usuario> inicioSesion(String usuarioOCorreo);
 }
