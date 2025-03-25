@@ -14,5 +14,5 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("SELECT u from Usuario u where u.nombreUsuario = ?1 OR u.correo = ?1")
     @Transactional(readOnly = true)
-    Optional<Usuario> inicioSesion(String usuarioOCorreo);
+    Optional<Usuario> iniciarSesion(String nombreUsuarioOCorreo);
 }

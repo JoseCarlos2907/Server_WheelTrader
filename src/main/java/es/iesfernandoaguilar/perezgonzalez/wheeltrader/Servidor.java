@@ -46,7 +46,6 @@ public class Servidor implements Runnable {
             System.out.println("Servidor escuchando en el puerto " + serverProperties.getProperty("PORT") + " y en la IP 192.168.1.66");
         } catch (IOException e) {
             e.printStackTrace();
-            //System.err.println(e.getMessage());
         }
     }
 

@@ -25,7 +25,6 @@ public class InicioDeSesionHandler implements Runnable {
         this.context = context;
     }
 
-
     @Override
     public void run() {
         this.usuarioRepository = context.getBean(UsuarioRepository.class);
@@ -34,16 +33,13 @@ public class InicioDeSesionHandler implements Runnable {
         DataOutputStream dos = null;
 
         boolean iniciaSesion = false;
-        boolean peticionUsuarioJSON = false;
-
-        // Usuario usuario = new Usuario("joseca", "a1889f685d85d43486198234645c3d06680156d285ec8f1fc511def9a578df29e3a505cbba5790d2b34228d1ac208db16b69dd0f1b370261417dbfcc7da0e4ab");
 
         try {
             dis = new DataInputStream(socket.getInputStream());
             dos = new DataOutputStream(socket.getOutputStream());
 
             Optional<Usuario> usuario = null;
-            while (!iniciaSesion || !peticionUsuarioJSON) {
+            while (!iniciaSesion) {
                 String linea = dis.readUTF();
                 Mensaje msgUsuario = Serializador.decodificarMensaje(linea);
 
@@ -53,23 +49,23 @@ public class InicioDeSesionHandler implements Runnable {
                         //System.out.println("OBTENER_SALT");
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_SALT");
-                        usuario = this.usuarioRepository.inicioSesion(msgUsuario.getParams().get(0));
+                        usuario = this.usuarioRepository.iniciarSesion(msgUsuario.getParams().get(0));
                         msgRespuesta.addParam(usuario.isPresent() ? usuario.get().getSalt(): "nada");
 
+                        System.out.println(msgUsuario.getParams().get(0));
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;
                     case "INICIAR_SESION":
                         //System.out.println("INICIAR_SESION");
-                        //System.out.println(msgUsuario.getParams().get(0));
-                        //System.out.println(msgUsuario.getParams().get(1));
+
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("INICIA_SESION");
 
-                        if (usuario.isPresent() && usuario.get().getNombreUsuario().equals(msgUsuario.getParams().get(0)) && usuario.get().getContrasenia().equals(msgUsuario.getParams().get(1))) {
+                        if (usuario.isPresent() && (usuario.get().getNombreUsuario().equals(msgUsuario.getParams().get(0)) || usuario.get().getCorreo().equals(msgUsuario.getParams().get(0))) && usuario.get().getContrasenia().equals(msgUsuario.getParams().get(1))) {
                             iniciaSesion = true;
 
                             msgRespuesta.addParam("si");
-                            // Eso convierte el objeto Usuario a una cadena con formato JSON
+                            // Esto convierte el objeto Usuario a una cadena con formato JSON
                             ObjectMapper mapper = new ObjectMapper();
                             msgRespuesta.addParam(mapper.writeValueAsString(usuario.get()));
                         } else {
