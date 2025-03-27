@@ -85,6 +85,8 @@ public class Servidor implements Runnable {
             this.executor.shutdown();
 
             this.executor.awaitTermination(3, TimeUnit.SECONDS);
+
+            this.executor.close();
         } catch (IOException e) {
             System.out.println("Error al cerrar el servidor: " + e.getMessage());
         } catch (InterruptedException e) {
