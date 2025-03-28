@@ -1,4 +1,13 @@
++Inicio sesión:
 OBTENER_SALT;usuario (Usuario -> Servidor)
 ENVIAR_SALT;salt (Servidor -> Usuario)
 INICIAR_SESION;usuario;contra (Usuario -> Servidor)
 INICIA_SESION;si/no;{JSON_DATOS_USUARIO} (Servidor -> Usuario)
+
++Registro:
+COMPROBAR_DNI;dni (Usuario -> Servidor)
+DNI_EXISTE;si/no (Servidor -> Usuario)
+COMPROBAR_NOMUSU_CORREO;nombreUsuario;correo (Usuario -> Servidor)
+USUARIO_EXISTE;si/no (Servidor -> Usuario)
+REGISTRAR_USUARIO;{JSON_DATOS_USUARIO} (Usuario -> Servidor)
+USUARIO_REGISTRADO (Servidor -> Usuario)

@@ -73,6 +73,51 @@ public class InicioDeSesionHandler implements Runnable {
                         }
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;
+
+                    case "COMPROBAR_DNI":
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("DNI_EXISTE");
+
+                        if(this.usuarioRepository.existsUsuarioByDni(msgUsuario.getParams().get(0))){
+                            msgRespuesta.addParam("si");
+                        }else{
+                            msgRespuesta.addParam("no");
+                        }
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+
+                        break;
+
+                    case "COMPROBAR_NOMUSU_CORREO":
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("USUARIO_EXISTE");
+
+                        if(
+                            this.usuarioRepository.existsUsuarioByNombreUsuario(msgUsuario.getParams().get(0)) ||
+                            this.usuarioRepository.existsUsuarioByCorreo(msgUsuario.getParams().get(1))
+                        ){
+                            msgRespuesta.addParam("si");
+                        }else{
+                            msgRespuesta.addParam("no");
+                        }
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        break;
+
+                    case "REGISTRAR_USUARIO":
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("USUARIO_REGISTRADO");
+
+                        ObjectMapper mapper = new ObjectMapper();
+                        Usuario usuarioMapped = mapper.readValue(msgUsuario.getParams().get(0), Usuario.class);
+
+                        Usuario usuarioRegistrar = new Usuario();
+                        usuarioRegistrar.parseUsuario(usuarioMapped);
+
+                        this.usuarioRepository.save(usuarioRegistrar);
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        break;
                 }
             }
         } catch (EOFException e) {

@@ -16,6 +16,8 @@ public class Usuario {
     @Column(unique = true, nullable = false)
     private String dni;
 
+    private String direccion;
+
     @Column(unique = true, nullable = false)
     private String nombreUsuario;
 
@@ -134,5 +136,29 @@ public class Usuario {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
+
+    // Este métoodo transforma un usuario de la interfaz a uno de la BD, la diferencia es que al crear una instancia de este es que se genera el id automáticamente,
+    // por eso creo uno nuevo en este métoodo, porque el que viene no puede generarlo y viene con un -1
+    public void parseUsuario(Usuario usuario2) {
+        this.setNombre(usuario2.getNombre());
+        this.setApellidos(usuario2.getApellidos());
+        this.setDni(usuario2.getDni());
+        this.setDireccion(usuario2.getDireccion());
+        this.setNombreUsuario(usuario2.getNombreUsuario());
+        this.setContrasenia(usuario2.getContrasenia());
+        this.setCorreo(usuario2.getCorreo());
+        this.setCorreoPP(usuario2.getCorreoPP());
+        this.setRol(usuario2.getRol());
+        this.setEstado(usuario2.getEstado());
+        this.setSalt(usuario2.getSalt());
     }
 }
