@@ -1,6 +1,7 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.Servidor;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Mensaje;
@@ -17,12 +18,14 @@ import java.util.Optional;
 
 public class InicioDeSesionHandler implements Runnable {
     private Socket socket;
+    private Servidor server;
     private UsuarioRepository usuarioRepository;
     private ApplicationContext context;
 
-    public InicioDeSesionHandler(Socket socket, ApplicationContext context) {
+    public InicioDeSesionHandler(Socket socket, ApplicationContext context, Servidor server) {
         this.socket = socket;
         this.context = context;
+        this.server = server;
     }
 
     @Override
@@ -115,6 +118,8 @@ public class InicioDeSesionHandler implements Runnable {
                         usuarioRegistrar.parseUsuario(usuarioMapped);
 
                         this.usuarioRepository.save(usuarioRegistrar);
+
+                        this.server.enviarCorreoRegistro(usuarioRegistrar.getCorreo(), usuarioRegistrar.getNombre() + " " + usuarioRegistrar.getApellidos());
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;

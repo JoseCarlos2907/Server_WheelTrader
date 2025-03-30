@@ -1,25 +1,19 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader;
 
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.handlers.InicioDeSesionHandler;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.SecureUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import org.springframework.stereotype.Component;
 
-import java.io.File;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.*;
-import java.util.Base64;
-import java.util.Enumeration;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
@@ -57,13 +51,12 @@ public class Servidor implements Runnable {
         };
     }
 
-
     public void listen(ApplicationContext context) {
         while (!parar){
             try {
                 Socket socket = this.server.accept();
 
-                this.executor.submit(new InicioDeSesionHandler(socket, context));
+                this.executor.submit(new InicioDeSesionHandler(socket, context, this));
 
                 System.out.println("Usuario conectado: " + socket.getPort());
             } catch (IOException e) {
@@ -94,8 +87,47 @@ public class Servidor implements Runnable {
         }
     }
 
-    public static void main(String[] args) {
-        SpringApplication.run(Servidor.class, args);
+    public void enviarCorreoRegistro(String correo, String nombreCompleto){
+        final String correoApp = "wheeltraderapp@gmail.com"; // Este es el correo de Gmail
+        final String contraseniaApp = "hrwd pvon rhrz yzoj"; // Esta es la contraseña de aplicación de la cuenta de Gmail
+
+        // Creo las configuraciones para conectar la aplicación al servidor smtp
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", "smtp.gmail.com"); // Especifico el servidor host de correos
+        properties.put("mail.smtp.port", "587");    // Especifico el puerto
+        properties.put("mail.smtp.auth", "true");   // Especifico que hay que autentificar
+        properties.put("mail.smtp.starttls.enable", "true");    // Especifico que sea segura la conexión
+
+        // Con esto compruebo las credenciales del correo de la aplicación y creo una sesión para posteriormente crear un mensaje
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(correoApp, contraseniaApp);
+            }
+        });
+
+        try {
+            // Creo el mensaje
+            Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(correoApp));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(correo));
+            msg.setSubject("Registro exitoso en WheelTrader");
+
+            String contenido = "Hola %s,%n%n" +
+                    "¡Gracias por registrarte en WheelTrader! Esperamos que disfrutes de la experiencia y que encuentres lo que buscas.%n%n"+
+                    "¡Bienvenido a WheelTrader!%n%n"+
+                    "Saludos,%n"+
+                    "El equipo de WheelTrader%n";
+            msg.setText(String.format(contenido, nombreCompleto));
+
+
+            // Envío el correo
+            Transport.send(msg);
+
+            System.out.println("Correo enviado con éxito.");
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -113,5 +145,9 @@ public class Servidor implements Runnable {
             this.stop();
             System.out.println("Servidor detenido correctamente.");
         }
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(Servidor.class, args);
     }
 }

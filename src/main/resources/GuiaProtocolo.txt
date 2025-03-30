@@ -1,3 +1,7 @@
++Correo Gmail: wheeltraderapp@gmail.com
++Contraseña aplicación Gmail: hrwd pvon rhrz yzoj
++Contraseña Gmail: WheelTrader123
+
 +Inicio sesión:
 OBTENER_SALT;usuario (Usuario -> Servidor)
 ENVIAR_SALT;salt (Servidor -> Usuario)

@@ -10,7 +10,7 @@ import java.util.Optional;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    Usuario findById(long id);
+    Usuario findById(long idUsuario);
 
     @Query("SELECT u from Usuario u where u.nombreUsuario = ?1 OR u.correo = ?1")
     @Transactional(readOnly = true)
