@@ -55,7 +55,6 @@ public class InicioDeSesionHandler implements Runnable {
                         usuario = this.usuarioRepository.iniciarSesion(msgUsuario.getParams().get(0));
                         msgRespuesta.addParam(usuario.isPresent() ? usuario.get().getSalt(): "nada");
 
-                        System.out.println(msgUsuario.getParams().get(0));
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;
                     case "INICIAR_SESION":

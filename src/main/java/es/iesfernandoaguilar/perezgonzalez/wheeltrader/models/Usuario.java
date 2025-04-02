@@ -37,10 +37,11 @@ public class Usuario {
 
     public Usuario() {}
 
-    public Usuario(String nombre, String apellidos, String dni, String nombreUsuario, String contrasenia, String correo, String correoPP, String estado, String salt, boolean moderador) {
+    public Usuario(String nombre, String apellidos, String dni, String direccion, String nombreUsuario, String contrasenia, String correo, String correoPP, String estado, String salt, boolean moderador) {
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.dni = dni;
+        this.direccion = direccion;
         this.nombreUsuario = nombreUsuario;
         this.contrasenia = contrasenia;
         this.correo = correo;
