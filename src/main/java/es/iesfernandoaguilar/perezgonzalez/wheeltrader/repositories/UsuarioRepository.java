@@ -13,7 +13,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Usuario findById(long idUsuario);
 
     @Query("SELECT u from Usuario u where u.nombreUsuario = ?1 OR u.correo = ?1")
-    @Transactional(readOnly = true)
     Optional<Usuario> iniciarSesion(String nombreUsuarioOCorreo);
 
     boolean existsUsuarioByDni(String dni);
@@ -21,4 +20,10 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     boolean existsUsuarioByNombreUsuario(String nombreUsuario);
 
     boolean existsUsuarioByCorreo(String correo);
+
+    @Query("SELECT u.salt from Usuario u where u.correo = ?1")
+    String getSaltUsuarioByCorreo(String correo);
+
+    @Query("Update Usuario u set u.contrasenia = ?1 where u.correo = ?2")
+    void updateContraseniaUsuario(String cotrasenia, String correo);
 }

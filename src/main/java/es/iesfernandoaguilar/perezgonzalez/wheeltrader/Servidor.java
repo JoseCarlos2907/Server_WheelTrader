@@ -27,9 +27,21 @@ public class Servidor implements Runnable {
     private ExecutorService executor;
     private boolean parar;
 
+    final String correoApp = "wheeltraderapp@gmail.com"; // Este es el correo de Gmail
+    final String contraseniaApp = "hrwd pvon rhrz yzoj"; // Esta es la contraseña de aplicación de la cuenta de Gmail
+    private Properties correoProperties;
+
     public Servidor() {
         this.serverProperties = new Properties();
         this.parar = false;
+
+        // Creo las configuraciones para conectar la aplicación al servidor smtp
+        this.correoProperties = new Properties();
+        this.correoProperties.put("mail.smtp.host", "smtp.gmail.com"); // Especifico el servidor host de correos
+        this.correoProperties.put("mail.smtp.port", "587");    // Especifico el puerto
+        this.correoProperties.put("mail.smtp.auth", "true");   // Especifico que hay que autentificar
+        this.correoProperties.put("mail.smtp.starttls.enable", "true");    // Especifico que sea segura la conexión
+
         try {
             this.serverProperties.load(new FileInputStream("src/main/resources/conf.properties"));
 
@@ -88,18 +100,8 @@ public class Servidor implements Runnable {
     }
 
     public void enviarCorreoRegistro(String correo, String nombreCompleto){
-        final String correoApp = "wheeltraderapp@gmail.com"; // Este es el correo de Gmail
-        final String contraseniaApp = "hrwd pvon rhrz yzoj"; // Esta es la contraseña de aplicación de la cuenta de Gmail
-
-        // Creo las configuraciones para conectar la aplicación al servidor smtp
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", "smtp.gmail.com"); // Especifico el servidor host de correos
-        properties.put("mail.smtp.port", "587");    // Especifico el puerto
-        properties.put("mail.smtp.auth", "true");   // Especifico que hay que autentificar
-        properties.put("mail.smtp.starttls.enable", "true");    // Especifico que sea segura la conexión
-
         // Con esto compruebo las credenciales del correo de la aplicación y creo una sesión para posteriormente crear un mensaje
-        Session session = Session.getInstance(properties, new Authenticator() {
+        Session session = Session.getInstance(this.correoProperties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(correoApp, contraseniaApp);
@@ -129,6 +131,8 @@ public class Servidor implements Runnable {
             e.printStackTrace();
         }
     }
+
+    public void
 
     @Override
     public void run() {

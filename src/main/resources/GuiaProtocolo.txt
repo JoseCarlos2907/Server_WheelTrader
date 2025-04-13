@@ -14,3 +14,13 @@ COMPROBAR_NOMUSU_CORREO;nombreUsuario;correo (Usuario -> Servidor)
 USUARIO_EXISTE;si/no (Servidor -> Usuario)
 REGISTRAR_USUARIO;{JSON_DATOS_USUARIO} (Usuario -> Servidor)
 USUARIO_REGISTRADO (Servidor -> Usuario)
+
++Recuperar contraseña:
+RECUPERAR_CONTRASENIA;correo (Usuario -> Servidor)
+CODIGO_ENVIADO (Servidor -> Usuario)
+CORREO_NO_EXISTE (Servidor -> Usuario)
+INTENTA_CODIGO;codigo (Usuario -> Servidor)
+CODIGO_CORRECTO;salt (Servidor -> Usuario)
+CODIGO_INCORRECTO (Servidor -> Usuario)
+REINICIAR_CONTRASENIA;contraseniaHasheada (Usuario -> Servidor)
+CONTRASENIA_REINICIADA (Servidor -> Usuario)
