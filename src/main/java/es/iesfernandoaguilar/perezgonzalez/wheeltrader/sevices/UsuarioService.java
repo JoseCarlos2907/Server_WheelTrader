@@ -4,6 +4,7 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -41,6 +42,11 @@ public class UsuarioService {
         return this.usuarioRepository.getSaltUsuarioByCorreo(correo);
     }
 
+    public String getNombreCompletoByCorreo(String correo) {
+        return this.usuarioRepository.getNombreCompletoByCorreo(correo);
+    }
+
+    @Transactional
     public void updateContraseniaUsuario(String contrasenia, String correo) {
         this.usuarioRepository.updateContraseniaUsuario(contrasenia, correo);
     }

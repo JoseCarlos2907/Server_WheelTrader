@@ -100,6 +100,38 @@ public class Servidor implements Runnable {
     }
 
     public void enviarCorreoRegistro(String correo, String nombreCompleto){
+        String asunto = "Registro exitoso en WheelTrader";
+
+        String texto = "Hola %s,%n%n" +
+                "¡Gracias por registrarte en WheelTrader! Esperamos que disfrutes de la experiencia y que encuentres lo que buscas.%n%n"+
+                "¡Bienvenido a WheelTrader!%n%n"+
+                "Saludos,%n"+
+                "El equipo de WheelTrader%n";
+        String contenido = String.format(texto, nombreCompleto);
+
+        this.enviarCorreo(asunto, contenido, correo);
+
+        System.out.println("Correo registro enviado con éxito.");
+    }
+
+    public void enviarCorreoRecuperarContrasenia(String correo, String nombreCompleto, String codigo){
+        String asunto = "Recuperación de Contraseña en WheelTrader";
+
+        String texto = "Hola %s,%n%n" +
+                "Hemos recibido una solicitud para restablecer la contraseña de tu cuenta.%n"+
+                "Tu código de recuperación es:%n"+
+                "%s%n%n" +
+                "Saludos,%n"+
+                "El equipo de WheelTrader%n";
+        String contenido = String.format(texto, nombreCompleto, codigo);
+
+        this.enviarCorreo(asunto, contenido, correo);
+
+        System.out.println("Correo recuperación contraseña enviado con éxito.");
+    }
+
+    // Este código se repite cada vez que se envía un correo, entonces lo tengo en una función aparte para no repetir código
+    private void enviarCorreo(String asunto, String contenido, String correo){
         // Con esto compruebo las credenciales del correo de la aplicación y creo una sesión para posteriormente crear un mensaje
         Session session = Session.getInstance(this.correoProperties, new Authenticator() {
             @Override
@@ -113,26 +145,16 @@ public class Servidor implements Runnable {
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(correoApp));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(correo));
-            msg.setSubject("Registro exitoso en WheelTrader");
-
-            String contenido = "Hola %s,%n%n" +
-                    "¡Gracias por registrarte en WheelTrader! Esperamos que disfrutes de la experiencia y que encuentres lo que buscas.%n%n"+
-                    "¡Bienvenido a WheelTrader!%n%n"+
-                    "Saludos,%n"+
-                    "El equipo de WheelTrader%n";
-            msg.setText(String.format(contenido, nombreCompleto));
+            msg.setSubject(asunto);
+            msg.setText(contenido);
 
 
             // Envío el correo
             Transport.send(msg);
-
-            System.out.println("Correo enviado con éxito.");
         } catch (MessagingException e) {
             e.printStackTrace();
         }
     }
-
-    public void
 
     @Override
     public void run() {

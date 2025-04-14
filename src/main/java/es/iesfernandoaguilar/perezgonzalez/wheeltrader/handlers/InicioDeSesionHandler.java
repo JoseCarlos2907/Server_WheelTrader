@@ -134,7 +134,12 @@ public class InicioDeSesionHandler implements Runnable {
                         if(this.usuarioService.existsUsuarioByCorreo(msgUsuario.getParams().get(0))){
                             msgRespuesta.setTipo("CODIGO_ENVIADO");
                             correoRecuperarContrasenia = msgUsuario.getParams().get(0);
-                            codigoGenerado = String.format("%4d", rnd.nextInt(1000)+1);
+                            codigoGenerado = String.format("%04d", rnd.nextInt(9998)+1);
+                            this.server.enviarCorreoRecuperarContrasenia(
+                                    correoRecuperarContrasenia,
+                                    this.usuarioService.getNombreCompletoByCorreo(correoRecuperarContrasenia),
+                                    codigoGenerado
+                            );
                         }else{
                             msgRespuesta.setTipo("CORREO_NO_EXISTE");
                         }
@@ -147,6 +152,7 @@ public class InicioDeSesionHandler implements Runnable {
                         if(codigoGenerado.equals(msgUsuario.getParams().get(0))){
                             msgRespuesta.setTipo("CODIGO_CORRECTO");
                             msgRespuesta.addParam(this.usuarioService.getSaltUsuarioByCorreo(correoRecuperarContrasenia));
+                            codigoGenerado = "0000";
                         }else{
                             msgRespuesta.setTipo("CODIGO_INCORRECTO");
                         }
@@ -158,7 +164,7 @@ public class InicioDeSesionHandler implements Runnable {
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("CONTRASENIA_REGISTRADA");
 
-                        this.usuarioService.updateContraseniaUsuario(msgRespuesta.getParams().get(0), correoRecuperarContrasenia);
+                        this.usuarioService.updateContraseniaUsuario(msgUsuario.getParams().get(0), correoRecuperarContrasenia);
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;
