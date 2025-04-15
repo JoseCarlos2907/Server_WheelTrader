@@ -55,12 +55,16 @@ public class Servidor implements Runnable {
         }
     }
 
-    @Bean
-    CommandLineRunner commandLineRunner(ApplicationContext context) {
-        return args -> {
-            new Thread(this).start();
-            this.listen(context);
-        };
+//    @Bean
+//    CommandLineRunner commandLineRunner(ApplicationContext context) {
+//        return args -> {
+//            new Thread(this).start();
+//            this.listen(context);
+//        };
+//    }
+
+    public void usuarioIniciaSesion(Socket socket) {
+        // TODO: Hacer el submit del Handler principal
     }
 
     public void listen(ApplicationContext context) {

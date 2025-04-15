@@ -1,0 +1,154 @@
++Usuario:
+idUsuario - Long
+Nombre - String
+Apellidos - String
+DNI - String
+Direccion - String
+NombreUsuario - String
+Contrasenia - String
+Correo - String
+CorreoPP - String
+Rol - Enumeración
+Estado - Enumeración
+Salt - String
+ReportesEnviados - List<Reporte> - @OneToMany(mappedBy = "usuarioEnvia")
+ReportesRecibidos - List<Reporte> - @OneToMany(mappedBy = "usuarioRecibe")
+NotificacionesEnviadas - List<Notificacion> - @OneToMany(mappedBy = "usuarioEnvia")
+NotificacionesRecibidas - List<Notificacion> - @OneToMany(mappedBy = "usuarioRecibe")
+ValoracionesEnviadas - List<Notificacion> - @OneToMany(mappedBy = "usuarioEnvia")
+ValoracionesRecibidas - List<Notificacion> - @OneToMany(mappedBy = "usuarioRecibe")
+AnunciosGuardados - Set<Anuncio> - @ManyToMany @JoinTable(name = "anuncios_guardados", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "anuncio_id"))
+AnunciosPublicados - List<Anuncio> - @OneToMany(mappedBy = "vendedor")
+Ventas - List<Venta> - @OneToMany(mappedBy = "vendedor")
+Compras - List<Venta> - @OneToMany(mappedBy = "comprador")
+ReunionesRecibidas - List<Reunion> - @OneToMany(mappedBy = "comprador")
+ReunionesOfrecidas - List<Reunion> - @OneToMany(mappedBy = "vendedor")
+
+
++Reporte: 
+idReporte - Long
+Motivo - String
+UsuarioEnvia - Usuario - @ManyToOne @JoinColumn(name = "usuario_envia_id")
+UsuarioRecibe - Usuario - @ManyToOne @JoinColumn(name = "usuario_recibe_id")
+
+
++Valoracion:
+idValoracion - Long
+Valoracion - int
+Comentario - String
+UsuarioEnvia - Usuario - @ManyToOne @JoinColumn(name = "usuario_envia_id")
+UsuarioRecibe - Usuario - @ManyToOne @JoinColumn(name = "usuario_recibe_id")
+
+
++Notificacion:
+idNotificacion- Long
+Titulo - String
+Mensaje - String
+Estado - Enumeración
+Tipo - Enumeración
+UsuarioEnvia - Usuario - @ManyToOne @JoinColumn(name = "usuario_envia_id")
+UsuarioRecibe - Usuario - @ManyToOne @JoinColumn(name = "usuario_recibe_id")
+ 
+
++Anuncio:
+idAnuncio - Long
+FechaPublicacion - LocalDateTime
+FechaExpiracion - LocalDateTime
+Descripcion - String
+Precio - double
+Estado - String
+Provincia - String
+Ciudad - String
+Matricula - String
+NumSerieBastidor - String
+Vendedor - Usuario - @ManyToOne @JoinColumn(name = "vendedor_id")
+UsuariosGuardan - Set<Usuario> - @ManyToMany(mappedBy = "anunciosGuardados")
+TipoVehiculo - TipoVehiculo - @ManyToOne @JoinColumn(name = "tipovehiculo_id")
+Imagenes - List<Imagen> - @OneToMany(mappedBy = "anuncio")
+Venta - Venta - @OneToOne(mappedBy = "anuncio")
+Reuniones - List<Reunion> - @OneToMany(mappedBy = "anuncio")
+ValoresCaracteristicas - List<ValoresCaracteristicas> - @OneToMany(mappedBy = "anuncio")
+
++Imagen:
+idImagen - Long
+ImgBase64 - String(LongText)
+Anuncio - Anuncio - @ManyToOne @JoinColumn(name = "anuncio_id")
+
+
++Venta:
+idVenta - Long
+FechaFinGarantia - LocalDateTime
+Anuncio - Anuncio - @OneToOne @JoinColumn(name = "anuncio_id")
+Vendedor - Usuario - @ManyToOne @JoinColumn(name = "vendedor_id")
+Comprador - Usuario - @ManyToOne @JoinColumn(name = "comprador_id")
+Pagos - List<Pago> - @OneToMany(mappedBy = "venta")
+
+
++Pago:
+idPago - Long
+Cantidad - double
+FechaPago - LocalDateTime
+Venta - Venta - @ManyToOne @JoinColumn(name = "venta_id")
+
+
++Reunion:
+idReunion - Long
+Calle - String
+Fecha - LocalDateTime
+Estado - Enumeración
+Anuncio - Anuncio - @ManyToOne @JoinColumn(name = "anuncio_id")
+Vendedor - Usuario - @ManyToOne @JoinColumn(name = "vendedor_id")
+Comprador - Usuario - @ManyToOne @JoinColumn(name = "comprador_id")
+Revisiones - List<Revision> - @OneToMany(mappedBy = "reunion")
+Cuestionario - Cuestionario - @OneToOne(mappedBy = "reunion")
+
+
++Revision:
+idRevision - Long
+Imagen - String
+Asunto - String
+Descripcion - String
+Estado - Enumeración
+Reunion - Reunion - @ManyToOne @JoinColumn(name = "reunion_id")
+
+
++Cuestionario:
+idCuestionario - Long
+Comodidad - int
+Rendimiento - int
+Cuidado - int
+ValoracionGeneral - int
+Reunion - Reunion - @OneToOne @JoinColumn(name = "reunion_id", unique=true)
+
++ValoresCaracteristicas (Relación: Anuncio <-> Caracteristica):
+idValorCaracteristica - Long
+Valor - String
+Anuncio - Anuncio - @ManyToOne @JoinColumn(name = "anuncio_id")
+Caracteristica - Caracteristica - @ManyToOne @JoinColumn(name = "caracteristica_id")
+
+
++Caracteristica:
+idCaracteristica - Long
+Nombre - String
+ValorMax - String
+ValorMin - String
+TiposVehiculo - List<TipoVehiculo_Caracteristica> - @OneToMany(mappedBy = "caracteristica")
+Valores - List<ValoresCaracteristicas> - @OneToMany(mappedBy = "caracteristica")
+
+
++Tipo_Vehiculo:
+idTipoVehiculo - Long
+Tipo - String
+Anuncios - List<Anuncio> - @OneToMany(mappedBy = "tipoVehiculo")
+Caracteristicas - List<TipoVehiculo_Caracteristica> - @OneToMany(mappedBy = "tipoVehiculo")
+
+
++TipoVehiculo_Caracteristica (Relación):
+idTipo_Caracteristica - Long
+Obligatorio - boolean
+TipoVehiculo - TipoVehiculo - @ManyToOne @JoinColumn(name = "tipo_vehiculo_id")
+Caracteristica - Caracteristica - @ManyToOne @JoinColumn(name = "caracteristica_id")
+
+
+
+

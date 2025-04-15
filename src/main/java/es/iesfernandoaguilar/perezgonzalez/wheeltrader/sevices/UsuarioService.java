@@ -18,6 +18,10 @@ public class UsuarioService {
         this.usuarioRepository.save(usuario);
     }
 
+    public void update(Usuario usuario) {
+        this.usuarioRepository.save(usuario);
+    }
+
     public Usuario findById(long idUsuario) {
         return usuarioRepository.findById(idUsuario);
     }
