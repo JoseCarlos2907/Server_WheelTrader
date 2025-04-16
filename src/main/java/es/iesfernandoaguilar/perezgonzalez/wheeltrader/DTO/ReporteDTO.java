@@ -12,9 +12,9 @@ public class ReporteDTO {
 
 
     // *-- Relaciones --* //
-    private Usuario usuarioEnvia;
+    private UsuarioDTO usuarioEnvia;
 
-    private Usuario usuarioRecibe;
+    private UsuarioDTO usuarioRecibe;
 
 
     // *-- Constructores --* //
@@ -38,19 +38,19 @@ public class ReporteDTO {
         this.motivo = motivo;
     }
 
-    public Usuario getUsuarioEnvia() {
+    public UsuarioDTO getUsuarioEnvia() {
         return usuarioEnvia;
     }
 
-    public void setUsuarioEnvia(Usuario usuarioEnvia) {
+    public void setUsuarioEnvia(UsuarioDTO usuarioEnvia) {
         this.usuarioEnvia = usuarioEnvia;
     }
 
-    public Usuario getUsuarioRecibe() {
+    public UsuarioDTO getUsuarioRecibe() {
         return usuarioRecibe;
     }
 
-    public void setUsuarioRecibe(Usuario usuarioRecibe) {
+    public void setUsuarioRecibe(UsuarioDTO usuarioRecibe) {
         this.usuarioRecibe = usuarioRecibe;
     }
 

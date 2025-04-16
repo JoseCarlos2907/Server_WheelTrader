@@ -13,9 +13,9 @@ public class TipoVehiculo_CaracteristicaDTO {
 
 
     // *-- Relaciones --* //
-    private TipoVehiculo tipoVehiculo;
+    private TipoVehiculoDTO tipoVehiculo;
 
-    private Caracteristica caracteristica;
+    private CaracteristicaDTO caracteristica;
 
 
     // *-- Constructores --* //
@@ -39,19 +39,19 @@ public class TipoVehiculo_CaracteristicaDTO {
         this.obligatorio = obligatorio;
     }
 
-    public TipoVehiculo getTipoVehiculo() {
+    public TipoVehiculoDTO getTipoVehiculo() {
         return tipoVehiculo;
     }
 
-    public void setTipoVehiculo(TipoVehiculo tipoVehiculo) {
+    public void setTipoVehiculo(TipoVehiculoDTO tipoVehiculo) {
         this.tipoVehiculo = tipoVehiculo;
     }
 
-    public Caracteristica getCaracteristica() {
+    public CaracteristicaDTO getCaracteristica() {
         return caracteristica;
     }
 
-    public void setCaracteristica(Caracteristica caracteristica) {
+    public void setCaracteristica(CaracteristicaDTO caracteristica) {
         this.caracteristica = caracteristica;
     }
 

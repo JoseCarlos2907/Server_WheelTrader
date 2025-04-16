@@ -16,7 +16,7 @@ public class PagoDTO {
 
 
     // *-- Relaciones --* //
-    private Venta venta;
+    private VentaDTO venta;
 
 
     // *-- Constructores --* //
@@ -48,11 +48,11 @@ public class PagoDTO {
         this.fechaPago = fechaPago;
     }
 
-    public Venta getVenta() {
+    public VentaDTO getVenta() {
         return venta;
     }
 
-    public void setVenta(Venta venta) {
+    public void setVenta(VentaDTO venta) {
         this.venta = venta;
     }
 

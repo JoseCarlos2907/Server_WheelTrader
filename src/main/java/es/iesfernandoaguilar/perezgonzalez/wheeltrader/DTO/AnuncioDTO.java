@@ -33,11 +33,11 @@ public class AnuncioDTO {
     // *-- Relaciones --* //
     private Usuario vendedor;
 
-    private Set<Usuario> usuariosGuardan;
+    private Set<UsuarioDTO> usuariosGuardan;
 
     private TipoVehiculo tipoVehiculo;
 
-    private List<Imagen> imagenes;
+    private List<ImagenDTO> imagenes;
 
     private Venta venta;
 
@@ -139,15 +139,15 @@ public class AnuncioDTO {
         this.vendedor = vendedor;
     }
 
-    public Set<Usuario> getUsuariosGuardan() {
+    public Set<UsuarioDTO> getUsuariosGuardan() {
         return usuariosGuardan;
     }
 
-    public void setUsuariosGuardan(Set<Usuario> usuariosGuardan) {
+    public void setUsuariosGuardan(Set<UsuarioDTO> usuariosGuardan) {
         this.usuariosGuardan = usuariosGuardan;
     }
 
-    public void addUsuarioGuarda(Usuario usuario) {
+    public void addUsuarioGuarda(UsuarioDTO usuario) {
         this.usuariosGuardan.add(usuario);
     }
 
@@ -159,15 +159,15 @@ public class AnuncioDTO {
         this.tipoVehiculo = tipoVehiculo;
     }
 
-    public List<Imagen> getImagenes() {
+    public List<ImagenDTO> getImagenes() {
         return imagenes;
     }
 
-    public void setImagenes(List<Imagen> imagenes) {
+    public void setImagenes(List<ImagenDTO> imagenes) {
         this.imagenes = imagenes;
     }
 
-    public void addImagen(Imagen imagen) {
+    public void addImagen(ImagenDTO imagen) {
         this.imagenes.add(imagen);
     }
 

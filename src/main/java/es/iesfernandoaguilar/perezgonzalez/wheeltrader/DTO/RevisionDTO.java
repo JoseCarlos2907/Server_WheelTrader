@@ -19,7 +19,7 @@ public class RevisionDTO {
 
 
     // *-- Relaciones --* //
-    private Reunion reunion;
+    private ReunionDTO reunion;
 
 
     // *-- Constructores --* //
@@ -67,11 +67,11 @@ public class RevisionDTO {
         this.estado = estado;
     }
 
-    public Reunion getReunion() {
+    public ReunionDTO getReunion() {
         return reunion;
     }
 
-    public void setReunion(Reunion reunion) {
+    public void setReunion(ReunionDTO reunion) {
         this.reunion = reunion;
     }
 

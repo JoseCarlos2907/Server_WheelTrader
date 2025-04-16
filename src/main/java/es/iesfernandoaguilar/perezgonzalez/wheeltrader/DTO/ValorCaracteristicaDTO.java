@@ -13,9 +13,9 @@ public class ValorCaracteristicaDTO {
 
 
     // *-- Relaciones --* //
-    private Anuncio anuncio;
+    private AnuncioDTO anuncio;
 
-    private Caracteristica caracteristica;
+    private CaracteristicaDTO caracteristica;
 
 
     // *-- Constructores --* //
@@ -39,19 +39,19 @@ public class ValorCaracteristicaDTO {
         this.valor = valor;
     }
 
-    public Anuncio getAnuncio() {
+    public AnuncioDTO getAnuncio() {
         return anuncio;
     }
 
-    public void setAnuncio(Anuncio anuncio) {
+    public void setAnuncio(AnuncioDTO anuncio) {
         this.anuncio = anuncio;
     }
 
-    public Caracteristica getCaracteristica() {
+    public CaracteristicaDTO getCaracteristica() {
         return caracteristica;
     }
 
-    public void setCaracteristica(Caracteristica caracteristica) {
+    public void setCaracteristica(CaracteristicaDTO caracteristica) {
         this.caracteristica = caracteristica;
     }
 

@@ -18,9 +18,9 @@ public class TipoVehiculoDTO {
 
 
     // *-- Relaciones --* //
-    private List<Anuncio> anuncios;
+    private List<AnuncioDTO> anuncios;
 
-    private List<TipoVehiculo_Caracteristica> tiposVehiculoCaracteristicas;
+    private List<TipoVehiculo_CaracteristicaDTO> tiposVehiculoCaracteristicas;
 
 
     // *-- Constructores --* //
@@ -44,27 +44,27 @@ public class TipoVehiculoDTO {
         this.tipo = tipo;
     }
 
-    public List<Anuncio> getAnuncios() {
+    public List<AnuncioDTO> getAnuncios() {
         return anuncios;
     }
 
-    public void setAnuncios(List<Anuncio> anuncios) {
+    public void setAnuncios(List<AnuncioDTO> anuncios) {
         this.anuncios = anuncios;
     }
 
-    public void addAnuncio(Anuncio anuncio) {
+    public void addAnuncio(AnuncioDTO anuncio) {
         this.anuncios.add(anuncio);
     }
 
-    public List<TipoVehiculo_Caracteristica> getTiposVehiculoCaracteristicas() {
+    public List<TipoVehiculo_CaracteristicaDTO> getTiposVehiculoCaracteristicas() {
         return tiposVehiculoCaracteristicas;
     }
 
-    public void setTiposVehiculoCaracteristicas(List<TipoVehiculo_Caracteristica> tiposVehiculoCaracteristicas) {
+    public void setTiposVehiculoCaracteristicas(List<TipoVehiculo_CaracteristicaDTO> tiposVehiculoCaracteristicas) {
         this.tiposVehiculoCaracteristicas = tiposVehiculoCaracteristicas;
     }
 
-    public void addTipoVehiculoCaracteristica(TipoVehiculo_Caracteristica caracteristica) {
+    public void addTipoVehiculoCaracteristica(TipoVehiculo_CaracteristicaDTO caracteristica) {
         this.tiposVehiculoCaracteristicas.add(caracteristica);
     }
 

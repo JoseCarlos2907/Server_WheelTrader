@@ -21,9 +21,9 @@ public class CaracteristicaDTO {
     private String valorMin;
 
     // *-- Relaciones --* //
-    private List<TipoVehiculo_Caracteristica> tiposVehiculoCaracteristica;
+    private List<TipoVehiculo_CaracteristicaDTO> tiposVehiculoCaracteristica;
 
-    private List<ValorCaracteristica> valoresCaracteristicas;
+    private List<ValorCaracteristicaDTO> valoresCaracteristicas;
 
 
     // *-- Constructores --* //
@@ -63,27 +63,27 @@ public class CaracteristicaDTO {
         this.valorMin = valorMin;
     }
 
-    public List<TipoVehiculo_Caracteristica> getTiposVehiculoCaracteristica() {
+    public List<TipoVehiculo_CaracteristicaDTO> getTiposVehiculoCaracteristica() {
         return tiposVehiculoCaracteristica;
     }
 
-    public void setTiposVehiculoCaracteristica(List<TipoVehiculo_Caracteristica> tiposVehiculoCaracteristica) {
+    public void setTiposVehiculoCaracteristica(List<TipoVehiculo_CaracteristicaDTO> tiposVehiculoCaracteristica) {
         this.tiposVehiculoCaracteristica = tiposVehiculoCaracteristica;
     }
 
-    public void addTipoVehiculoCaracteristica(TipoVehiculo_Caracteristica caracteristica) {
+    public void addTipoVehiculoCaracteristica(TipoVehiculo_CaracteristicaDTO caracteristica) {
         this.tiposVehiculoCaracteristica.add(caracteristica);
     }
 
-    public List<ValorCaracteristica> getValoresCaracteristicas() {
+    public List<ValorCaracteristicaDTO> getValoresCaracteristicas() {
         return valoresCaracteristicas;
     }
 
-    public void setValoresCaracteristicas(List<ValorCaracteristica> valoresCaracteristicas) {
+    public void setValoresCaracteristicas(List<ValorCaracteristicaDTO> valoresCaracteristicas) {
         this.valoresCaracteristicas = valoresCaracteristicas;
     }
 
-    public void addValorCaracteristica(ValorCaracteristica caracteristica) {
+    public void addValorCaracteristica(ValorCaracteristicaDTO caracteristica) {
         this.valoresCaracteristicas.add(caracteristica);
     }
 

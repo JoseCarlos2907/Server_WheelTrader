@@ -19,15 +19,15 @@ public class ReunionDTO {
 
 
     // *-- Relaciones --* //
-    private Anuncio anuncio;
+    private AnuncioDTO anuncio;
 
-    private Usuario vendedor;
+    private UsuarioDTO vendedor;
 
-    private Usuario comprador;
+    private UsuarioDTO comprador;
 
-    private List<Revision> revisiones;
+    private List<RevisionDTO> revisiones;
 
-    private Cuestionario cuestionario;
+    private CuestionarioDTO cuestionario;
 
 
     // *-- Constructores --* //
@@ -67,47 +67,47 @@ public class ReunionDTO {
         this.estado = estado;
     }
 
-    public Anuncio getAnuncio() {
+    public AnuncioDTO getAnuncio() {
         return anuncio;
     }
 
-    public void setAnuncio(Anuncio anuncio) {
+    public void setAnuncio(AnuncioDTO anuncio) {
         this.anuncio = anuncio;
     }
 
-    public Usuario getVendedor() {
+    public UsuarioDTO getVendedor() {
         return vendedor;
     }
 
-    public void setVendedor(Usuario vendedor) {
+    public void setVendedor(UsuarioDTO vendedor) {
         this.vendedor = vendedor;
     }
 
-    public Usuario getComprador() {
+    public UsuarioDTO getComprador() {
         return comprador;
     }
 
-    public void setComprador(Usuario comprador) {
+    public void setComprador(UsuarioDTO comprador) {
         this.comprador = comprador;
     }
 
-    public List<Revision> getRevisiones() {
+    public List<RevisionDTO> getRevisiones() {
         return revisiones;
     }
 
-    public void setRevisiones(List<Revision> revisiones) {
+    public void setRevisiones(List<RevisionDTO> revisiones) {
         this.revisiones = revisiones;
     }
 
-    public void addRevision(Revision revision) {
+    public void addRevision(RevisionDTO revision) {
         this.revisiones.add(revision);
     }
 
-    public Cuestionario getCuestionario() {
+    public CuestionarioDTO getCuestionario() {
         return cuestionario;
     }
 
-    public void setCuestionario(Cuestionario cuestionario) {
+    public void setCuestionario(CuestionarioDTO cuestionario) {
         this.cuestionario = cuestionario;
     }
 

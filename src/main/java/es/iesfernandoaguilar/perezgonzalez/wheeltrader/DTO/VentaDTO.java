@@ -16,13 +16,13 @@ public class VentaDTO {
     private LocalDateTime fechaFinGarantia;
 
     // *-- Relaciones --* //
-    private Anuncio anuncio;
+    private AnuncioDTO anuncio;
 
-    private Usuario vendedor;
+    private UsuarioDTO vendedor;
 
-    private Usuario comprador;
+    private UsuarioDTO comprador;
 
-    private List<Pago> pagos;
+    private List<PagoDTO> pagos;
 
     // *-- Constructores --* //
     public VentaDTO() {}
@@ -45,39 +45,39 @@ public class VentaDTO {
         this.fechaFinGarantia = fechaFinGarantia;
     }
 
-    public Anuncio getAnuncio() {
+    public AnuncioDTO getAnuncio() {
         return anuncio;
     }
 
-    public void setAnuncio(Anuncio anuncio) {
+    public void setAnuncio(AnuncioDTO anuncio) {
         this.anuncio = anuncio;
     }
 
-    public Usuario getVendedor() {
+    public UsuarioDTO getVendedor() {
         return vendedor;
     }
 
-    public void setVendedor(Usuario vendedor) {
+    public void setVendedor(UsuarioDTO vendedor) {
         this.vendedor = vendedor;
     }
 
-    public Usuario getComprador() {
+    public UsuarioDTO getComprador() {
         return comprador;
     }
 
-    public void setComprador(Usuario comprador) {
+    public void setComprador(UsuarioDTO comprador) {
         this.comprador = comprador;
     }
 
-    public List<Pago> getPagos() {
+    public List<PagoDTO> getPagos() {
         return pagos;
     }
 
-    public void setPagos(List<Pago> pagos) {
+    public void setPagos(List<PagoDTO> pagos) {
         this.pagos = pagos;
     }
 
-    public void addPago(Pago pago) {
+    public void addPago(PagoDTO pago) {
         this.pagos.add(pago);
     }
 

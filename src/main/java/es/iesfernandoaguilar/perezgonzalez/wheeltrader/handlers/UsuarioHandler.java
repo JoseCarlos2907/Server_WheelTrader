@@ -25,6 +25,10 @@ public class UsuarioHandler implements Runnable {
             this.dis = new DataInputStream(cliente.getInputStream());
             this.dos = new DataOutputStream(cliente.getOutputStream());
 
+            Mensaje msg = new Mensaje();
+            msg.setTipo("BIENVENIDO");
+            this.dos.writeUTF(Serializador.codificarMensaje(msg));
+
             while (true) {
                 String linea = this.dis.readUTF();
                 Mensaje msgUsuario = Serializador.decodificarMensaje(linea);

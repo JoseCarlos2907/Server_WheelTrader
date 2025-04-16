@@ -18,7 +18,7 @@ public class CuestionarioDTO {
 
 
     // *-- Relaciones --* //
-    private Reunion reunion;
+    private ReunionDTO reunion;
 
 
     // *-- Constructores --* //
@@ -66,11 +66,11 @@ public class CuestionarioDTO {
         this.valoracionGeneral = valoracionGeneral;
     }
 
-    public Reunion getReunion() {
+    public ReunionDTO getReunion() {
         return reunion;
     }
 
-    public void setReunion(Reunion reunion) {
+    public void setReunion(ReunionDTO reunion) {
         this.reunion = reunion;
     }
 

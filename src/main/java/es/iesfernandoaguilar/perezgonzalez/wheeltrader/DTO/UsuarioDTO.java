@@ -35,29 +35,29 @@ public class UsuarioDTO {
     private String salt;
 
     // *-- Relaciones --* //
-    private List<Reporte> reportesEnviados;
+    private List<ReporteDTO> reportesEnviados;
 
-    private List<Reporte> reportesRecibidos;
+    private List<ReporteDTO> reportesRecibidos;
 
-    private List<Notificacion> notificacionesEnviadas;
+    private List<NotificacionDTO> notificacionesEnviadas;
 
-    private List<Notificacion> notificacionesRecibidas;
+    private List<NotificacionDTO> notificacionesRecibidas;
 
-    private List<Valoracion> valoracionesEnviadas;
+    private List<ValoracionDTO> valoracionesEnviadas;
 
-    private List<Valoracion> valoracionesRecibidas;
+    private List<ValoracionDTO> valoracionesRecibidas;
 
-    private Set<Anuncio> anunciosGuardados;
+    private Set<AnuncioDTO> anunciosGuardados;
 
-    private List<Anuncio> anunciosPublicados;
+    private List<AnuncioDTO> anunciosPublicados;
 
-    private List<Venta> ventas;
+    private List<VentaDTO> ventas;
 
-    private List<Venta> compras;
+    private List<VentaDTO> compras;
 
-    private List<Reunion> reunionesRecibidas;
+    private List<ReunionDTO> reunionesRecibidas;
 
-    private List<Reunion> reunionesOfrecidas;
+    private List<ReunionDTO> reunionesOfrecidas;
 
 
     // *-- Constructores --* //
@@ -161,147 +161,147 @@ public class UsuarioDTO {
         this.salt = salt;
     }
 
-    public List<Reporte> getReportesEnviados() {
+    public List<ReporteDTO> getReportesEnviados() {
         return reportesEnviados;
     }
 
-    public void setReportesEnviados(List<Reporte> reportesEnviados) {
+    public void setReportesEnviados(List<ReporteDTO> reportesEnviados) {
         this.reportesEnviados = reportesEnviados;
     }
 
-    public void addReporteEnviado(Reporte reporte) {
+    public void addReporteEnviado(ReporteDTO reporte) {
         this.reportesEnviados.add(reporte);
     }
 
-    public List<Reporte> getReportesRecibidos() {
+    public List<ReporteDTO> getReportesRecibidos() {
         return reportesRecibidos;
     }
 
-    public void setReportesRecibidos(List<Reporte> reportesRecibidos) {
+    public void setReportesRecibidos(List<ReporteDTO> reportesRecibidos) {
         this.reportesRecibidos = reportesRecibidos;
     }
 
-    public void addReporteRecibido(Reporte reporte) {
+    public void addReporteRecibido(ReporteDTO reporte) {
         this.reportesRecibidos.add(reporte);
     }
 
-    public List<Notificacion> getNotificacionesEnviadas() {
+    public List<NotificacionDTO> getNotificacionesEnviadas() {
         return notificacionesEnviadas;
     }
 
-    public void setNotificacionesEnviadas(List<Notificacion> notificacionesEnviadas) {
+    public void setNotificacionesEnviadas(List<NotificacionDTO> notificacionesEnviadas) {
         this.notificacionesEnviadas = notificacionesEnviadas;
     }
 
-    public void addNotificacionEnviada(Notificacion notificacion) {
+    public void addNotificacionEnviada(NotificacionDTO notificacion) {
         this.notificacionesEnviadas.add(notificacion);
     }
 
-    public List<Notificacion> getNotificacionesRecibidas() {
+    public List<NotificacionDTO> getNotificacionesRecibidas() {
         return notificacionesRecibidas;
     }
 
-    public void setNotificacionesRecibidas(List<Notificacion> notificacionesRecibidas) {
+    public void setNotificacionesRecibidas(List<NotificacionDTO> notificacionesRecibidas) {
         this.notificacionesRecibidas = notificacionesRecibidas;
     }
 
-    public void addNotificacionRecibida(Notificacion notificacion) {
+    public void addNotificacionRecibida(NotificacionDTO notificacion) {
         this.notificacionesRecibidas.add(notificacion);
     }
 
-    public List<Valoracion> getValoracionesEnviadas() {
+    public List<ValoracionDTO> getValoracionesEnviadas() {
         return valoracionesEnviadas;
     }
 
-    public void setValoracionesEnviadas(List<Valoracion> valoracionesEnviadas) {
+    public void setValoracionesEnviadas(List<ValoracionDTO> valoracionesEnviadas) {
         this.valoracionesEnviadas = valoracionesEnviadas;
     }
 
-    public void addValoracionEnviada(Valoracion valoracion) {
+    public void addValoracionEnviada(ValoracionDTO valoracion) {
         this.valoracionesEnviadas.add(valoracion);
     }
 
-    public List<Valoracion> getValoracionesRecibidas() {
+    public List<ValoracionDTO> getValoracionesRecibidas() {
         return valoracionesRecibidas;
     }
 
-    public void setValoracionesRecibidas(List<Valoracion> valoracionesRecibidas) {
+    public void setValoracionesRecibidas(List<ValoracionDTO> valoracionesRecibidas) {
         this.valoracionesRecibidas = valoracionesRecibidas;
     }
 
-    public void addValoracionRecibida(Valoracion valoracion) {
+    public void addValoracionRecibida(ValoracionDTO valoracion) {
         this.valoracionesRecibidas.add(valoracion);
     }
 
-    public Set<Anuncio> getAnunciosGuardados() {
+    public Set<AnuncioDTO> getAnunciosGuardados() {
         return anunciosGuardados;
     }
 
-    public void setAnunciosGuardados(Set<Anuncio> anunciosGuardados) {
+    public void setAnunciosGuardados(Set<AnuncioDTO> anunciosGuardados) {
         this.anunciosGuardados = anunciosGuardados;
     }
 
-    public void addAnuncioGuardado(Anuncio anuncio) {
+    public void addAnuncioGuardado(AnuncioDTO anuncio) {
         this.anunciosGuardados.add(anuncio);
     }
 
-    public List<Anuncio> getAnunciosPublicados() {
+    public List<AnuncioDTO> getAnunciosPublicados() {
         return anunciosPublicados;
     }
 
-    public void setAnunciosPublicados(List<Anuncio> anunciosPublicados) {
+    public void setAnunciosPublicados(List<AnuncioDTO> anunciosPublicados) {
         this.anunciosPublicados = anunciosPublicados;
     }
 
-    public void addAnuncioPublicado(Anuncio anuncio) {
+    public void addAnuncioPublicado(AnuncioDTO anuncio) {
         this.anunciosPublicados.add(anuncio);
     }
 
-    public List<Venta> getVentas() {
+    public List<VentaDTO> getVentas() {
         return ventas;
     }
 
-    public void setVentas(List<Venta> ventas) {
+    public void setVentas(List<VentaDTO> ventas) {
         this.ventas = ventas;
     }
 
-    public void addVenta(Venta venta) {
+    public void addVenta(VentaDTO venta) {
         this.ventas.add(venta);
     }
 
-    public List<Venta> getCompras() {
+    public List<VentaDTO> getCompras() {
         return compras;
     }
 
-    public void setCompras(List<Venta> compras) {
+    public void setCompras(List<VentaDTO> compras) {
         this.compras = compras;
     }
 
-    public void addCompra(Venta venta) {
+    public void addCompra(VentaDTO venta) {
         this.compras.add(venta);
     }
 
-    public List<Reunion> getReunionesRecibidas() {
+    public List<ReunionDTO> getReunionesRecibidas() {
         return reunionesRecibidas;
     }
 
-    public void setReunionesRecibidas(List<Reunion> reunionesRecibidas) {
+    public void setReunionesRecibidas(List<ReunionDTO> reunionesRecibidas) {
         this.reunionesRecibidas = reunionesRecibidas;
     }
 
-    public void addReunionRecibida(Reunion reunion) {
+    public void addReunionRecibida(ReunionDTO reunion) {
         this.reunionesRecibidas.add(reunion);
     }
 
-    public List<Reunion> getReunionesOfrecidas() {
+    public List<ReunionDTO> getReunionesOfrecidas() {
         return reunionesOfrecidas;
     }
 
-    public void setReunionesOfrecidas(List<Reunion> reunionesOfrecidas) {
+    public void setReunionesOfrecidas(List<ReunionDTO> reunionesOfrecidas) {
         this.reunionesOfrecidas = reunionesOfrecidas;
     }
 
-    public void addReunionOfrecida(Reunion reunion) {
+    public void addReunionOfrecida(ReunionDTO reunion) {
         this.reunionesOfrecidas.add(reunion);
     }
 

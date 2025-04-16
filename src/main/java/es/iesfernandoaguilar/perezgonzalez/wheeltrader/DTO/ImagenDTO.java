@@ -12,7 +12,7 @@ public class ImagenDTO {
 
 
     // *-- Relaciones --* //
-    private Anuncio anuncio;
+    private AnuncioDTO anuncio;
 
 
     // *-- Constructores --* //
@@ -36,11 +36,11 @@ public class ImagenDTO {
         this.imgBase64 = imgBase64;
     }
 
-    public Anuncio getAnuncio() {
+    public AnuncioDTO getAnuncio() {
         return anuncio;
     }
 
-    public void setAnuncio(Anuncio anuncio) {
+    public void setAnuncio(AnuncioDTO anuncio) {
         this.anuncio = anuncio;
     }
 
