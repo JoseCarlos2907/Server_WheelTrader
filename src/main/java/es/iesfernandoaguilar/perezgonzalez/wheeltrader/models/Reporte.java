@@ -12,6 +12,8 @@ public class Reporte {
 
     private String motivo;
 
+    private String explicacion;
+
     // *-- Relaciones --* //
     @ManyToOne
     @JoinColumn(name = "usuario_envia_id")
@@ -24,12 +26,12 @@ public class Reporte {
     // *-- Constructores --* //
     public Reporte() {}
 
-    public Reporte(String motivo) {
+    public Reporte(String motivo, String explicacion) {
         this.motivo = motivo;
+        this.explicacion = explicacion;
     }
 
     // *-- Getters, Setters --* //
-
     public Long getIdReporte() {
         return idReporte;
     }
@@ -44,6 +46,14 @@ public class Reporte {
 
     public void setMotivo(String motivo) {
         this.motivo = motivo;
+    }
+
+    public String getExplicacion() {
+        return explicacion;
+    }
+
+    public void setExplicacion(String explicacion) {
+        this.explicacion = explicacion;
     }
 
     public Usuario getUsuarioEnvia() {

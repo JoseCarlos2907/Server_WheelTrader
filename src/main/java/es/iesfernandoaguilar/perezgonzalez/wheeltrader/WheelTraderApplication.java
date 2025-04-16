@@ -97,7 +97,7 @@ public class WheelTraderApplication {
         };
     }*/
 
-    /*@Bean
+    @Bean
     CommandLineRunner commandLineRunner(ApplicationContext context) {
         return args -> {
             UsuarioService usuarioService = context.getBean(UsuarioService.class);
@@ -111,5 +111,5 @@ public class WheelTraderApplication {
 
             System.out.println(mapper.writeValueAsString(usuarioDTO));
         };
-    }*/
+    }
 }

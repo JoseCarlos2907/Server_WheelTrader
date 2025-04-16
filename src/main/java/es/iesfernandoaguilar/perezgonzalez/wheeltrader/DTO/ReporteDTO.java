@@ -10,6 +10,7 @@ public class ReporteDTO {
 
     private String motivo;
 
+    private String explicacion;
 
     // *-- Relaciones --* //
     private UsuarioDTO usuarioEnvia;
@@ -36,6 +37,14 @@ public class ReporteDTO {
 
     public void setMotivo(String motivo) {
         this.motivo = motivo;
+    }
+
+    public String getExplicacion() {
+        return explicacion;
+    }
+
+    public void setExplicacion(String explicacion) {
+        this.explicacion = explicacion;
     }
 
     public UsuarioDTO getUsuarioEnvia() {
