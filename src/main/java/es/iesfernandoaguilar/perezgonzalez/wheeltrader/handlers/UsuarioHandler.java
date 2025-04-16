@@ -5,6 +5,7 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Serializador;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -38,6 +39,9 @@ public class UsuarioHandler implements Runnable {
                         break;
                 }
             }
+
+        } catch (EOFException e) {
+            System.out.println("Se cerró el flujo con el puerto " + cliente.getPort());
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }

@@ -179,7 +179,7 @@ public class InicioDeSesionHandler implements Runnable {
                 }
             }
         } catch (EOFException e) {
-            System.out.println("Se cerro el flujo de inicio de sesión");
+            System.out.println("Se cerró el flujo de inicio de sesión");
         } catch (IOException e) {
             System.err.println(e.getMessage());
         }
