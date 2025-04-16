@@ -1,5 +1,7 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.UsuarioDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
@@ -92,6 +94,22 @@ public class WheelTraderApplication {
 
             anuncioService.save(anuncio);
             usuarioService.save(usuario);
+        };
+    }*/
+
+    /*@Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            UsuarioService usuarioService = context.getBean(UsuarioService.class);
+
+            Usuario usuario = usuarioService.findById(1);
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            UsuarioDTO usuarioDTO = new UsuarioDTO();
+            usuarioDTO.parse(usuario);
+
+            System.out.println(mapper.writeValueAsString(usuarioDTO));
         };
     }*/
 }

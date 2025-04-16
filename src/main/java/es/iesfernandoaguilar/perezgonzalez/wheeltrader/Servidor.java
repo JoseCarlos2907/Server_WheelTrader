@@ -1,6 +1,8 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader;
 
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.handlers.InicioDeSesionHandler;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.handlers.UsuarioHandler;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +18,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +29,7 @@ public class Servidor implements Runnable {
     private Properties serverProperties;
     private ExecutorService executor;
     private boolean parar;
+    private ConcurrentHashMap<Long, UsuarioHandler> usuariosHandlers;
 
     final String correoApp = "wheeltraderapp@gmail.com"; // Este es el correo de Gmail
     final String contraseniaApp = "hrwd pvon rhrz yzoj"; // Esta es la contraseña de aplicación de la cuenta de Gmail
@@ -49,22 +53,26 @@ public class Servidor implements Runnable {
 
             this.executor = Executors.newCachedThreadPool();
 
+            this.usuariosHandlers = new ConcurrentHashMap<>();
+
             System.out.println("Servidor escuchando en el puerto " + serverProperties.getProperty("PORT") + " y en la IP 192.168.1.66");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-//    @Bean
-//    CommandLineRunner commandLineRunner(ApplicationContext context) {
-//        return args -> {
-//            new Thread(this).start();
-//            this.listen(context);
-//        };
-//    }
+    @Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            new Thread(this).start();
+            this.listen(context);
+        };
+    }
 
-    public void usuarioIniciaSesion(Socket socket) {
-        // TODO: Hacer el submit del Handler principal
+    public void usuarioIniciaSesion(Long usuarioId, Socket socket) {
+        UsuarioHandler uHandler = new UsuarioHandler(socket);
+        this.usuariosHandlers.put(usuarioId, uHandler);
+        this.executor.submit(uHandler);
     }
 
     public void listen(ApplicationContext context) {

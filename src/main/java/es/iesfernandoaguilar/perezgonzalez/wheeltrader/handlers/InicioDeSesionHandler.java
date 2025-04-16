@@ -1,6 +1,7 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.handlers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.UsuarioDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.Servidor;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
@@ -39,11 +40,11 @@ public class InicioDeSesionHandler implements Runnable {
 
         boolean iniciaSesion = false;
 
+        Optional<Usuario> usuario = null;
         try {
             dis = new DataInputStream(socket.getInputStream());
             dos = new DataOutputStream(socket.getOutputStream());
 
-            Optional<Usuario> usuario = null;
             Random rnd = new Random();
             String codigoGenerado = "0000";
             String correoRecuperarContrasenia = "";
@@ -74,7 +75,14 @@ public class InicioDeSesionHandler implements Runnable {
                             msgRespuesta.addParam("si");
                             // Esto convierte el objeto Usuario a una cadena con formato JSON
                             ObjectMapper mapper = new ObjectMapper();
-                            msgRespuesta.addParam(mapper.writeValueAsString(usuario.get()));
+
+                            // Preparo un usuario sin el hash de la contraseña y sin el salt para la sesión
+                            UsuarioDTO usuarioPreparado = new UsuarioDTO();
+                            usuarioPreparado.parse(usuario.get());
+                            usuarioPreparado.setContrasenia("");
+                            usuarioPreparado.setSalt("");
+
+                            msgRespuesta.addParam(mapper.writeValueAsString(usuarioPreparado));
                         } else {
                             msgRespuesta.addParam("no");
                         }
@@ -174,6 +182,10 @@ public class InicioDeSesionHandler implements Runnable {
             System.out.println("Se cerro el flujo de inicio de sesión");
         } catch (IOException e) {
             System.err.println(e.getMessage());
+        }
+
+        if(iniciaSesion){
+            this.server.usuarioIniciaSesion(usuario.get().getIdUsuario(), this.socket);
         }
     }
 }

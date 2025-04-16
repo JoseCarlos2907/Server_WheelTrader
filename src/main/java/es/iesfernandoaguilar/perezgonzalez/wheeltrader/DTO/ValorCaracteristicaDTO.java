@@ -1,36 +1,28 @@
-package es.iesfernandoaguilar.perezgonzalez.wheeltrader.models;
+package es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO;
 
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Anuncio;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Caracteristica;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.ValorCaracteristica;
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "valorescaracteristicas")
-public class ValorCaracteristica {
+public class ValorCaracteristicaDTO {
     // *-- Atributos --* //
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idValorCaracteristica;
 
     private String valor;
 
+
     // *-- Relaciones --* //
-    // Lo asigno en Anuncio
-    @ManyToOne
-    @JoinColumn(name = "anuncio_id")
     private Anuncio anuncio;
 
-    // Lo asigno aquí
-    @ManyToOne
-    @JoinColumn(name = "caracteristica_id")
     private Caracteristica caracteristica;
 
+
     // *-- Constructores --* //
-    public ValorCaracteristica() {}
+    public ValorCaracteristicaDTO() {}
 
-    public ValorCaracteristica(String valor) {
-        this.valor = valor;
-    }
 
-    // *-- Getters, Setters --* //
+    // *-- Getters y Setters --* //
     public Long getIdValorCaracteristica() {
         return idValorCaracteristica;
     }
@@ -61,9 +53,14 @@ public class ValorCaracteristica {
 
     public void setCaracteristica(Caracteristica caracteristica) {
         this.caracteristica = caracteristica;
-        caracteristica.addValorCaracteristica(this);
     }
 
-
     // *-- Métodos --* //
+    public void parse(ValorCaracteristica valorCaracteristica) {
+        this.idValorCaracteristica = valorCaracteristica.getIdValorCaracteristica();
+        this.valor = valorCaracteristica.getValor();
+
+        this.anuncio = null;
+        this.caracteristica = null;
+    }
 }

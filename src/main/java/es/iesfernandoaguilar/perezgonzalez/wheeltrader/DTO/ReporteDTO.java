@@ -1,35 +1,27 @@
-package es.iesfernandoaguilar.perezgonzalez.wheeltrader.models;
+package es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO;
 
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Reporte;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "reportes")
-public class Reporte {
+public class ReporteDTO {
     // *-- Atributos --* //
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idReporte;
 
     private String motivo;
 
+
     // *-- Relaciones --* //
-    @ManyToOne
-    @JoinColumn(name = "usuario_envia_id")
     private Usuario usuarioEnvia;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_recibe_id")
     private Usuario usuarioRecibe;
 
+
     // *-- Constructores --* //
-    public Reporte() {}
+    public ReporteDTO() {}
 
-    public Reporte(String motivo) {
-        this.motivo = motivo;
-    }
 
-    // *-- Getters, Setters --* //
-
+    // *-- Getters y Setters --* //
     public Long getIdReporte() {
         return idReporte;
     }
@@ -63,6 +55,11 @@ public class Reporte {
     }
 
     // *-- Métodos --* //
+    public void parse(Reporte reporte) {
+        this.idReporte = reporte.getIdReporte();
+        this.motivo = reporte.getMotivo();
 
-
+        this.usuarioEnvia = null;
+        this.usuarioRecibe = null;
+    }
 }
