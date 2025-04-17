@@ -8,7 +8,7 @@ public class ImagenDTO {
     // *-- Atributos --* //
     private Long idImagen;
 
-    private String imgBase64;
+    private byte[] imagen;
 
 
     // *-- Relaciones --* //
@@ -18,6 +18,9 @@ public class ImagenDTO {
     // *-- Constructores --* //
     public ImagenDTO() {}
 
+    public ImagenDTO(byte[] imagen) {
+        this.imagen = imagen;
+    }
 
     // *-- Getters y Setters --* //
     public Long getIdImagen() {
@@ -28,12 +31,12 @@ public class ImagenDTO {
         this.idImagen = idImagen;
     }
 
-    public String getImgBase64() {
-        return imgBase64;
+    public byte[] getImagen() {
+        return imagen;
     }
 
-    public void setImgBase64(String imgBase64) {
-        this.imgBase64 = imgBase64;
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
     }
 
     public AnuncioDTO getAnuncio() {
@@ -47,7 +50,7 @@ public class ImagenDTO {
     // *-- Métodos --* //
     public void parse(Imagen imagen){
         this.idImagen = imagen.getIdImagen();
-        this.imgBase64 = imagen.getImgBase64();
+        this.imagen = imagen.getImagen();
 
         this.anuncio = null;
     }

@@ -11,7 +11,8 @@ public class Revision {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idRevision;
 
-    private String imagenBase64;
+    @Lob
+    private byte[] imagen;
 
     private String asunto;
 
@@ -43,12 +44,12 @@ public class Revision {
         this.idRevision = idRevision;
     }
 
-    public String getImagenBase64() {
-        return imagenBase64;
+    public byte[] getImagen() {
+        return imagen;
     }
 
-    public void setImagenBase64(String imagenBase64) {
-        this.imagenBase64 = imagenBase64;
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
     }
 
     public String getAsunto() {

@@ -69,8 +69,8 @@ public class Servidor implements Runnable {
         };
     }
 
-    public void usuarioIniciaSesion(Long usuarioId, Socket socket) {
-        UsuarioHandler uHandler = new UsuarioHandler(socket);
+    public void usuarioIniciaSesion(Long usuarioId, Socket socket, ApplicationContext context) {
+        UsuarioHandler uHandler = new UsuarioHandler(socket, context);
         this.usuariosHandlers.put(usuarioId, uHandler);
         this.executor.submit(uHandler);
     }

@@ -15,12 +15,15 @@ public class ValorCaracteristicaDTO {
     // *-- Relaciones --* //
     private AnuncioDTO anuncio;
 
-    private CaracteristicaDTO caracteristica;
+    private String nombreCaracteristica;
 
 
     // *-- Constructores --* //
     public ValorCaracteristicaDTO() {}
 
+    public ValorCaracteristicaDTO(String valor){
+        this.valor = valor;
+    }
 
     // *-- Getters y Setters --* //
     public Long getIdValorCaracteristica() {
@@ -47,12 +50,12 @@ public class ValorCaracteristicaDTO {
         this.anuncio = anuncio;
     }
 
-    public CaracteristicaDTO getCaracteristica() {
-        return caracteristica;
+    public String getNombreCaracteristica() {
+        return nombreCaracteristica;
     }
 
-    public void setCaracteristica(CaracteristicaDTO caracteristica) {
-        this.caracteristica = caracteristica;
+    public void setNombreCaracteristica(String nombreCaracteristica) {
+        this.nombreCaracteristica = nombreCaracteristica;
     }
 
     // *-- Métodos --* //
@@ -61,6 +64,6 @@ public class ValorCaracteristicaDTO {
         this.valor = valorCaracteristica.getValor();
 
         this.anuncio = null;
-        this.caracteristica = null;
+        this.nombreCaracteristica = null;
     }
 }

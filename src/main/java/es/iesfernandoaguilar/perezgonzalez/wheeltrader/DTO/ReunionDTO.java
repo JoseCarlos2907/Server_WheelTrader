@@ -15,7 +15,7 @@ public class ReunionDTO {
 
     private LocalDateTime fecha;
 
-    private EstadoReunion estado;
+    private String estado;
 
 
     // *-- Relaciones --* //
@@ -59,11 +59,11 @@ public class ReunionDTO {
         this.fecha = fecha;
     }
 
-    public EstadoReunion getEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoReunion estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 
@@ -116,7 +116,7 @@ public class ReunionDTO {
         this.idReunion = reunion.getIdReunion();
         this.calle = reunion.getCalle();
         this.fecha = reunion.getFecha();
-        this.estado = reunion.getEstado();
+        this.estado = reunion.getEstado().toString();
 
         this.anuncio = null;
         this.vendedor = null;

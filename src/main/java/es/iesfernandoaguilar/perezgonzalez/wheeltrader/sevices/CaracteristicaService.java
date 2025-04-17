@@ -15,4 +15,12 @@ public class CaracteristicaService {
     public void save(Caracteristica caracteristica) {
         this.caracteristicaRepository.save(caracteristica);
     }
+
+    public Caracteristica findByNombreWithValoresCaracteristicas(String nombre) {
+        return this.caracteristicaRepository.findByNombreWithValoresCaracteristicas(nombre);
+    }
+
+    public Caracteristica findByNombreWithTipoVehiculoCaracteristicas(String nombre) {
+        return this.caracteristicaRepository.findByNombreWithTipoVehiculoCaracteristicas(nombre);
+    }
 }

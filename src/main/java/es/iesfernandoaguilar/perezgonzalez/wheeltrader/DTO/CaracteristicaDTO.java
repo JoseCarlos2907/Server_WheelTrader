@@ -1,5 +1,6 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO;
 
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Caracteristica;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.TipoVehiculo_Caracteristica;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.ValorCaracteristica;
@@ -16,9 +17,13 @@ public class CaracteristicaDTO {
 
     private String nombre;
 
-    private String valorMax;
+    private String tipo_dato;
 
-    private String valorMin;
+    private int valorMax;
+
+    private int valorMin;
+
+    private String opciones;
 
     // *-- Relaciones --* //
     private List<TipoVehiculo_CaracteristicaDTO> tiposVehiculoCaracteristica;
@@ -47,20 +52,36 @@ public class CaracteristicaDTO {
         this.nombre = nombre;
     }
 
-    public String getValorMax() {
+    public String getTipo_dato() {
+        return tipo_dato;
+    }
+
+    public void setTipo_dato(String tipo_dato) {
+        this.tipo_dato = tipo_dato;
+    }
+
+    public int getValorMax() {
         return valorMax;
     }
 
-    public void setValorMax(String valorMax) {
+    public void setValorMax(int valorMax) {
         this.valorMax = valorMax;
     }
 
-    public String getValorMin() {
+    public int getValorMin() {
         return valorMin;
     }
 
-    public void setValorMin(String valorMin) {
+    public void setValorMin(int valorMin) {
         this.valorMin = valorMin;
+    }
+
+    public String getOpciones() {
+        return opciones;
+    }
+
+    public void setOpciones(String opciones) {
+        this.opciones = opciones;
     }
 
     public List<TipoVehiculo_CaracteristicaDTO> getTiposVehiculoCaracteristica() {

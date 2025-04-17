@@ -5,6 +5,8 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +22,7 @@ public class AnuncioDTO {
 
     private double precio;
 
-    private EstadoAnuncio estado;
+    private String estado;
 
     private String provincia;
 
@@ -31,24 +33,40 @@ public class AnuncioDTO {
     private String numSerieBastidor;
 
     // *-- Relaciones --* //
-    private Usuario vendedor;
+    private UsuarioDTO vendedor;
 
     private Set<UsuarioDTO> usuariosGuardan;
 
-    private TipoVehiculo tipoVehiculo;
+    private String tipoVehiculo;
 
     private List<ImagenDTO> imagenes;
 
-    private Venta venta;
+    private VentaDTO venta;
 
-    private List<Reunion> reuniones;
+    private List<ReunionDTO> reuniones;
 
-    private List<ValorCaracteristica> valoresCaracteristicas;
+    private List<ValorCaracteristicaDTO> valoresCaracteristicas;
 
 
     // *-- Constructores --* //
     public AnuncioDTO() {}
 
+    public AnuncioDTO(LocalDateTime fechaPublicacion, String descripcion, double precio, String provincia, String ciudad, String matricula, String numSerieBastidor) {
+        this.fechaPublicacion = fechaPublicacion;
+        this.fechaExpiracion = fechaPublicacion.plusMonths(3);
+        this.descripcion = descripcion;
+        this.precio = precio;
+        this.estado = "EN_VENTA";
+        this.provincia = provincia;
+        this.ciudad = ciudad;
+        this.matricula = matricula;
+        this.numSerieBastidor = numSerieBastidor;
+
+        this.usuariosGuardan = new HashSet<>();
+        this.imagenes = new ArrayList<>();
+        this.reuniones = new ArrayList<>();
+        this.valoresCaracteristicas = new ArrayList<>();
+    }
 
     // *-- Getters y Setters --* //
     public Long getIdAnuncio() {
@@ -91,11 +109,11 @@ public class AnuncioDTO {
         this.precio = precio;
     }
 
-    public EstadoAnuncio getEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoAnuncio estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 
@@ -131,11 +149,11 @@ public class AnuncioDTO {
         this.numSerieBastidor = numSerieBastidor;
     }
 
-    public Usuario getVendedor() {
+    public UsuarioDTO getVendedor() {
         return vendedor;
     }
 
-    public void setVendedor(Usuario vendedor) {
+    public void setVendedor(UsuarioDTO vendedor) {
         this.vendedor = vendedor;
     }
 
@@ -151,11 +169,11 @@ public class AnuncioDTO {
         this.usuariosGuardan.add(usuario);
     }
 
-    public TipoVehiculo getTipoVehiculo() {
+    public String getTipoVehiculo() {
         return tipoVehiculo;
     }
 
-    public void setTipoVehiculo(TipoVehiculo tipoVehiculo) {
+    public void setTipoVehiculo(String tipoVehiculo) {
         this.tipoVehiculo = tipoVehiculo;
     }
 
@@ -171,35 +189,35 @@ public class AnuncioDTO {
         this.imagenes.add(imagen);
     }
 
-    public Venta getVenta() {
+    public VentaDTO getVenta() {
         return venta;
     }
 
-    public void setVenta(Venta venta) {
+    public void setVenta(VentaDTO venta) {
         this.venta = venta;
     }
 
-    public List<Reunion> getReuniones() {
+    public List<ReunionDTO> getReuniones() {
         return reuniones;
     }
 
-    public void setReuniones(List<Reunion> reuniones) {
+    public void setReuniones(List<ReunionDTO> reuniones) {
         this.reuniones = reuniones;
     }
 
-    public void addReunion(Reunion reunion) {
+    public void addReunion(ReunionDTO reunion) {
         this.reuniones.add(reunion);
     }
 
-    public List<ValorCaracteristica> getValoresCaracteristicas() {
+    public List<ValorCaracteristicaDTO> getValoresCaracteristicas() {
         return valoresCaracteristicas;
     }
 
-    public void setValoresCaracteristicas(List<ValorCaracteristica> valoresCaracteristicas) {
+    public void setValoresCaracteristicas(List<ValorCaracteristicaDTO> valoresCaracteristicas) {
         this.valoresCaracteristicas = valoresCaracteristicas;
     }
 
-    public void addValorCaracteristica(ValorCaracteristica valorCaracteristica) {
+    public void addValorCaracteristica(ValorCaracteristicaDTO valorCaracteristica) {
         this.valoresCaracteristicas.add(valorCaracteristica);
     }
 
@@ -210,7 +228,7 @@ public class AnuncioDTO {
         this.fechaExpiracion = anuncio.getFechaExpiracion();
         this.descripcion = anuncio.getDescripcion();
         this.precio = anuncio.getPrecio();
-        this.estado = anuncio.getEstado();
+        this.estado = anuncio.getEstado().toString();
         this.provincia = anuncio.getProvincia();
         this.ciudad = anuncio.getCiudad();
 

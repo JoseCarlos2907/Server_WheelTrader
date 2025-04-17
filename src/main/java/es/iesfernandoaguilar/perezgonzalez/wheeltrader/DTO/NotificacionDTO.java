@@ -14,9 +14,9 @@ public class NotificacionDTO {
 
     private String mensaje;
 
-    private EstadoNotificacion estado;
+    private String estado;
 
-    private TipoNotificacion tipo;
+    private String tipo;
 
 
     // *-- Relaciones --* //
@@ -54,19 +54,19 @@ public class NotificacionDTO {
         this.mensaje = mensaje;
     }
 
-    public EstadoNotificacion getEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoNotificacion estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 
-    public TipoNotificacion getTipo() {
+    public String getTipo() {
         return tipo;
     }
 
-    public void setTipo(TipoNotificacion tipo) {
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
@@ -92,8 +92,8 @@ public class NotificacionDTO {
         this.idNotificacion = notificacion.getIdNotificacion();
         this.titulo = notificacion.getTitulo();
         this.mensaje = notificacion.getMensaje();
-        this.estado = notificacion.getEstado();
-        this.tipo = notificacion.getTipo();
+        this.estado = notificacion.getEstado().toString();
+        this.tipo = notificacion.getTipo().toString();
 
         this.usuarioEnvia = null;
         this.usuarioRecibe = null;

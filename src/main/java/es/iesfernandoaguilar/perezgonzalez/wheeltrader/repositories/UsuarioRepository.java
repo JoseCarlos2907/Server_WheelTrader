@@ -32,4 +32,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Modifying
     @Query("update Usuario u set u.contrasenia = ?1 where u.correo = ?2")
     void updateContraseniaUsuario(String cotrasenia, String correo);
+
+    @Query("select u from Usuario u left join fetch u.anunciosPublicados where u.nombreUsuario = ?1")
+    Usuario findByNombreUsuarioWithAnunciosPublicados(String nombreUsuario);
 }

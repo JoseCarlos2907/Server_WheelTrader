@@ -26,6 +26,10 @@ public class UsuarioService {
         return usuarioRepository.findById(idUsuario);
     }
 
+    public Usuario findByNombreUsuarioWithAnunciosPublicados(String nombreUsuario) {
+        return this.usuarioRepository.findByNombreUsuarioWithAnunciosPublicados(nombreUsuario);
+    }
+
     public Optional<Usuario> iniciarSesion(String nombreUsuarioOCorreo) {
         return usuarioRepository.iniciarSesion(nombreUsuarioOCorreo);
     }

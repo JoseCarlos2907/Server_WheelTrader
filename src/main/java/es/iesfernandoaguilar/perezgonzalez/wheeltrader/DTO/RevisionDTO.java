@@ -9,13 +9,13 @@ public class RevisionDTO {
     // *-- Atributos --* //
     private Long idRevision;
 
-    private String imagenBase64;
+    private byte[] imagen;
 
     private String asunto;
 
     private String descripcion;
 
-    private EstadoRevision estado;
+    private String estado;
 
 
     // *-- Relaciones --* //
@@ -35,12 +35,12 @@ public class RevisionDTO {
         this.idRevision = idRevision;
     }
 
-    public String getImagenBase64() {
-        return imagenBase64;
+    public byte[] getImagen() {
+        return imagen;
     }
 
-    public void setImagenBase64(String imagenBase64) {
-        this.imagenBase64 = imagenBase64;
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
     }
 
     public String getAsunto() {
@@ -59,11 +59,11 @@ public class RevisionDTO {
         this.descripcion = descripcion;
     }
 
-    public EstadoRevision getEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoRevision estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 
@@ -78,10 +78,10 @@ public class RevisionDTO {
     // *-- Métodos --* //
     public void parse(Revision revision){
         this.idRevision = revision.getIdRevision();
-        this.imagenBase64 = revision.getImagenBase64();
+        this.imagen = revision.getImagen();
         this.asunto = revision.getAsunto();
         this.descripcion = revision.getDescripcion();
-        this.estado = revision.getEstado();
+        this.estado = revision.getEstado().toString();
 
         this.reunion = null;
     }

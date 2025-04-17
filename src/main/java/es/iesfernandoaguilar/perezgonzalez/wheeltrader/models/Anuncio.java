@@ -21,6 +21,7 @@ public class Anuncio {
 
     private LocalDateTime fechaExpiracion;
 
+    @Lob
     private String descripcion;
 
     private double precio;
@@ -62,8 +63,8 @@ public class Anuncio {
     // *-- Constructores --* //
     public Anuncio() {}
 
-    public Anuncio(LocalDateTime fechaPublicacion, String descripcion, double precio, String provincia, String ciudad, String matricula, String numSerieBastidor) {
-        this.fechaPublicacion = fechaPublicacion;
+    public Anuncio(String descripcion, double precio, String provincia, String ciudad, String matricula, String numSerieBastidor) {
+        this.fechaPublicacion = LocalDateTime.now();
         this.fechaExpiracion = fechaPublicacion.plusMonths(3);
         this.descripcion = descripcion;
         this.precio = precio;

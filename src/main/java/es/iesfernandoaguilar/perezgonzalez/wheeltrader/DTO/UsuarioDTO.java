@@ -28,9 +28,9 @@ public class UsuarioDTO {
 
     private String correoPP;
 
-    private RolUsuario rol;
+    private String rol;
 
-    private EstadoUsuario estado;
+    private String estado;
 
     private String salt;
 
@@ -137,19 +137,19 @@ public class UsuarioDTO {
         this.correoPP = correoPP;
     }
 
-    public RolUsuario getRol() {
+    public String getRol() {
         return rol;
     }
 
-    public void setRol(RolUsuario rol) {
+    public void setRol(String rol) {
         this.rol = rol;
     }
 
-    public EstadoUsuario getEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoUsuario estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
     }
 
@@ -316,8 +316,8 @@ public class UsuarioDTO {
         this.contrasenia = usuario.getContrasenia();
         this.correo = usuario.getCorreo();
         this.correoPP = usuario.getCorreoPP();
-        this.rol = usuario.esModerador() ? RolUsuario.MODERADOR : RolUsuario.USUARIO;
-        this.estado = usuario.estaActivo() ? EstadoUsuario.ACTIVO : EstadoUsuario.BANEADO;
+        this.rol = usuario.esModerador() ? RolUsuario.MODERADOR.toString() : RolUsuario.USUARIO.toString();
+        this.estado = usuario.estaActivo() ? EstadoUsuario.ACTIVO.toString() : EstadoUsuario.BANEADO.toString();
         this.salt = usuario.getSalt();
 
         this.reportesEnviados = null;

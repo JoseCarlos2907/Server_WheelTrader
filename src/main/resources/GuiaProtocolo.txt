@@ -24,3 +24,9 @@ CODIGO_CORRECTO;salt (Servidor -> Usuario)
 CODIGO_INCORRECTO (Servidor -> Usuario)
 REINICIAR_CONTRASENIA;contraseniaHasheada (Usuario -> Servidor)
 CONTRASENIA_REINICIADA (Servidor -> Usuario)
+
++Publicar anuncio:
+COMPROBAR_DATOS_VEHICULO;{JSON_ListaValores} (Usuario -> Servidor)
+DATOS_VALIDOS;si/no (Servidor -> Usuario)
+PUBLICAR_ANUNCIO;{JSON_ANUNCIO} (Usuario -> Servidor)
+ANUNCIO_PUBLICADO (Servidor -> Usuario)

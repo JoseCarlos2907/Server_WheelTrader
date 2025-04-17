@@ -1,5 +1,6 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.models;
 
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -15,9 +16,13 @@ public class Caracteristica {
 
     private String nombre;
 
-    private String valorMax;
+    private TipoDatoCaracteristica tipo_dato;
 
-    private String valorMin;
+    private int valorMax;
+
+    private int valorMin;
+
+    private String opciones;
 
     // *-- Relaciones --* //
     // Lo asigno en TipoVehiculo_Caracteristica
@@ -31,10 +36,12 @@ public class Caracteristica {
     // *-- Constructores --* //
     public Caracteristica() {}
 
-    public Caracteristica(String nombre, String valorMax, String valorMin) {
+    public Caracteristica(String nombre, TipoDatoCaracteristica tipo_dato, int valorMax, int valorMin, String opciones) {
         this.nombre = nombre;
+        this.tipo_dato = tipo_dato;
         this.valorMax = valorMax;
         this.valorMin = valorMin;
+        this.opciones = opciones;
 
         this.tiposVehiculoCaracteristica = new ArrayList<>();
         this.valoresCaracteristicas = new ArrayList<>();
@@ -58,20 +65,36 @@ public class Caracteristica {
         this.nombre = nombre;
     }
 
-    public String getValorMax() {
+    public TipoDatoCaracteristica getTipo_dato() {
+        return tipo_dato;
+    }
+
+    public void setTipo_dato(TipoDatoCaracteristica tipo_dato) {
+        this.tipo_dato = tipo_dato;
+    }
+
+    public int getValorMax() {
         return valorMax;
     }
 
-    public void setValorMax(String valorMax) {
+    public void setValorMax(int valorMax) {
         this.valorMax = valorMax;
     }
 
-    public String getValorMin() {
+    public int getValorMin() {
         return valorMin;
     }
 
-    public void setValorMin(String valorMin) {
+    public void setValorMin(int valorMin) {
         this.valorMin = valorMin;
+    }
+
+    public String getOpciones() {
+        return opciones;
+    }
+
+    public void setOpciones(String opciones) {
+        this.opciones = opciones;
     }
 
     public List<TipoVehiculo_Caracteristica> getTiposVehiculoCaracteristica() {

@@ -10,7 +10,8 @@ public class Imagen {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idImagen;
 
-    private String imgBase64;
+    @Lob
+    private byte[] imagen;
 
     // *-- Relaciones --* //
     @ManyToOne
@@ -20,8 +21,8 @@ public class Imagen {
     // *-- Constructores --* //
     public Imagen() {}
 
-    public Imagen(String imgBase64) {
-        this.imgBase64 = imgBase64;
+    public Imagen(byte[] imagen) {
+        this.imagen = imagen;
     }
 
     // *-- Getters, Setters --* //
@@ -34,12 +35,12 @@ public class Imagen {
         this.idImagen = idImagen;
     }
 
-    public String getImgBase64() {
-        return imgBase64;
+    public byte[] getImagen() {
+        return imagen;
     }
 
-    public void setImgBase64(String imgBase64) {
-        this.imgBase64 = imgBase64;
+    public void setImagen(byte[] imagen) {
+        this.imagen = imagen;
     }
 
     public Anuncio getAnuncio() {

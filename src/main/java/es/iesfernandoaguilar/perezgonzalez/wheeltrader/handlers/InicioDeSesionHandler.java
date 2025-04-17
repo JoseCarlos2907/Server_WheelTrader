@@ -185,7 +185,7 @@ public class InicioDeSesionHandler implements Runnable {
         }
 
         if(iniciaSesion){
-            this.server.usuarioIniciaSesion(usuario.get().getIdUsuario(), this.socket);
+            this.server.usuarioIniciaSesion(usuario.get().getIdUsuario(), this.socket, this.context);
         }
     }
 }
