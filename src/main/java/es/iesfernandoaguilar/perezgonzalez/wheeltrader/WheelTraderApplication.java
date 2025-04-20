@@ -1,26 +1,17 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.AnuncioDTO;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.ImagenDTO;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.UsuarioDTO;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.ValorCaracteristicaDTO;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.FiltroTodoDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.SecureUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootApplication
 public class WheelTraderApplication {
@@ -622,6 +613,52 @@ public class WheelTraderApplication {
             }
 
             usuarioService.save(usuario);
+        };
+    }*/
+
+    // Prueba de búsqueda de todos los tipos de vehículos
+    /*@Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            AnuncioService anuncioService = context.getBean(AnuncioService.class);
+
+            // Hago un filtro simulando que es el que viene de la aplicación
+            FiltroTodoDTO filtroDTO = new FiltroTodoDTO();
+            filtroDTO.setMarca("");
+            filtroDTO.setModelo("Astra");
+            filtroDTO.setAnioMaximo(2025);
+            filtroDTO.setAnioMinimo(2003);
+            filtroDTO.setProvincia("");
+            filtroDTO.setCiudad("");
+            filtroDTO.setPrecioMinimo(1200);
+            filtroDTO.setPrecioMaximo(10000);
+            filtroDTO.addTipoVehiculo("Coche");
+            filtroDTO.addTipoVehiculo("Moto");
+            filtroDTO.setPagina(0);
+            filtroDTO.setCantidadPorPagina(10);
+
+            Pageable pageable = PageRequest.of(filtroDTO.getPagina(), filtroDTO.getCantidadPorPagina());
+
+            List<Anuncio> anuncios = anuncioService.findAll(
+                    filtroDTO.getTiposVehiculo(),
+                    filtroDTO.getAnioMinimo(),
+                    filtroDTO.getAnioMaximo(),
+                    filtroDTO.getMarca(),
+                    filtroDTO.getModelo(),
+                    filtroDTO.getProvincia(),
+                    filtroDTO.getCiudad(),
+                    filtroDTO.getPrecioMinimo(),
+                    filtroDTO.getPrecioMaximo(),
+                    pageable
+            );
+
+            for (Anuncio anuncio : anuncios) {
+                System.out.println("------------------------");
+                System.out.println("ID: " + anuncio.getIdAnuncio());
+                System.out.println("Matricula: " + anuncio.getMatricula());
+                System.out.println("Descripción: " + anuncio.getDescripcion());
+            }
+            System.out.println("------------------------");
         };
     }*/
 }

@@ -224,8 +224,8 @@ public class AnuncioDTO {
     // *-- Métodos --* //
     public void parse(Anuncio anuncio) {
         this.idAnuncio = anuncio.getIdAnuncio();
-        this.fechaPublicacion = anuncio.getFechaPublicacion();
-        this.fechaExpiracion = anuncio.getFechaExpiracion();
+        this.fechaPublicacion = null;
+        this.fechaExpiracion = null;
         this.descripcion = anuncio.getDescripcion();
         this.precio = anuncio.getPrecio();
         this.estado = anuncio.getEstado().toString();
@@ -233,11 +233,11 @@ public class AnuncioDTO {
         this.ciudad = anuncio.getCiudad();
 
         this.vendedor = null;
-        this.usuariosGuardan = null;
+        this.usuariosGuardan = new HashSet<>();
         this.tipoVehiculo = null;
-        this.imagenes = null;
+        this.imagenes = new ArrayList<>();
         this.venta = null;
-        this.reuniones = null;
-        this.valoresCaracteristicas = null;
+        this.reuniones = new ArrayList<>();
+        this.valoresCaracteristicas = new ArrayList<>();
     }
 }

@@ -26,7 +26,25 @@ REINICIAR_CONTRASENIA;contraseniaHasheada (Usuario -> Servidor)
 CONTRASENIA_REINICIADA (Servidor -> Usuario)
 
 +Publicar anuncio:
-COMPROBAR_DATOS_VEHICULO;{JSON_ListaValores} (Usuario -> Servidor)
+COMPROBAR_DATOS_VEHICULO;{JSON_LISTA_VALORES} (Usuario -> Servidor)
 DATOS_VALIDOS;si/no (Servidor -> Usuario)
-PUBLICAR_ANUNCIO;{JSON_ANUNCIO} (Usuario -> Servidor)
+PUBLICAR_ANUNCIO;{JSON_ANUNCIO};cantImagenes (Usuario -> Servidor)
+    longitudImg1
+    img1_Bytes[]
+    longitudImg2
+    img2_Bytes[]
+    ...
+    longitudImgN
+    imgN_Bytes[]
 ANUNCIO_PUBLICADO (Servidor -> Usuario)
+
++Lista de anuncios:
+OBTENER_ANUNCIOS;{JSON_FILTRO};tipoFiltro (Usuario -> Servidor)
+ENVIA_ANUNCIOS;{JSON_LISTA_ANUNCIOS};cantAnuncios (Servidor -> Usuario)
+    longitudImg1
+    imagenAnuncio1
+    longitudImg2
+    imagenAnuncio2
+    ...
+    longitudImgN
+    imagenAnuncioN

@@ -1,16 +1,19 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.handlers;
 
+import ch.qos.logback.core.joran.spi.NoAutoStartUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.AnuncioDTO;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.ImagenDTO;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.ValorCaracteristicaDTO;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.*;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.FiltroTodoDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Mensaje;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Serializador;
 import org.springframework.context.ApplicationContext;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -93,6 +96,25 @@ public class UsuarioHandler implements Runnable {
 
                         this.dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;
+
+
+                    case "OBTENER_ANUNCIOS":
+                        List<byte[]> imagenesListaAnuncios = new ArrayList<>();
+                        List<AnuncioDTO> anuncios = obtenerAnuncios(mapper, anuncioService, VCService, imagenService, imagenesListaAnuncios, msgUsuario.getParams().get(0), msgUsuario.getParams().get(1));
+
+                        // Convierto los anuncios parseados a JSON para pasarselo a la aplicación
+                        String anunciosJSON = mapper.writeValueAsString(anuncios);
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_ANUNCIOS");
+                        msgRespuesta.addParam(anunciosJSON);
+                        msgRespuesta.addParam(String.valueOf(imagenesListaAnuncios.size()));
+
+                        this.dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        for (byte[] imagen : imagenesListaAnuncios) {
+                            this.dos.writeInt(imagen.length);
+                            this.dos.write(imagen);
+                        }
+                        break;
                 }
             }
 
@@ -159,14 +181,6 @@ public class UsuarioHandler implements Runnable {
 
         usuario.addAnuncioPublicado(anuncio);
 
-        // Parseo las imágenes y las añado al anuncio parseado
-        for(byte[] img : imagenes){
-            Imagen imagen = new Imagen();
-            imagen.setImagen(img);
-            imagenService.save(imagen);
-            anuncio.addImagen(imagen);
-        }
-
         // Busco el tipo de vehículo por la cadena que le paso desde le lado del usuario
         TipoVehiculo tipoCoche = tipoVehiculoService.findByTipoWithAnuncios(anuncioDTO.getTipoVehiculo());
         anuncio.setTipoVehiculo(tipoCoche);
@@ -188,6 +202,78 @@ public class UsuarioHandler implements Runnable {
             VCService.save(valorCaracteristica);
         }
 
+        // Parseo las imágenes y las añado al anuncio parseado
+        for(byte[] img : imagenes){
+            Imagen imagen = new Imagen();
+            imagen.setImagen(img);
+            anuncio.addImagen(imagen);
+            imagenService.save(imagen);
+        }
+
         usuarioService.save(usuario);
+    }
+
+    public List<AnuncioDTO> obtenerAnuncios(ObjectMapper mapper, AnuncioService anuncioService, ValorCaracteristicaService VCService, ImagenService imagenService, List<byte[]> imagenes, String filtroJSON, String tipoFiltro) throws JsonProcessingException {
+        List<Anuncio> anunciosEncontrados = new ArrayList<>();
+        List<AnuncioDTO> anunciosParseados = new ArrayList<>();
+        switch (tipoFiltro){
+            case "Todo":
+                // Recojo el JSON del filtro del protocolo
+                FiltroTodoDTO filtroTodoDTO = mapper.readValue(filtroJSON, FiltroTodoDTO.class);
+
+                // Creo un objeto paginable con los parametros del filtro
+                Pageable pageable = PageRequest.of(filtroTodoDTO.getPagina(), filtroTodoDTO.getCantidadPorPagina());
+
+                // Busco los anuncios desde el servicio según el tipo
+                anunciosEncontrados = anuncioService.findAll(
+                        filtroTodoDTO.getTiposVehiculo(),
+                        filtroTodoDTO.getAnioMinimo(),
+                        filtroTodoDTO.getAnioMaximo(),
+                        filtroTodoDTO.getMarca(),
+                        filtroTodoDTO.getModelo(),
+                        filtroTodoDTO.getProvincia(),
+                        filtroTodoDTO.getCiudad(),
+                        filtroTodoDTO.getPrecioMinimo(),
+                        filtroTodoDTO.getPrecioMaximo(),
+                        pageable
+                );
+                break;
+        }
+
+        // Convierto los anuncios encontrados a un formato que permita la aplicación (sin relaciones)
+        for (Anuncio anuncio : anunciosEncontrados) {
+            AnuncioDTO anuncioDTOEncontrado = new AnuncioDTO();
+            anuncioDTOEncontrado.parse(anuncio);
+
+            // Datos propios de anuncio
+            anuncioDTOEncontrado.setPrecio(anuncio.getPrecio());
+            anuncioDTOEncontrado.setProvincia(anuncio.getProvincia());
+            anuncioDTOEncontrado.setCiudad(anuncio.getCiudad());
+
+            List<ValorCaracteristica> valoresCaracteristicas = VCService.findByIdAnuncio(anuncio.getIdAnuncio());
+
+            // Datos de la relación con ValorCaracteristica
+            for (ValorCaracteristica valorCaracteristica : valoresCaracteristicas) {
+                ValorCaracteristicaDTO vcDTO = new ValorCaracteristicaDTO();
+                vcDTO.parse(valorCaracteristica);
+                anuncioDTOEncontrado.getValoresCaracteristicas().add(vcDTO);
+            }
+
+            // Datos de la relación con Usuario
+            UsuarioDTO usuarioDTO = new UsuarioDTO();
+            usuarioDTO.parse(anuncio.getVendedor());
+            anuncioDTOEncontrado.setVendedor(usuarioDTO);
+
+            // Datos de la relación con TipoVehiculo
+            anuncioDTOEncontrado.setTipoVehiculo(anuncio.getTipoVehiculo().getTipo());
+
+            // Datos de la relación con Imagen
+            List<Imagen> imgs = imagenService.findByIdAnuncio(anuncio.getIdAnuncio());
+            imagenes.add(imgs.getFirst().getImagen());
+
+            anunciosParseados.add(anuncioDTOEncontrado);
+        }
+
+        return anunciosParseados;
     }
 }

@@ -64,6 +64,6 @@ public class ValorCaracteristicaDTO {
         this.valor = valorCaracteristica.getValor();
 
         this.anuncio = null;
-        this.nombreCaracteristica = null;
+        this.nombreCaracteristica = valorCaracteristica.getCaracteristica().getNombre();
     }
 }
