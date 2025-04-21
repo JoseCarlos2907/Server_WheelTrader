@@ -66,8 +66,8 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
             "AND anio.caracteristica.nombre LIKE 'Anio_%' AND CAST(anio.valor AS int) >= :anioMinimo AND CAST(anio.valor AS int) <= :anioMaximo " +
             "AND km.caracteristica.nombre LIKE 'KM_%' AND CAST(km.valor AS int) >= :kmMinimo AND CAST(km.valor AS int) <= :kmMaximo " +
             "AND cv.caracteristica.nombre LIKE 'CV_%' AND CAST(cv.valor AS int) >= :cvMinimo AND CAST(cv.valor AS int) <= :cvMaximo " +
-            "AND marchas.caracteristica.nombre LIKE 'Marchas_%' AND CAST(marchas.valor AS int) = :cantMarchas " +
-            "AND puertas.caracteristica.nombre LIKE 'Puertas_%' AND CAST(puertas.valor AS int) = :nPuertas " +
+            "AND marchas.caracteristica.nombre LIKE 'Marchas_%' AND CAST(marchas.valor AS int) = :cantMarchas OR :cantMarchas = 0 " +
+            "AND puertas.caracteristica.nombre LIKE 'Puertas_%' AND CAST(puertas.valor AS int) = :nPuertas OR :nPuertas = 0 " +
             "AND (LOWER(marca.valor) = LOWER(:marca) OR :marca IS NULL) " +
             "AND (LOWER(modelo.valor) = LOWER(:modelo) OR :modelo IS NULL) " +
             "AND (LOWER(tc.valor) = LOWER(:tipoCombustible) OR :tipoCombustible IS NULL) " +
@@ -112,7 +112,7 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
             "AND anio.caracteristica.nombre LIKE 'Anio_%' AND CAST(anio.valor AS int) >= :anioMinimo AND CAST(anio.valor AS int) <= :anioMaximo " +
             "AND km.caracteristica.nombre LIKE 'KM_%' AND CAST(km.valor AS int) >= :kmMinimo AND CAST(km.valor AS int) <= :kmMaximo " +
             "AND cilindrada.caracteristica.nombre LIKE 'CV_%' AND CAST(cilindrada.valor AS int) >= :cvMinimo AND CAST(cilindrada.valor AS int) <= :cvMaximo " +
-            "AND marchas.caracteristica.nombre LIKE 'Marchas_%' AND CAST(marchas.valor AS int) = :cantMarchas " +
+            "AND marchas.caracteristica.nombre LIKE 'Marchas_%' AND CAST(marchas.valor AS int) = :cantMarchas OR :cantMarchas = 0 " +
             "AND (LOWER(marca.valor) = LOWER(:marca) OR :marca IS NULL) " +
             "AND (LOWER(modelo.valor) = LOWER(:modelo) OR :modelo IS NULL) " +
             "AND (LOWER(tc.valor) = LOWER(:tipoCombustible) OR :tipoCombustible IS NULL) " +
@@ -156,8 +156,8 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
             "AND anio.caracteristica.nombre LIKE 'Anio_%' AND CAST(anio.valor AS int) >= :anioMinimo AND CAST(anio.valor AS int) <= :anioMaximo " +
             "AND km.caracteristica.nombre LIKE 'KM_%' AND CAST(km.valor AS int) >= :kmMinimo AND CAST(km.valor AS int) <= :kmMaximo " +
             "AND cv.caracteristica.nombre LIKE 'CV_%' AND CAST(cv.valor AS int) >= :cvMinimo AND CAST(cv.valor AS int) <= :cvMaximo " +
-            "AND marchas.caracteristica.nombre LIKE 'Marchas_%' AND CAST(marchas.valor AS int) = :cantMarchas " +
-            "AND puertas.caracteristica.nombre LIKE 'Puertas_%' AND CAST(puertas.valor AS int) = :nPuertas " +
+            "AND marchas.caracteristica.nombre LIKE 'Marchas_%' AND CAST(marchas.valor AS int) = :cantMarchas OR :cantMarchas = 0 " +
+            "AND puertas.caracteristica.nombre LIKE 'Puertas_%' AND CAST(puertas.valor AS int) = :nPuertas OR :nPuertas = 0 " +
             "AND (LOWER(marca.valor) = LOWER(:marca) OR :marca IS NULL) " +
             "AND (LOWER(modelo.valor) = LOWER(:modelo) OR :modelo IS NULL) " +
             "AND (LOWER(tc.valor) = LOWER(:tipoCombustible) OR :tipoCombustible IS NULL) " +
@@ -202,7 +202,7 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
             "AND anio.caracteristica.nombre LIKE 'Anio_%' AND CAST(anio.valor AS int) >= :anioMinimo AND CAST(anio.valor AS int) <= :anioMaximo " +
             "AND km.caracteristica.nombre LIKE 'KM_%' AND CAST(km.valor AS int) >= :kmMinimo AND CAST(km.valor AS int) <= :kmMaximo " +
             "AND cv.caracteristica.nombre LIKE 'CV_%' AND CAST(cv.valor AS int) >= :cvMinimo AND CAST(cv.valor AS int) <= :cvMaximo " +
-            "AND marchas.caracteristica.nombre LIKE 'Marchas_%' AND CAST(marchas.valor AS int) = :cantMarchas " +
+            "AND marchas.caracteristica.nombre LIKE 'Marchas_%' AND CAST(marchas.valor AS int) = :cantMarchas OR :cantMarchas = 0 " +
             "AND (LOWER(marca.valor) = LOWER(:marca) OR :marca IS NULL) " +
             "AND (LOWER(modelo.valor) = LOWER(:modelo) OR :modelo IS NULL) " +
             "AND (LOWER(tc.valor) = LOWER(:tipoCombustible) OR :tipoCombustible IS NULL) " +

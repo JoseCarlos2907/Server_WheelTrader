@@ -26,7 +26,7 @@ public class AnuncioService {
     @Transactional
     public List<Anuncio> findAll(List<String> tiposVehiculo, int anioMinimo, int anioMaximo, String marca, String modelo, String provincia, String ciudad, double precioMinimo, double precioMaximo, Pageable pageable) {
         return this.anuncioRepository.findAll(
-                marca.isEmpty() ? null : marca,
+                marca,
                 modelo.isEmpty() ? null : modelo,
                 anioMinimo,
                 anioMaximo,
@@ -42,20 +42,20 @@ public class AnuncioService {
     @Transactional
     public List<Anuncio> findCoches(String marca, String modelo, int cantMarchas, int kmMinimo, int kmMaximo, int nPuertas, String provincia, String ciudad, int cvMinimo, int cvMaximo, int anioMinimo, int anioMaximo, String tipoCombustible, String transmision, Pageable pageable){
         return this.anuncioRepository.findCoches(
-                marca.isEmpty() ? null : marca,
-                modelo.isEmpty() ? null : marca,
+                marca,
+                modelo,
                 cantMarchas,
                 kmMinimo,
                 kmMaximo,
                 nPuertas,
-                provincia.isEmpty() ? null : marca,
-                ciudad.isEmpty() ? null : marca,
+                provincia,
+                ciudad,
                 cvMinimo,
                 cvMaximo,
                 anioMinimo,
                 anioMaximo,
-                tipoCombustible.isEmpty() ? null : marca,
-                transmision.isEmpty() ? null : marca,
+                tipoCombustible,
+                transmision,
                 pageable
         );
     }
@@ -63,18 +63,18 @@ public class AnuncioService {
     @Transactional
     public List<Anuncio> findMotos(String marca, String modelo, int cantMarchas, int kmMinimo, int kmMaximo, String provincia, String ciudad, int cvMinimo, int cvMaximo, int anioMinimo, int anioMaximo, String tipoCombustible, Pageable pageable){
         return this.anuncioRepository.findMotos(
-                marca.isEmpty() ? null : marca,
-                modelo.isEmpty() ? null : marca,
+                marca,
+                modelo,
                 cantMarchas,
                 kmMinimo,
                 kmMaximo,
-                provincia.isEmpty() ? null : marca,
-                ciudad.isEmpty() ? null : marca,
+                provincia,
+                ciudad,
                 cvMinimo,
                 cvMaximo,
                 anioMinimo,
                 anioMaximo,
-                tipoCombustible.isEmpty() ? null : marca,
+                tipoCombustible,
                 pageable
         );
     }
@@ -82,20 +82,20 @@ public class AnuncioService {
     @Transactional
     public List<Anuncio> findCamionetas(String marca, String modelo, int anioMinimo, int anioMaximo, int kmMinimo, int kmMaximo, String tipoCombustible, int cvMinimo, int cvMaximo, int cantMarchas, int nPuertas, String provincia, String ciudad, String traccion, Pageable pageable){
         return this.anuncioRepository.findCamionetas(
-                marca.isEmpty() ? null : marca,
-                modelo.isEmpty() ? null : marca,
+                marca,
+                modelo,
                 anioMinimo,
                 anioMaximo,
                 kmMinimo,
                 kmMaximo,
-                tipoCombustible.isEmpty() ? null : marca,
+                tipoCombustible,
                 cvMinimo,
                 cvMaximo,
                 cantMarchas,
                 nPuertas,
-                provincia.isEmpty() ? null : marca,
-                ciudad.isEmpty() ? null : marca,
-                traccion.isEmpty() ? null : marca,
+                provincia,
+                ciudad,
+                traccion,
                 pageable
         );
     }
@@ -103,18 +103,18 @@ public class AnuncioService {
     @Transactional
     public List<Anuncio> findCamiones(String marca, String modelo, int anioMinimo, int anioMaximo, int kmMinimo, int kmMaximo, String tipoCombustible, int cvMinimo, int cvMaximo, int cantMarchas, String provincia, String ciudad, Pageable pageable){
         return this.anuncioRepository.findCamiones(
-                marca.isEmpty() ? null : marca,
-                modelo.isEmpty() ? null : marca,
+                marca,
+                modelo,
                 anioMinimo,
                 anioMaximo,
                 kmMinimo,
                 kmMaximo,
-                tipoCombustible.isEmpty() ? null : marca,
+                tipoCombustible,
                 cvMinimo,
                 cvMaximo,
                 cantMarchas,
-                provincia.isEmpty() ? null : marca,
-                ciudad.isEmpty() ? null : marca,
+                provincia,
+                ciudad,
                 pageable
         );
     }
@@ -122,13 +122,13 @@ public class AnuncioService {
     @Transactional
     public List<Anuncio> findMaquinaria(String marca, String modelo, int anioMinimo, int anioMaximo, String tipoCombustible, String provincia, String ciudad, Pageable pageable){
         return this.anuncioRepository.findMaquinarias(
-                marca.isEmpty() ? null : marca,
-                modelo.isEmpty() ? null : marca,
+                marca,
+                modelo,
                 anioMinimo,
                 anioMaximo,
-                tipoCombustible.isEmpty() ? null : marca,
-                provincia.isEmpty() ? null : marca,
-                ciudad.isEmpty() ? null : marca,
+                tipoCombustible,
+                provincia,
+                ciudad,
                 pageable
         );
     }
