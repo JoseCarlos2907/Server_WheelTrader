@@ -5,7 +5,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.*;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.FiltroTodoDTO;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
@@ -222,7 +222,7 @@ public class UsuarioHandler implements Runnable {
                 FiltroTodoDTO filtroTodoDTO = mapper.readValue(filtroJSON, FiltroTodoDTO.class);
 
                 // Creo un objeto paginable con los parametros del filtro
-                Pageable pageable = PageRequest.of(filtroTodoDTO.getPagina(), filtroTodoDTO.getCantidadPorPagina());
+                Pageable pageableTodo = PageRequest.of(filtroTodoDTO.getPagina(), filtroTodoDTO.getCantidadPorPagina());
 
                 // Busco los anuncios desde el servicio según el tipo
                 anunciosEncontrados = anuncioService.findAll(
@@ -235,7 +235,116 @@ public class UsuarioHandler implements Runnable {
                         filtroTodoDTO.getCiudad(),
                         filtroTodoDTO.getPrecioMinimo(),
                         filtroTodoDTO.getPrecioMaximo(),
-                        pageable
+                        pageableTodo
+                );
+                break;
+
+            case "Coche":
+                FiltroCocheDTO filtroCocheDTO = mapper.readValue(filtroJSON, FiltroCocheDTO.class);
+
+                Pageable pageableCoche = PageRequest.of(filtroCocheDTO.getPagina(), filtroCocheDTO.getCantidadPorPagina());
+
+                anunciosEncontrados = anuncioService.findCoches(
+                        filtroCocheDTO.getMarca(),
+                        filtroCocheDTO.getModelo(),
+                        filtroCocheDTO.getCantMarchas(),
+                        filtroCocheDTO.getKmMinimo(),
+                        filtroCocheDTO.getKmMaximo(),
+                        filtroCocheDTO.getnPuertas(),
+                        filtroCocheDTO.getProvincia(),
+                        filtroCocheDTO.getCiudad(),
+                        filtroCocheDTO.getCvMinimo(),
+                        filtroCocheDTO.getCvMaximo(),
+                        filtroCocheDTO.getAnioMinimo(),
+                        filtroCocheDTO.getAnioMaximo(),
+                        filtroCocheDTO.getTipoCombustible(),
+                        filtroCocheDTO.getTransmision(),
+                        pageableCoche
+                );
+                break;
+
+            case "Moto":
+                FiltroMotoDTO filtroMotoDTO = mapper.readValue(filtroJSON, FiltroMotoDTO.class);
+
+                Pageable pageableMoto = PageRequest.of(filtroMotoDTO.getPagina(), filtroMotoDTO.getCantidadPorPagina());
+
+                anunciosEncontrados = anuncioService.findMotos(
+                        filtroMotoDTO.getMarca(),
+                        filtroMotoDTO.getModelo(),
+                        filtroMotoDTO.getCantMarchas(),
+                        filtroMotoDTO.getKmMinimo(),
+                        filtroMotoDTO.getKmMaximo(),
+                        filtroMotoDTO.getProvincia(),
+                        filtroMotoDTO.getCiudad(),
+                        filtroMotoDTO.getCvMinimo(),
+                        filtroMotoDTO.getCvMaximo(),
+                        filtroMotoDTO.getAnioMinimo(),
+                        filtroMotoDTO.getAnioMaximo(),
+                        filtroMotoDTO.getTipoCombustible(),
+                        pageableMoto
+                );
+                break;
+
+            case "Camioneta":
+                FiltroCamionetaDTO filtroCamionetaDTO = mapper.readValue(filtroJSON, FiltroCamionetaDTO.class);
+
+                Pageable pageableCamioneta = PageRequest.of(filtroCamionetaDTO.getPagina(), filtroCamionetaDTO.getCantidadPorPagina());
+
+                anunciosEncontrados = anuncioService.findCamionetas(
+                        filtroCamionetaDTO.getMarca(),
+                        filtroCamionetaDTO.getModelo(),
+                        filtroCamionetaDTO.getAnioMinimo(),
+                        filtroCamionetaDTO.getAnioMaximo(),
+                        filtroCamionetaDTO.getKmMinimo(),
+                        filtroCamionetaDTO.getKmMaximo(),
+                        filtroCamionetaDTO.getTipoCombustible(),
+                        filtroCamionetaDTO.getCvMinimo(),
+                        filtroCamionetaDTO.getCvMaximo(),
+                        filtroCamionetaDTO.getCantMarchas(),
+                        filtroCamionetaDTO.getnPuertas(),
+                        filtroCamionetaDTO.getProvincia(),
+                        filtroCamionetaDTO.getCiudad(),
+                        filtroCamionetaDTO.getTraccion(),
+                        pageableCamioneta
+                );
+                break;
+
+            case "Camion":
+                FiltroCamionDTO filtroCamionDTO = mapper.readValue(filtroJSON, FiltroCamionDTO.class);
+
+                Pageable pageableCamion = PageRequest.of(filtroCamionDTO.getPagina(), filtroCamionDTO.getCantidadPorPagina());
+
+                anunciosEncontrados = anuncioService.findCamiones(
+                        filtroCamionDTO.getMarca(),
+                        filtroCamionDTO.getModelo(),
+                        filtroCamionDTO.getAnioMinimo(),
+                        filtroCamionDTO.getAnioMaximo(),
+                        filtroCamionDTO.getKmMinimo(),
+                        filtroCamionDTO.getKmMaximo(),
+                        filtroCamionDTO.getTipoCombustible(),
+                        filtroCamionDTO.getCvMinimo(),
+                        filtroCamionDTO.getCvMaximo(),
+                        filtroCamionDTO.getCantMarchas(),
+                        filtroCamionDTO.getProvincia(),
+                        filtroCamionDTO.getCiudad(),
+                        pageableCamion
+                );
+                break;
+
+            case "Maquinaria":
+                FiltroMaquinariaDTO filtroMaquinariaDTO  = mapper.readValue(filtroJSON, FiltroMaquinariaDTO.class);
+
+                Pageable pageableMaquinaria = PageRequest.of(filtroMaquinariaDTO.getPagina(), filtroMaquinariaDTO.getCantidadPorPagina());
+
+                anunciosEncontrados = anuncioService.findMaquinaria(
+                        filtroMaquinariaDTO.getMarca(),
+                        filtroMaquinariaDTO.getModelo(),
+                        filtroMaquinariaDTO.getAnioMinimo(),
+                        filtroMaquinariaDTO.getAnioMaximo(),
+                        filtroMaquinariaDTO.getTipoCombustible(),
+                        filtroMaquinariaDTO.getProvincia(),
+                        filtroMaquinariaDTO.getCiudad(),
+                        pageableMaquinaria
                 );
                 break;
         }
