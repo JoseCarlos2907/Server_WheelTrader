@@ -27,13 +27,13 @@ public class AnuncioService {
     public List<Anuncio> findAll(List<String> tiposVehiculo, int anioMinimo, int anioMaximo, String marca, String modelo, String provincia, String ciudad, double precioMinimo, double precioMaximo, Pageable pageable) {
         return this.anuncioRepository.findAll(
                 marca,
-                modelo.isEmpty() ? null : modelo,
+                modelo,
                 anioMinimo,
                 anioMaximo,
                 precioMinimo,
                 precioMaximo,
-                provincia.isEmpty() ? null : provincia,
-                ciudad.isEmpty() ? null : ciudad,
+                provincia,
+                ciudad,
                 tiposVehiculo,
                 pageable
         );

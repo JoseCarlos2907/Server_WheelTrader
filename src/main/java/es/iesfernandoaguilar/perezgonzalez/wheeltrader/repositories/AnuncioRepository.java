@@ -62,7 +62,7 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
             "LEFT JOIN a.valoresCaracteristicas cv " +
             "LEFT JOIN a.valoresCaracteristicas tc " +
             "LEFT JOIN a.valoresCaracteristicas transmision " +
-            "WHERE t.tipo = 'Coche' " +
+            "WHERE t.tipo IN ('Coche') " +
             "AND anio.caracteristica.nombre LIKE 'Anio_%' AND CAST(anio.valor AS int) >= :anioMinimo AND CAST(anio.valor AS int) <= :anioMaximo " +
             "AND km.caracteristica.nombre LIKE 'KM_%' AND CAST(km.valor AS int) >= :kmMinimo AND CAST(km.valor AS int) <= :kmMaximo " +
             "AND cv.caracteristica.nombre LIKE 'CV_%' AND CAST(cv.valor AS int) >= :cvMinimo AND CAST(cv.valor AS int) <= :cvMaximo " +

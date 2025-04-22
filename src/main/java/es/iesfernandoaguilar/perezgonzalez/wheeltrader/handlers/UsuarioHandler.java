@@ -99,6 +99,7 @@ public class UsuarioHandler implements Runnable {
 
 
                     case "OBTENER_ANUNCIOS":
+                        System.out.println("OBTENER_ANUNCIOS");
                         List<byte[]> imagenesListaAnuncios = new ArrayList<>();
                         List<AnuncioDTO> anuncios = obtenerAnuncios(mapper, anuncioService, VCService, imagenService, imagenesListaAnuncios, msgUsuario.getParams().get(0), msgUsuario.getParams().get(1));
 
