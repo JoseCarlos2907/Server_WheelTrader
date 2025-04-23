@@ -108,12 +108,21 @@ public class UsuarioHandler implements Runnable {
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_ANUNCIOS");
                         msgRespuesta.addParam(anunciosJSON);
-                        msgRespuesta.addParam(String.valueOf(imagenesListaAnuncios.size()));
 
                         this.dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        this.dos.flush();
+
+                        this.dos.writeInt(imagenesListaAnuncios.size());
+                        this.dos.flush();
+
+                        System.out.println("Cantidad de imagenes: " + imagenesListaAnuncios.size());
                         for (byte[] imagen : imagenesListaAnuncios) {
+                            System.out.println("Longitud de la imagen: " + imagen.length);
                             this.dos.writeInt(imagen.length);
+                            this.dos.flush();
+
                             this.dos.write(imagen);
+                            this.dos.flush();
                         }
                         break;
                 }
