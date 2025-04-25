@@ -1,8 +1,11 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader;
 
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.FiltroTodoDTO;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.SecureUtils;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -11,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Base64;
 import java.util.List;
 
 @SpringBootApplication
@@ -28,7 +32,7 @@ public class WheelTraderApplication {
             byte[] salt2 = SecureUtils.getSalt();
 
             Usuario usuario1 = new Usuario("joseca","perez","12345678A","c/Mi Casa n9", "joseca", SecureUtils.generate512("joseca", salt1),"correo@a.com","correopp@a.com", Base64.getEncoder().encodeToString(salt1),true);
-            Usuario usuario2 = new Usuario("prueba","crr1","22345678A","c/Mi Casa n9", "pruebacrr1", SecureUtils.generate512("Prueba123", salt2),"prueba1portalgp@gmail.com","correo.pp@a.com", Base64.getEncoder().encodeToString(salt2),false);
+            Usuario usuario2 = new Usuario("prueba","123","22345678A","c/Mi Casa n9", "prueba123", SecureUtils.generate512("Prueba123", salt2),"prueba1portalgp@gmail.com","correo.pp@a.com", Base64.getEncoder().encodeToString(salt2),false);
 
             usuarioRepository.save(usuario1);
             usuarioRepository.save(usuario2);

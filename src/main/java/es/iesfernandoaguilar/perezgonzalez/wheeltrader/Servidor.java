@@ -28,8 +28,9 @@ public class Servidor implements Runnable {
     private ServerSocket server;
     private Properties serverProperties;
     private ExecutorService executor;
+    private ExecutorService handlersExecutor;
     private boolean parar;
-    private ConcurrentHashMap<Long, UsuarioHandler> usuariosHandlers;
+    // private ConcurrentHashMap<Long, UsuarioHandler> usuariosHandlers;
 
     final String correoApp = "wheeltraderapp@gmail.com"; // Este es el correo de Gmail
     final String contraseniaApp = "hrwd pvon rhrz yzoj"; // Esta es la contraseña de aplicación de la cuenta de Gmail
@@ -52,8 +53,9 @@ public class Servidor implements Runnable {
             this.server = new ServerSocket(Integer.parseInt(serverProperties.getProperty("PORT")));
 
             this.executor = Executors.newCachedThreadPool();
+            this.handlersExecutor = Executors.newCachedThreadPool();
 
-            this.usuariosHandlers = new ConcurrentHashMap<>();
+            // this.usuariosHandlers = new ConcurrentHashMap<>();
 
             System.out.println("Servidor escuchando en el puerto " + serverProperties.getProperty("PORT") + " y en la IP 192.168.1.66");
         } catch (IOException e) {
@@ -71,8 +73,8 @@ public class Servidor implements Runnable {
 
     public void usuarioIniciaSesion(Long usuarioId, Socket socket, ApplicationContext context) {
         UsuarioHandler uHandler = new UsuarioHandler(socket, context);
-        this.usuariosHandlers.put(usuarioId, uHandler);
-        this.executor.submit(uHandler);
+        // this.usuariosHandlers.put(usuarioId, uHandler);
+        this.handlersExecutor.submit(uHandler);
     }
 
     public void listen(ApplicationContext context) {

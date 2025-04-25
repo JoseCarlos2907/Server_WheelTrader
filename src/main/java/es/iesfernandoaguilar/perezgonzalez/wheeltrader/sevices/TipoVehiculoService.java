@@ -19,4 +19,8 @@ public class TipoVehiculoService {
     public TipoVehiculo findByTipoWithAnuncios(String tipo){
         return this.tipoVehiculoRepository.findByTipoWithAnuncios(tipo);
     }
+
+    public TipoVehiculo findByIdAnuncio(long idAnuncio){
+        return this.tipoVehiculoRepository.findByIdAnuncio(idAnuncio);
+    }
 }

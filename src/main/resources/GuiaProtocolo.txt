@@ -39,8 +39,8 @@ PUBLICAR_ANUNCIO;{JSON_ANUNCIO};cantImagenes (Usuario -> Servidor)
 ANUNCIO_PUBLICADO (Servidor -> Usuario)
 
 +Lista de anuncios:
-OBTENER_ANUNCIOS;{JSON_FILTRO};tipoFiltro (Usuario -> Servidor)
-ENVIA_ANUNCIOS;{JSON_LISTA_ANUNCIOS};cantAnuncios (Servidor -> Usuario)
+OBTENER_ANUNCIOS;{JSON_FILTRO};tipoFiltro;si/no (Usuario -> Servidor)
+ENVIA_ANUNCIOS;{JSON_LISTA_ANUNCIOS};cantAnuncios;si/no (Servidor -> Usuario)
     longitudImg1
     imagenAnuncio1
     longitudImg2

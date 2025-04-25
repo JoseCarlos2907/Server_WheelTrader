@@ -9,4 +9,7 @@ import org.springframework.stereotype.Repository;
 public interface TipoVehiculoRepository extends JpaRepository<TipoVehiculo, Long> {
     @Query("select tv from TipoVehiculo tv left join fetch tv.anuncios where tv.tipo = ?1")
     TipoVehiculo findByTipoWithAnuncios(String tipo);
+
+    @Query("select t from TipoVehiculo t left join t.anuncios a where a.idAnuncio = ?1")
+    TipoVehiculo findByIdAnuncio(long idAnuncio);
 }

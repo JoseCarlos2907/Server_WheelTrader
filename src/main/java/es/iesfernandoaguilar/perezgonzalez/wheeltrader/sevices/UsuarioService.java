@@ -58,4 +58,8 @@ public class UsuarioService {
     public void updateContraseniaUsuario(String contrasenia, String correo) {
         this.usuarioRepository.updateContraseniaUsuario(contrasenia, correo);
     }
+
+    public Usuario findByIdAnuncio(long idAnuncio){
+        return this.usuarioRepository.findByIdAnuncio(idAnuncio);
+    }
 }

@@ -62,6 +62,7 @@ public class InicioDeSesionHandler implements Runnable {
                         msgRespuesta.addParam(usuario.isPresent() ? usuario.get().getSalt(): "nada");
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
                         break;
                     case "INICIAR_SESION":
                         //System.out.println("INICIAR_SESION");
@@ -87,6 +88,7 @@ public class InicioDeSesionHandler implements Runnable {
                             msgRespuesta.addParam("no");
                         }
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
                         break;
 
                     case "COMPROBAR_DNI":

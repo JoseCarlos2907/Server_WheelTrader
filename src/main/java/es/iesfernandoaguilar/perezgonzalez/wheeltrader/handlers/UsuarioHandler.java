@@ -20,6 +20,7 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,12 @@ public class UsuarioHandler implements Runnable {
     private Socket cliente;
     private ApplicationContext context;
 
-    private DataOutputStream dos;
-    private DataInputStream dis;
+    private CaracteristicaService caracteristicaService;
+    ImagenService imagenService;
+    TipoVehiculoService tipoVehiculoService;
+    ValorCaracteristicaService VCService;
+    AnuncioService anuncioService;
+    UsuarioService usuarioService;
 
     public UsuarioHandler(Socket cliente, ApplicationContext context) {
         this.cliente = cliente;
@@ -38,25 +43,25 @@ public class UsuarioHandler implements Runnable {
 
     @Override
     public void run() {
-        CaracteristicaService caracteristicaService = context.getBean(CaracteristicaService.class);
-        ImagenService imagenService = context.getBean(ImagenService.class);
-        TipoVehiculoService tipoVehiculoService = context.getBean(TipoVehiculoService.class);
-        ValorCaracteristicaService VCService = context.getBean(ValorCaracteristicaService.class);
-        AnuncioService anuncioService = context.getBean(AnuncioService.class);
-        UsuarioService usuarioService = context.getBean(UsuarioService.class);
+        this.caracteristicaService = context.getBean(CaracteristicaService.class);
+        this.imagenService = context.getBean(ImagenService.class);
+        this.tipoVehiculoService = context.getBean(TipoVehiculoService.class);
+        this.VCService = context.getBean(ValorCaracteristicaService.class);
+        this.anuncioService = context.getBean(AnuncioService.class);
+        this.usuarioService = context.getBean(UsuarioService.class);
         ObjectMapper mapper = new ObjectMapper();
+
+        DataInputStream dis = null;
+        DataOutputStream dos = null;
 
         boolean cierraSesion = false;
         try {
-            this.dis = new DataInputStream(cliente.getInputStream());
-            this.dos = new DataOutputStream(cliente.getOutputStream());
-
-            Mensaje msg = new Mensaje();
-            msg.setTipo("BIENVENIDO");
-            this.dos.writeUTF(Serializador.codificarMensaje(msg));
+            dos = new DataOutputStream(cliente.getOutputStream());
+            dis = new DataInputStream(cliente.getInputStream());
 
             while (!cierraSesion) {
-                String linea = this.dis.readUTF();
+                String linea = dis.readUTF();
+                // System.out.println(linea);
                 Mensaje msgUsuario = Serializador.decodificarMensaje(linea);
 
                 Mensaje msgRespuesta;
@@ -65,13 +70,14 @@ public class UsuarioHandler implements Runnable {
                         System.out.println("COMPROBAR_DATOS_VEHICULO");
                         List<ValorCaracteristicaDTO> valoresDTO = mapper.readValue(msgUsuario.getParams().get(0), new TypeReference<List<ValorCaracteristicaDTO>>(){});
 
-                        boolean resultado = comprobarDatosVehiculo(caracteristicaService, valoresDTO);
+                        boolean resultado = comprobarDatosVehiculo(valoresDTO);
 
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("DATOS_VALIDOS");
                         msgRespuesta.addParam(resultado ? "si" : "no");
 
-                        this.dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
                         break;
 
                     case "PUBLICAR_ANUNCIO":
@@ -83,46 +89,42 @@ public class UsuarioHandler implements Runnable {
                         int cantImagenes = Integer.parseInt(msgUsuario.getParams().get(1));
                         for (int i = 0; i < cantImagenes; i++) {
                             // Por cada imagen recojo la cantidad de bytes de cada una con los bytes de cada una
-                            int cantBytesImg = this.dis.readInt();
+                            int cantBytesImg = dis.readInt();
                             byte[] bytesImagen = new byte[cantBytesImg];
-                            this.dis.readFully(bytesImagen);
+                            dis.readFully(bytesImagen);
                             imagenes.add(bytesImagen);
                         }
 
-                        publicarAnuncio(anuncioDTO, imagenes, caracteristicaService, imagenService, tipoVehiculoService, VCService, anuncioService, usuarioService);
+                        publicarAnuncio(anuncioDTO, imagenes);
 
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ANUNCIO_PUBLICADO");
 
-                        this.dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;
 
-
                     case "OBTENER_ANUNCIOS":
-                        System.out.println("OBTENER_ANUNCIOS");
+                        // System.out.println("OBTENER_ANUNCIOS");
                         List<byte[]> imagenesListaAnuncios = new ArrayList<>();
-                        List<AnuncioDTO> anuncios = obtenerAnuncios(mapper, anuncioService, VCService, imagenService, imagenesListaAnuncios, msgUsuario.getParams().get(0), msgUsuario.getParams().get(1));
+                        List<AnuncioDTO> anuncios = obtenerAnuncios(mapper, imagenesListaAnuncios, msgUsuario.getParams().get(0), msgUsuario.getParams().get(1));
 
                         // Convierto los anuncios parseados a JSON para pasarselo a la aplicación
                         String anunciosJSON = mapper.writeValueAsString(anuncios);
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_ANUNCIOS");
                         msgRespuesta.addParam(anunciosJSON);
+                        msgRespuesta.addParam(String.valueOf(imagenesListaAnuncios.size()));
+                        msgRespuesta.addParam(msgUsuario.getParams().get(2));
 
-                        this.dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
-                        this.dos.flush();
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
 
-                        this.dos.writeInt(imagenesListaAnuncios.size());
-                        this.dos.flush();
-
-                        System.out.println("Cantidad de imagenes: " + imagenesListaAnuncios.size());
                         for (byte[] imagen : imagenesListaAnuncios) {
-                            System.out.println("Longitud de la imagen: " + imagen.length);
-                            this.dos.writeInt(imagen.length);
-                            this.dos.flush();
+                            dos.writeInt(imagen.length);
+                            dos.flush();
 
-                            this.dos.write(imagen);
-                            this.dos.flush();
+                            dos.write(imagen);
+                            dos.flush();
                         }
                         break;
                 }
@@ -135,13 +137,13 @@ public class UsuarioHandler implements Runnable {
         }
     }
 
-    public boolean comprobarDatosVehiculo(CaracteristicaService caracteristicaService, List<ValorCaracteristicaDTO> valoresCaracteristicas) {
+    public boolean comprobarDatosVehiculo(List<ValorCaracteristicaDTO> valoresCaracteristicas) {
         boolean sonValidos = true;
         for (ValorCaracteristicaDTO valorDTO : valoresCaracteristicas){
-            Caracteristica caracteristica = caracteristicaService.findByNombreWithTipoVehiculoCaracteristicas(valorDTO.getNombreCaracteristica());
+            Caracteristica caracteristica = this.caracteristicaService.findByNombreWithTipoVehiculoCaracteristicas(valorDTO.getNombreCaracteristica());
             TipoVehiculo_Caracteristica valor = caracteristica.getTiposVehiculoCaracteristica().getFirst();
 
-            // System.out.println(valorDTO.getNombreCaracteristica());
+            System.out.println(valorDTO.getNombreCaracteristica());
 
             try {
                 if (caracteristica.getTipo_dato().equals(TipoDatoCaracteristica.NUMERICO)) {
@@ -168,16 +170,10 @@ public class UsuarioHandler implements Runnable {
 
     public void publicarAnuncio(
             AnuncioDTO anuncioDTO,
-            List<byte[]> imagenes,
-            CaracteristicaService caracteristicaService,
-            ImagenService imagenService,
-            TipoVehiculoService tipoVehiculoService,
-            ValorCaracteristicaService VCService,
-            AnuncioService anuncioService,
-            UsuarioService usuarioService
+            List<byte[]> imagenes
     ) {
         // A partir de aquí se mapean los datos a mano
-        Usuario usuario = usuarioService.findByNombreUsuarioWithAnunciosPublicados(anuncioDTO.getVendedor().getNombreUsuario());
+        Usuario usuario = this.usuarioService.findByNombreUsuarioWithAnunciosPublicados(anuncioDTO.getVendedor().getNombreUsuario());
 
         // Parseo el anuncio
         Anuncio anuncio = new Anuncio(
@@ -192,24 +188,24 @@ public class UsuarioHandler implements Runnable {
         usuario.addAnuncioPublicado(anuncio);
 
         // Busco el tipo de vehículo por la cadena que le paso desde le lado del usuario
-        TipoVehiculo tipoCoche = tipoVehiculoService.findByTipoWithAnuncios(anuncioDTO.getTipoVehiculo());
+        TipoVehiculo tipoCoche = this.tipoVehiculoService.findByTipoWithAnuncios(anuncioDTO.getTipoVehiculo());
         anuncio.setTipoVehiculo(tipoCoche);
 
         // Parseo cada valor característica y la asocio al anuncio parseado directamente
         for(ValorCaracteristicaDTO valorDTO: anuncioDTO.getValoresCaracteristicas()){
-            Caracteristica caracteristica = caracteristicaService.findByNombreWithValoresCaracteristicas(valorDTO.getNombreCaracteristica());
+            Caracteristica caracteristica = this.caracteristicaService.findByNombreWithValoresCaracteristicas(valorDTO.getNombreCaracteristica());
             ValorCaracteristica valorCaracteristica = new ValorCaracteristica(valorDTO.getValor());
             valorCaracteristica.setCaracteristica(caracteristica);
             anuncio.addValoresCaracteristica(valorCaracteristica);
         }
 
         // Guardo primero el anuncio
-        anuncioService.save(anuncio);
+        this.anuncioService.save(anuncio);
 
         // Después guardo los valores de las características con la relación de este anuncio,
         // ya que si lo hago antes de guardar el anuncio no me encuentra el anuncio en la relación
         for(ValorCaracteristica valorCaracteristica : anuncio.getValoresCaracteristicas()){
-            VCService.save(valorCaracteristica);
+            this.VCService.save(valorCaracteristica);
         }
 
         // Parseo las imágenes y las añado al anuncio parseado
@@ -217,13 +213,13 @@ public class UsuarioHandler implements Runnable {
             Imagen imagen = new Imagen();
             imagen.setImagen(img);
             anuncio.addImagen(imagen);
-            imagenService.save(imagen);
+            this.imagenService.save(imagen);
         }
 
-        usuarioService.save(usuario);
+        this.usuarioService.save(usuario);
     }
 
-    public List<AnuncioDTO> obtenerAnuncios(ObjectMapper mapper, AnuncioService anuncioService, ValorCaracteristicaService VCService, ImagenService imagenService, List<byte[]> imagenes, String filtroJSON, String tipoFiltro) throws JsonProcessingException {
+    public List<AnuncioDTO> obtenerAnuncios(ObjectMapper mapper, List<byte[]> imagenes, String filtroJSON, String tipoFiltro) throws JsonProcessingException {
         List<Anuncio> anunciosEncontrados = new ArrayList<>();
         List<AnuncioDTO> anunciosParseados = new ArrayList<>();
         switch (tipoFiltro){
@@ -235,7 +231,7 @@ public class UsuarioHandler implements Runnable {
                 Pageable pageableTodo = PageRequest.of(filtroTodoDTO.getPagina(), filtroTodoDTO.getCantidadPorPagina());
 
                 // Busco los anuncios desde el servicio según el tipo
-                anunciosEncontrados = anuncioService.findAll(
+                anunciosEncontrados = this.anuncioService.findAll(
                         filtroTodoDTO.getTiposVehiculo(),
                         filtroTodoDTO.getAnioMinimo(),
                         filtroTodoDTO.getAnioMaximo(),
@@ -254,7 +250,7 @@ public class UsuarioHandler implements Runnable {
 
                 Pageable pageableCoche = PageRequest.of(filtroCocheDTO.getPagina(), filtroCocheDTO.getCantidadPorPagina());
 
-                anunciosEncontrados = anuncioService.findCoches(
+                anunciosEncontrados = this.anuncioService.findCoches(
                         filtroCocheDTO.getMarca(),
                         filtroCocheDTO.getModelo(),
                         filtroCocheDTO.getCantMarchas(),
@@ -278,7 +274,7 @@ public class UsuarioHandler implements Runnable {
 
                 Pageable pageableMoto = PageRequest.of(filtroMotoDTO.getPagina(), filtroMotoDTO.getCantidadPorPagina());
 
-                anunciosEncontrados = anuncioService.findMotos(
+                anunciosEncontrados = this.anuncioService.findMotos(
                         filtroMotoDTO.getMarca(),
                         filtroMotoDTO.getModelo(),
                         filtroMotoDTO.getCantMarchas(),
@@ -300,7 +296,7 @@ public class UsuarioHandler implements Runnable {
 
                 Pageable pageableCamioneta = PageRequest.of(filtroCamionetaDTO.getPagina(), filtroCamionetaDTO.getCantidadPorPagina());
 
-                anunciosEncontrados = anuncioService.findCamionetas(
+                anunciosEncontrados = this.anuncioService.findCamionetas(
                         filtroCamionetaDTO.getMarca(),
                         filtroCamionetaDTO.getModelo(),
                         filtroCamionetaDTO.getAnioMinimo(),
@@ -324,7 +320,7 @@ public class UsuarioHandler implements Runnable {
 
                 Pageable pageableCamion = PageRequest.of(filtroCamionDTO.getPagina(), filtroCamionDTO.getCantidadPorPagina());
 
-                anunciosEncontrados = anuncioService.findCamiones(
+                anunciosEncontrados = this.anuncioService.findCamiones(
                         filtroCamionDTO.getMarca(),
                         filtroCamionDTO.getModelo(),
                         filtroCamionDTO.getAnioMinimo(),
@@ -346,7 +342,7 @@ public class UsuarioHandler implements Runnable {
 
                 Pageable pageableMaquinaria = PageRequest.of(filtroMaquinariaDTO.getPagina(), filtroMaquinariaDTO.getCantidadPorPagina());
 
-                anunciosEncontrados = anuncioService.findMaquinaria(
+                anunciosEncontrados = this.anuncioService.findMaquinaria(
                         filtroMaquinariaDTO.getMarca(),
                         filtroMaquinariaDTO.getModelo(),
                         filtroMaquinariaDTO.getAnioMinimo(),
@@ -369,7 +365,7 @@ public class UsuarioHandler implements Runnable {
             anuncioDTOEncontrado.setProvincia(anuncio.getProvincia());
             anuncioDTOEncontrado.setCiudad(anuncio.getCiudad());
 
-            List<ValorCaracteristica> valoresCaracteristicas = VCService.findByIdAnuncio(anuncio.getIdAnuncio());
+            List<ValorCaracteristica> valoresCaracteristicas = this.VCService.findByIdAnuncio(anuncio.getIdAnuncio());
 
             // Datos de la relación con ValorCaracteristica
             for (ValorCaracteristica valorCaracteristica : valoresCaracteristicas) {
@@ -381,6 +377,8 @@ public class UsuarioHandler implements Runnable {
             // Datos de la relación con Usuario
             UsuarioDTO usuarioDTO = new UsuarioDTO();
             usuarioDTO.parse(anuncio.getVendedor());
+            usuarioDTO.setContrasenia("");
+            usuarioDTO.setSalt("");
             anuncioDTOEncontrado.setVendedor(usuarioDTO);
 
             // Datos de la relación con TipoVehiculo
