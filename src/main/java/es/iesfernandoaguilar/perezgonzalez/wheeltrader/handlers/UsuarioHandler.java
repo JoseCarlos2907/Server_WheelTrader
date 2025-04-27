@@ -23,6 +23,7 @@ import java.net.Socket;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class UsuarioHandler implements Runnable {
 
@@ -106,7 +107,7 @@ public class UsuarioHandler implements Runnable {
                     case "OBTENER_ANUNCIOS":
                         // System.out.println("OBTENER_ANUNCIOS");
                         List<byte[]> imagenesListaAnuncios = new ArrayList<>();
-                        List<AnuncioDTO> anuncios = obtenerAnuncios(mapper, imagenesListaAnuncios, msgUsuario.getParams().get(0), msgUsuario.getParams().get(1));
+                        List<AnuncioDTO> anuncios = obtenerAnuncios(mapper, imagenesListaAnuncios, msgUsuario.getParams().get(0), msgUsuario.getParams().get(1), Integer.parseInt(msgUsuario.getParams().get(3)));
 
                         // Convierto los anuncios parseados a JSON para pasarselo a la aplicación
                         String anunciosJSON = mapper.writeValueAsString(anuncios);
@@ -219,9 +220,12 @@ public class UsuarioHandler implements Runnable {
         this.usuarioService.save(usuario);
     }
 
-    public List<AnuncioDTO> obtenerAnuncios(ObjectMapper mapper, List<byte[]> imagenes, String filtroJSON, String tipoFiltro) throws JsonProcessingException {
+    public List<AnuncioDTO> obtenerAnuncios(ObjectMapper mapper, List<byte[]> imagenes, String filtroJSON, String tipoFiltro, long idUsuario) throws JsonProcessingException {
         List<Anuncio> anunciosEncontrados = new ArrayList<>();
         List<AnuncioDTO> anunciosParseados = new ArrayList<>();
+
+        System.out.println(filtroJSON);
+
         switch (tipoFiltro){
             case "Todo":
                 // Recojo el JSON del filtro del protocolo
@@ -250,7 +254,8 @@ public class UsuarioHandler implements Runnable {
 
                 Pageable pageableCoche = PageRequest.of(filtroCocheDTO.getPagina(), filtroCocheDTO.getCantidadPorPagina());
 
-                anunciosEncontrados = this.anuncioService.findCoches(
+                anunciosEncontrados = this.anuncioService.findAunciosByTipo(
+                        tipoFiltro,
                         filtroCocheDTO.getMarca(),
                         filtroCocheDTO.getModelo(),
                         filtroCocheDTO.getCantMarchas(),
@@ -265,6 +270,7 @@ public class UsuarioHandler implements Runnable {
                         filtroCocheDTO.getAnioMaximo(),
                         filtroCocheDTO.getTipoCombustible(),
                         filtroCocheDTO.getTransmision(),
+                        null,
                         pageableCoche
                 );
                 break;
@@ -274,12 +280,14 @@ public class UsuarioHandler implements Runnable {
 
                 Pageable pageableMoto = PageRequest.of(filtroMotoDTO.getPagina(), filtroMotoDTO.getCantidadPorPagina());
 
-                anunciosEncontrados = this.anuncioService.findMotos(
+                anunciosEncontrados = this.anuncioService.findAunciosByTipo(
+                        filtroMotoDTO.getTipoFiltro(),
                         filtroMotoDTO.getMarca(),
                         filtroMotoDTO.getModelo(),
                         filtroMotoDTO.getCantMarchas(),
                         filtroMotoDTO.getKmMinimo(),
                         filtroMotoDTO.getKmMaximo(),
+                        null,
                         filtroMotoDTO.getProvincia(),
                         filtroMotoDTO.getCiudad(),
                         filtroMotoDTO.getCvMinimo(),
@@ -287,6 +295,8 @@ public class UsuarioHandler implements Runnable {
                         filtroMotoDTO.getAnioMinimo(),
                         filtroMotoDTO.getAnioMaximo(),
                         filtroMotoDTO.getTipoCombustible(),
+                        null,
+                        null,
                         pageableMoto
                 );
                 break;
@@ -296,20 +306,22 @@ public class UsuarioHandler implements Runnable {
 
                 Pageable pageableCamioneta = PageRequest.of(filtroCamionetaDTO.getPagina(), filtroCamionetaDTO.getCantidadPorPagina());
 
-                anunciosEncontrados = this.anuncioService.findCamionetas(
+                anunciosEncontrados = this.anuncioService.findAunciosByTipo(
+                        filtroCamionetaDTO.getTipoFiltro(),
                         filtroCamionetaDTO.getMarca(),
                         filtroCamionetaDTO.getModelo(),
-                        filtroCamionetaDTO.getAnioMinimo(),
-                        filtroCamionetaDTO.getAnioMaximo(),
+                        filtroCamionetaDTO.getCantMarchas(),
                         filtroCamionetaDTO.getKmMinimo(),
                         filtroCamionetaDTO.getKmMaximo(),
-                        filtroCamionetaDTO.getTipoCombustible(),
-                        filtroCamionetaDTO.getCvMinimo(),
-                        filtroCamionetaDTO.getCvMaximo(),
-                        filtroCamionetaDTO.getCantMarchas(),
                         filtroCamionetaDTO.getnPuertas(),
                         filtroCamionetaDTO.getProvincia(),
                         filtroCamionetaDTO.getCiudad(),
+                        filtroCamionetaDTO.getCvMinimo(),
+                        filtroCamionetaDTO.getCvMaximo(),
+                        filtroCamionetaDTO.getAnioMinimo(),
+                        filtroCamionetaDTO.getAnioMaximo(),
+                        filtroCamionetaDTO.getTipoCombustible(),
+                        null,
                         filtroCamionetaDTO.getTraccion(),
                         pageableCamioneta
                 );
@@ -320,19 +332,23 @@ public class UsuarioHandler implements Runnable {
 
                 Pageable pageableCamion = PageRequest.of(filtroCamionDTO.getPagina(), filtroCamionDTO.getCantidadPorPagina());
 
-                anunciosEncontrados = this.anuncioService.findCamiones(
+                anunciosEncontrados = this.anuncioService.findAunciosByTipo(
+                        filtroCamionDTO.getTipoFiltro(),
                         filtroCamionDTO.getMarca(),
                         filtroCamionDTO.getModelo(),
-                        filtroCamionDTO.getAnioMinimo(),
-                        filtroCamionDTO.getAnioMaximo(),
+                        filtroCamionDTO.getCantMarchas(),
                         filtroCamionDTO.getKmMinimo(),
                         filtroCamionDTO.getKmMaximo(),
-                        filtroCamionDTO.getTipoCombustible(),
-                        filtroCamionDTO.getCvMinimo(),
-                        filtroCamionDTO.getCvMaximo(),
-                        filtroCamionDTO.getCantMarchas(),
+                        null,
                         filtroCamionDTO.getProvincia(),
                         filtroCamionDTO.getCiudad(),
+                        filtroCamionDTO.getCvMinimo(),
+                        filtroCamionDTO.getCvMaximo(),
+                        filtroCamionDTO.getAnioMinimo(),
+                        filtroCamionDTO.getAnioMaximo(),
+                        filtroCamionDTO.getTipoCombustible(),
+                        null,
+                        null,
                         pageableCamion
                 );
                 break;
@@ -342,14 +358,23 @@ public class UsuarioHandler implements Runnable {
 
                 Pageable pageableMaquinaria = PageRequest.of(filtroMaquinariaDTO.getPagina(), filtroMaquinariaDTO.getCantidadPorPagina());
 
-                anunciosEncontrados = this.anuncioService.findMaquinaria(
+                anunciosEncontrados = this.anuncioService.findAunciosByTipo(
+                        filtroMaquinariaDTO.getTipoFiltro(),
                         filtroMaquinariaDTO.getMarca(),
                         filtroMaquinariaDTO.getModelo(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        filtroMaquinariaDTO.getProvincia(),
+                        filtroMaquinariaDTO.getCiudad(),
+                        null,
+                        null,
                         filtroMaquinariaDTO.getAnioMinimo(),
                         filtroMaquinariaDTO.getAnioMaximo(),
                         filtroMaquinariaDTO.getTipoCombustible(),
-                        filtroMaquinariaDTO.getProvincia(),
-                        filtroMaquinariaDTO.getCiudad(),
+                        null,
+                        null,
                         pageableMaquinaria
                 );
                 break;
@@ -374,6 +399,12 @@ public class UsuarioHandler implements Runnable {
                 anuncioDTOEncontrado.getValoresCaracteristicas().add(vcDTO);
             }
 
+            // Datos de la relación con TipoVehiculo
+            TipoVehiculo tipoVehiculo = this.tipoVehiculoService.findByIdAnuncio(anuncio.getIdAnuncio());
+            TipoVehiculoDTO tipoVehiculoDTO = new TipoVehiculoDTO();
+            tipoVehiculoDTO.parse(tipoVehiculo);
+            anuncioDTOEncontrado.setTipoVehiculo(tipoVehiculo.getTipo());
+
             // Datos de la relación con Usuario
             UsuarioDTO usuarioDTO = new UsuarioDTO();
             usuarioDTO.parse(anuncio.getVendedor());
@@ -387,6 +418,13 @@ public class UsuarioHandler implements Runnable {
             // Datos de la relación con Imagen
             List<Imagen> imgs = imagenService.findByIdAnuncio(anuncio.getIdAnuncio());
             imagenes.add(imgs.getFirst().getImagen());
+
+            Optional<Usuario> usuarioOpt = this.usuarioService.findUsuarioQueHaGuardadoAnuncio(idUsuario, anuncio.getIdAnuncio());
+            if (usuarioOpt.isPresent()) {
+                anuncioDTOEncontrado.guardar();
+            }else{
+                anuncioDTOEncontrado.eliminarGuardado();
+            }
 
             anunciosParseados.add(anuncioDTOEncontrado);
         }

@@ -35,7 +35,7 @@ public class AnuncioDTO {
     // *-- Relaciones --* //
     private UsuarioDTO vendedor;
 
-    private Set<UsuarioDTO> usuariosGuardan;
+    private boolean guardado;
 
     private String tipoVehiculo;
 
@@ -61,8 +61,8 @@ public class AnuncioDTO {
         this.ciudad = ciudad;
         this.matricula = matricula;
         this.numSerieBastidor = numSerieBastidor;
+        this.guardado = false;
 
-        this.usuariosGuardan = new HashSet<>();
         this.imagenes = new ArrayList<>();
         this.reuniones = new ArrayList<>();
         this.valoresCaracteristicas = new ArrayList<>();
@@ -157,16 +157,16 @@ public class AnuncioDTO {
         this.vendedor = vendedor;
     }
 
-    public Set<UsuarioDTO> getUsuariosGuardan() {
-        return usuariosGuardan;
+    public boolean isGuardado() {
+        return this.guardado;
     }
 
-    public void setUsuariosGuardan(Set<UsuarioDTO> usuariosGuardan) {
-        this.usuariosGuardan = usuariosGuardan;
+    public void guardar() {
+        this.guardado = true;
     }
 
-    public void addUsuarioGuarda(UsuarioDTO usuario) {
-        this.usuariosGuardan.add(usuario);
+    public void eliminarGuardado(){
+        this.guardado = false;
     }
 
     public String getTipoVehiculo() {
@@ -231,9 +231,9 @@ public class AnuncioDTO {
         this.estado = anuncio.getEstado().toString();
         this.provincia = anuncio.getProvincia();
         this.ciudad = anuncio.getCiudad();
+        this.guardado = false;
 
         this.vendedor = null;
-        this.usuariosGuardan = new HashSet<>();
         this.tipoVehiculo = null;
         this.imagenes = new ArrayList<>();
         this.venta = null;

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -36,6 +37,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query("select u from Usuario u left join fetch u.anunciosPublicados where u.nombreUsuario = ?1")
     Usuario findByNombreUsuarioWithAnunciosPublicados(String nombreUsuario);
 
-    @Query("select u from Usuario u left join u.anunciosGuardados a where a.idAnuncio = ?1")
-    Usuario findByIdAnuncio(long id);
+    @Query("""
+        select u
+        from Usuario u
+        join u.anunciosGuardados a
+        where u.idUsuario = ?1 and a.idAnuncio = ?2
+    """)
+    Optional<Usuario> findUsuarioQueHaGuardadoAnuncio(Long idUsuario, Long idAnuncio);
 }

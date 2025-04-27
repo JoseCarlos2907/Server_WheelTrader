@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
 
 @SpringBootApplication
 public class WheelTraderApplication {
@@ -665,4 +666,76 @@ public class WheelTraderApplication {
             System.out.println("------------------------");
         };
     }*/
+
+    // Prueba fallida del primer tipo
+    /*@Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            AnuncioService anuncioService = context.getBean(AnuncioService.class);
+
+            Pageable pageable = PageRequest.of(0, 10);
+
+            List<Anuncio> anuncios = anuncioService.findCoches(
+                    null,
+                    null,
+                    0,
+                    0,
+                    1000000,
+                    0,
+                    null,
+                    null,
+                    0,
+                    100000,
+                    1950,
+                    2025,
+                    null,
+                    null,
+                    pageable
+            );
+            
+            for (Anuncio anuncio : anuncios) {
+                System.out.println("anuncio.getVendedor().getNombre() = " + anuncio.getVendedor().getNombre());
+            }
+        };
+    }*/
+
+    // Prueba sentencia con Criteria API
+    @Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            AnuncioService anuncioService = context.getBean(AnuncioService.class);
+            UsuarioService usuarioService = context.getBean(UsuarioService.class);
+
+            Pageable pageable = PageRequest.of(0, 10);
+
+            List<Anuncio> anuncios = anuncioService.findAunciosByTipo(
+              "Coche",
+                    null,
+                    null,
+                    0,
+                    0,
+                    2000000,
+                    0,
+                    null,
+                    null,
+                    0,
+                    2000,
+                    1950,
+                    2025,
+                    null,
+                    null,
+                    null,
+                    pageable
+            );
+
+
+            System.out.println("-------------------");
+            for (Anuncio anuncio : anuncios) {
+                System.out.println("anuncio.getVendedor().getNombre() = " + anuncio.getVendedor().getNombre());
+                Optional<Usuario> usuarioOpt = usuarioService.findUsuarioQueHaGuardadoAnuncio(1, anuncio.getIdAnuncio());
+                System.out.println("Guardado: " + usuarioOpt.isPresent());
+                System.out.println("-------------------");
+            }
+        };
+    }
 }

@@ -30,7 +30,7 @@ public class Servidor implements Runnable {
     private ExecutorService executor;
     private ExecutorService handlersExecutor;
     private boolean parar;
-    // private ConcurrentHashMap<Long, UsuarioHandler> usuariosHandlers;
+    private ConcurrentHashMap<Long, UsuarioHandler> usuariosHandlers;
 
     final String correoApp = "wheeltraderapp@gmail.com"; // Este es el correo de Gmail
     final String contraseniaApp = "hrwd pvon rhrz yzoj"; // Esta es la contraseña de aplicación de la cuenta de Gmail
@@ -55,7 +55,7 @@ public class Servidor implements Runnable {
             this.executor = Executors.newCachedThreadPool();
             this.handlersExecutor = Executors.newCachedThreadPool();
 
-            // this.usuariosHandlers = new ConcurrentHashMap<>();
+            this.usuariosHandlers = new ConcurrentHashMap<>();
 
             System.out.println("Servidor escuchando en el puerto " + serverProperties.getProperty("PORT") + " y en la IP 192.168.1.66");
         } catch (IOException e) {
@@ -63,17 +63,17 @@ public class Servidor implements Runnable {
         }
     }
 
-    @Bean
-    CommandLineRunner commandLineRunner(ApplicationContext context) {
-        return args -> {
-            new Thread(this).start();
-            this.listen(context);
-        };
-    }
+//    @Bean
+//    CommandLineRunner commandLineRunner(ApplicationContext context) {
+//        return args -> {
+//            new Thread(this).start();
+//            this.listen(context);
+//        };
+//    }
 
     public void usuarioIniciaSesion(Long usuarioId, Socket socket, ApplicationContext context) {
         UsuarioHandler uHandler = new UsuarioHandler(socket, context);
-        // this.usuariosHandlers.put(usuarioId, uHandler);
+        this.usuariosHandlers.put(usuarioId, uHandler);
         this.handlersExecutor.submit(uHandler);
     }
 
