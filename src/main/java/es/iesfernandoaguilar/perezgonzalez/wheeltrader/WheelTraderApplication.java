@@ -292,7 +292,7 @@ public class WheelTraderApplication {
 
             TipoVehiculo_Caracteristica relacionMoto_Cilindrada = new TipoVehiculo_Caracteristica(true);
             relacionMoto_Cilindrada.setTipoVehiculo(tipoVehiculoMoto);
-            relacionMoto_Modelo.setCaracteristica(caracteristicaCilindradaMotos);
+            relacionMoto_Cilindrada.setCaracteristica(caracteristicaCilindradaMotos);
             tipoVehiculoCaracteristicaService.save(relacionMoto_Cilindrada);
 
             TipoVehiculo_Caracteristica relacionMoto_Anio = new TipoVehiculo_Caracteristica(true);
@@ -700,7 +700,7 @@ public class WheelTraderApplication {
     }*/
 
     // Prueba sentencia con Criteria API
-    @Bean
+    /*@Bean
     CommandLineRunner commandLineRunner(ApplicationContext context) {
         return args -> {
             AnuncioService anuncioService = context.getBean(AnuncioService.class);
@@ -737,5 +737,5 @@ public class WheelTraderApplication {
                 System.out.println("-------------------");
             }
         };
-    }
+    }*/
 }
