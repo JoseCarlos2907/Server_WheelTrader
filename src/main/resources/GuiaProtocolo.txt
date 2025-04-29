@@ -48,3 +48,11 @@ ENVIA_ANUNCIOS;{JSON_LISTA_ANUNCIOS};cantAnuncios;si/no (Servidor -> Usuario)
     ...
     longitudImgN
     imagenAnuncioN
+
+
++Guardar anuncios:
+GUARDAR_ANUNCIO;idAnuncio;nombreUsuario
+ANUNCIO_GUARDADO
+ELIMINAR_ANUNCIO_GUARDADOS;idAnuncio;nombreUsuario
+ANUNCIO_ELIMINADO_GUARDADOS
+

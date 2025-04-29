@@ -37,6 +37,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query("select u from Usuario u left join fetch u.anunciosPublicados where u.nombreUsuario = ?1")
     Usuario findByNombreUsuarioWithAnunciosPublicados(String nombreUsuario);
 
+    @Query("select u from Usuario u left join fetch u.anunciosGuardados where u.nombreUsuario = ?1")
+    Usuario findByNombreUsuarioWithAnunciosGuardados(String nombreUsuario);
+
     @Query("""
         select u
         from Usuario u

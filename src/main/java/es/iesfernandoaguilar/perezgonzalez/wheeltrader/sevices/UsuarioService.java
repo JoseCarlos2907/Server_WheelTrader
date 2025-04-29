@@ -15,6 +15,7 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Transactional
     public void save(Usuario usuario) {
         this.usuarioRepository.save(usuario);
     }
@@ -29,6 +30,10 @@ public class UsuarioService {
 
     public Usuario findByNombreUsuarioWithAnunciosPublicados(String nombreUsuario) {
         return this.usuarioRepository.findByNombreUsuarioWithAnunciosPublicados(nombreUsuario);
+    }
+
+    public Usuario findByNombreUsuarioWithAnunciosGuardados(String nombreUsuario) {
+        return this.usuarioRepository.findByNombreUsuarioWithAnunciosGuardados(nombreUsuario);
     }
 
     public Optional<Usuario> iniciarSesion(String nombreUsuarioOCorreo) {

@@ -8,10 +8,10 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.AnuncioRepos
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +31,11 @@ public class AnuncioService {
 
     public Anuncio findById(long id) {
         return this.anuncioRepository.findById(id);
+    }
+
+    @Transactional
+    public Anuncio findByIdWithUsuariosGuardan(int idAnuncio) {
+        return this.anuncioRepository.findByIdWithUsuariosGuardan(idAnuncio);
     }
 
     @Transactional

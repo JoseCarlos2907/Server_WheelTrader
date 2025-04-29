@@ -311,6 +311,11 @@ public class Usuario {
         anuncio.addUsuariosGuardan(this);
     }
 
+    public void eliminarAnuncioGuardado(Anuncio anuncio){
+        this.anunciosGuardados.remove(anuncio);
+        anuncio.eliminarUsuarioGuarda(this);
+    }
+
     public List<Anuncio> getAnunciosPublicados(){
         return this.anunciosPublicados;
     }
@@ -387,6 +392,19 @@ public class Usuario {
     }
 
     // *-- Métodos --* //
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Usuario usuario = (Usuario) o;
+        return idUsuario != null && idUsuario.equals(usuario.getIdUsuario());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
     // Este métoodo transforma un usuario de la interfaz a uno de la BD, la diferencia es que al crear una instancia de este es que se genera el id automáticamente,
     // por eso creo uno nuevo en este métoodo, porque el que viene no puede generarlo y viene con un -1
     public void parseUsuario(Usuario usuario2) {

@@ -128,6 +128,28 @@ public class UsuarioHandler implements Runnable {
                             dos.flush();
                         }
                         break;
+
+                    case "GUARDAR_ANUNCIO":
+
+                        this.guardarAnuncio(Integer.parseInt(msgUsuario.getParams().getFirst()), msgUsuario.getParams().get(1));
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ANUNCIO_GUARDADO");
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+                        break;
+
+                    case "ELIMINAR_ANUNCIO_GUARDADOS":
+
+                        this.eliminarAnuncioGuardado(Integer.parseInt(msgUsuario.getParams().getFirst()), msgUsuario.getParams().get(1));
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ANUNCIO_ELIMINADO_GUARDADOS");
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+                        break;
                 }
             }
 
@@ -430,5 +452,25 @@ public class UsuarioHandler implements Runnable {
         }
 
         return anunciosParseados;
+    }
+
+    public void guardarAnuncio(int idAnuncio, String nombreUsuario){
+        Anuncio anuncio = this.anuncioService.findByIdWithUsuariosGuardan(idAnuncio);
+
+        Usuario usuario = this.usuarioService.findByNombreUsuarioWithAnunciosGuardados(nombreUsuario);
+
+        usuario.addAnuncioGuardado(anuncio);
+
+        this.usuarioService.save(usuario);
+    }
+
+    public void eliminarAnuncioGuardado(int idAnuncio, String nombreUsuario){
+        Anuncio anuncio = this.anuncioService.findByIdWithUsuariosGuardan(idAnuncio);
+
+        Usuario usuario = this.usuarioService.findByNombreUsuarioWithAnunciosGuardados(nombreUsuario);
+
+        usuario.eliminarAnuncioGuardado(anuncio);
+
+        this.usuarioService.save(usuario);
     }
 }

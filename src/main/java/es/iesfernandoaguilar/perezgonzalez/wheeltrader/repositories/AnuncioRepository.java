@@ -15,6 +15,9 @@ import java.util.List;
 public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
     Anuncio findById(long id);
 
+    @Query("select a from Anuncio a left join fetch a.usuariosGuardan where a.idAnuncio = ?1")
+    Anuncio findByIdWithUsuariosGuardan(int idAnuncio);
+
     @EntityGraph(attributePaths = {
             "vendedor",
             "usuariosGuardan",

@@ -183,6 +183,10 @@ public class Anuncio {
         }
     }
 
+    public void eliminarUsuarioGuarda(Usuario usuario) {
+        this.usuariosGuardan.remove(usuario);
+    }
+
     public TipoVehiculo getTipoVehiculo() {
         return tipoVehiculo;
     }
@@ -247,4 +251,17 @@ public class Anuncio {
 
 
     // *-- Métodos --* //
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Anuncio anuncio = (Anuncio) o;
+        return idAnuncio != null && idAnuncio.equals(anuncio.getIdAnuncio());
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }
