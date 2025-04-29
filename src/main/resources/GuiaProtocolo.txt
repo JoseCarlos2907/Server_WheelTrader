@@ -40,7 +40,7 @@ ANUNCIO_PUBLICADO (Servidor -> Usuario)
 
 +Lista de anuncios:
 OBTENER_ANUNCIOS;{JSON_FILTRO};tipoFiltro;si/no;idUsuario (Usuario -> Servidor)
-ENVIA_ANUNCIOS;{JSON_LISTA_ANUNCIOS};cantAnuncios;si/no (Servidor -> Usuario)
+ENVIA_ANUNCIOS;tipoFiltro;{JSON_LISTA_ANUNCIOS};cantAnuncios;si/no (Servidor -> Usuario)
     longitudImg1
     imagenAnuncio1
     longitudImg2
@@ -55,4 +55,3 @@ GUARDAR_ANUNCIO;idAnuncio;nombreUsuario
 ANUNCIO_GUARDADO
 ELIMINAR_ANUNCIO_GUARDADOS;idAnuncio;nombreUsuario
 ANUNCIO_ELIMINADO_GUARDADOS
-

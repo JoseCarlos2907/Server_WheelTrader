@@ -100,4 +100,7 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
             @Param("transmision") String transmision,
             Pageable pageable
     );
+
+    @Query("select a from Anuncio a join a.usuariosGuardan u where u.nombreUsuario = ?1")
+    List<Anuncio> findAnunciosGuardadosByNombreUsuario(String nombreUsuario);
 }

@@ -237,4 +237,8 @@ public class AnuncioService {
             predicates.add(builder.exists(subquery));
         }
     }
+
+    public List<Anuncio> findAnunciosGuardadosByNombreUsuario(String nombreUsuario) {
+        return this.anuncioRepository.findAnunciosGuardadosByNombreUsuario(nombreUsuario);
+    }
 }

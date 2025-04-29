@@ -113,6 +113,7 @@ public class UsuarioHandler implements Runnable {
                         String anunciosJSON = mapper.writeValueAsString(anuncios);
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_ANUNCIOS");
+                        msgRespuesta.addParam(msgUsuario.getParams().get(1));
                         msgRespuesta.addParam(anunciosJSON);
                         msgRespuesta.addParam(String.valueOf(imagenesListaAnuncios.size()));
                         msgRespuesta.addParam(msgUsuario.getParams().get(2));
@@ -399,6 +400,13 @@ public class UsuarioHandler implements Runnable {
                         null,
                         pageableMaquinaria
                 );
+                break;
+
+            case "Guardados":
+
+                FiltroGuardadosDTO filtroGuardadosDTO  = mapper.readValue(filtroJSON, FiltroGuardadosDTO.class);
+
+                anunciosEncontrados = this.anuncioService.findAnunciosGuardadosByNombreUsuario(filtroGuardadosDTO.getNombreUsuario());
                 break;
         }
 
