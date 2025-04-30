@@ -151,6 +151,27 @@ public class UsuarioHandler implements Runnable {
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         dos.flush();
                         break;
+
+                    case "OBTENER_IMAGENES":
+
+                        List<byte[]> bytesImagenes = this.enviarImagenesAnuncio(Integer.parseInt(msgUsuario.getParams().getFirst()));
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_IMAGENES");
+                        msgRespuesta.addParam(String.valueOf(bytesImagenes.size()));
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+
+                        for (byte[] imagen : bytesImagenes) {
+                            dos.writeInt(imagen.length);
+                            dos.flush();
+
+                            dos.write(imagen);
+                            dos.flush();
+                        }
+
+                        break;
                 }
             }
 
@@ -489,5 +510,17 @@ public class UsuarioHandler implements Runnable {
         usuario.eliminarAnuncioGuardado(anuncio);
 
         this.usuarioService.save(usuario);
+    }
+
+    public List<byte[]> enviarImagenesAnuncio(int idAnuncio){
+        List<Imagen> imagenes = this.imagenService.findByIdAnuncio(idAnuncio);
+
+        List<byte[]> bytesImagenes = new ArrayList<>();
+
+        for (Imagen imagen : imagenes) {
+            bytesImagenes.add(imagen.getImagen());
+        }
+
+        return bytesImagenes;
     }
 }

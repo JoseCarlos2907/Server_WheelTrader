@@ -51,7 +51,18 @@ ENVIA_ANUNCIOS;tipoFiltro;{JSON_LISTA_ANUNCIOS};cantAnuncios;si/no (Servidor -> 
 
 
 +Guardar anuncios:
-GUARDAR_ANUNCIO;idAnuncio;nombreUsuario
-ANUNCIO_GUARDADO
-ELIMINAR_ANUNCIO_GUARDADOS;idAnuncio;nombreUsuario
-ANUNCIO_ELIMINADO_GUARDADOS
+GUARDAR_ANUNCIO;idAnuncio;nombreUsuario (Usuario -> Servidor)
+ANUNCIO_GUARDADO (Servidor -> Usuario)
+ELIMINAR_ANUNCIO_GUARDADOS;idAnuncio;nombreUsuario (Usuario -> Servidor)
+ANUNCIO_ELIMINADO_GUARDADOS (Servidor -> Usuario)
+
++Detalle anuncio:
+OBTENER_IMAGENES;idAnuncio (Usuario -> Servidor)
+ENVIA_IMAGENES;cantImagenes (Servidor -> Usuario)
+    longitudImg1
+    imagen1
+    longitudImg2
+    imagen2
+    ...
+    longitudImgN
+    imagenN
