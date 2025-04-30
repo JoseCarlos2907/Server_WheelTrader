@@ -407,6 +407,15 @@ public class UsuarioHandler implements Runnable {
                 FiltroGuardadosDTO filtroGuardadosDTO  = mapper.readValue(filtroJSON, FiltroGuardadosDTO.class);
 
                 anunciosEncontrados = this.anuncioService.findAnunciosGuardadosByNombreUsuario(filtroGuardadosDTO.getNombreUsuario());
+
+                break;
+
+            case "Publicados":
+
+                FiltroPublicadosDTO filtroPublicadosDTO = mapper.readValue(filtroJSON, FiltroPublicadosDTO.class);
+
+                anunciosEncontrados = this.anuncioService.findAnunciosPublicadosByNombreUsuario(filtroPublicadosDTO.getNombreUsuario());
+
                 break;
         }
 

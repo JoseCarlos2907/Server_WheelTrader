@@ -241,4 +241,8 @@ public class AnuncioService {
     public List<Anuncio> findAnunciosGuardadosByNombreUsuario(String nombreUsuario) {
         return this.anuncioRepository.findAnunciosGuardadosByNombreUsuario(nombreUsuario);
     }
+
+    public List<Anuncio> findAnunciosPublicadosByNombreUsuario(String nombreUsuario) {
+        return this.anuncioRepository.findAnunciosPublicadosByNombreUsuario(nombreUsuario);
+    }
 }

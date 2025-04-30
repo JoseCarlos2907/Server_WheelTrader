@@ -103,4 +103,7 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
 
     @Query("select a from Anuncio a join a.usuariosGuardan u where u.nombreUsuario = ?1")
     List<Anuncio> findAnunciosGuardadosByNombreUsuario(String nombreUsuario);
+
+    @Query("select a from Anuncio a where a.vendedor.nombreUsuario = ?1")
+    List<Anuncio> findAnunciosPublicadosByNombreUsuario(String nombreUsuario);
 }
