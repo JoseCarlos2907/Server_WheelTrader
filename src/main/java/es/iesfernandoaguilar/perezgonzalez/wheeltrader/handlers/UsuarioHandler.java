@@ -102,6 +102,7 @@ public class UsuarioHandler implements Runnable {
                         msgRespuesta.setTipo("ANUNCIO_PUBLICADO");
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
                         break;
 
                     case "OBTENER_ANUNCIOS":
@@ -427,7 +428,9 @@ public class UsuarioHandler implements Runnable {
 
                 FiltroGuardadosDTO filtroGuardadosDTO  = mapper.readValue(filtroJSON, FiltroGuardadosDTO.class);
 
-                anunciosEncontrados = this.anuncioService.findAnunciosGuardadosByNombreUsuario(filtroGuardadosDTO.getNombreUsuario());
+                Pageable pageableGuardados = PageRequest.of(filtroGuardadosDTO.getPagina(), filtroGuardadosDTO.getCantidadPorPagina());
+
+                anunciosEncontrados = this.anuncioService.findAnunciosGuardadosByNombreUsuario(filtroGuardadosDTO.getNombreUsuario(), pageableGuardados);
 
                 break;
 
@@ -435,7 +438,9 @@ public class UsuarioHandler implements Runnable {
 
                 FiltroPublicadosDTO filtroPublicadosDTO = mapper.readValue(filtroJSON, FiltroPublicadosDTO.class);
 
-                anunciosEncontrados = this.anuncioService.findAnunciosPublicadosByNombreUsuario(filtroPublicadosDTO.getNombreUsuario());
+                Pageable pageablePublicados = PageRequest.of(filtroPublicadosDTO.getPagina(), filtroPublicadosDTO.getCantidadPorPagina());
+
+                anunciosEncontrados = this.anuncioService.findAnunciosPublicadosByNombreUsuario(filtroPublicadosDTO.getNombreUsuario(), pageablePublicados);
 
                 break;
         }

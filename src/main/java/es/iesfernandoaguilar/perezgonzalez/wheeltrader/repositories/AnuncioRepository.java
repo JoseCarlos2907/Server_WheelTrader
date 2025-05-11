@@ -101,9 +101,9 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
             Pageable pageable
     );
 
-    @Query("select a from Anuncio a join a.usuariosGuardan u where u.nombreUsuario = ?1")
-    List<Anuncio> findAnunciosGuardadosByNombreUsuario(String nombreUsuario);
+    @Query("select a from Anuncio a join a.usuariosGuardan u where u.nombreUsuario = ?1 order by a.fechaPublicacion desc")
+    List<Anuncio> findAnunciosGuardadosByNombreUsuario(String nombreUsuario, Pageable pageable);
 
-    @Query("select a from Anuncio a where a.vendedor.nombreUsuario = ?1")
-    List<Anuncio> findAnunciosPublicadosByNombreUsuario(String nombreUsuario);
+    @Query("select a from Anuncio a where a.vendedor.nombreUsuario = ?1 order by a.fechaPublicacion desc")
+    List<Anuncio> findAnunciosPublicadosByNombreUsuario(String nombreUsuario, Pageable pageable);
 }

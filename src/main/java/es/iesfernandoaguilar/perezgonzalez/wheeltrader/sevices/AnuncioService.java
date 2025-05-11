@@ -238,11 +238,11 @@ public class AnuncioService {
         }
     }
 
-    public List<Anuncio> findAnunciosGuardadosByNombreUsuario(String nombreUsuario) {
-        return this.anuncioRepository.findAnunciosGuardadosByNombreUsuario(nombreUsuario);
+    public List<Anuncio> findAnunciosGuardadosByNombreUsuario(String nombreUsuario, Pageable pageable) {
+        return this.anuncioRepository.findAnunciosGuardadosByNombreUsuario(nombreUsuario, pageable);
     }
 
-    public List<Anuncio> findAnunciosPublicadosByNombreUsuario(String nombreUsuario) {
-        return this.anuncioRepository.findAnunciosPublicadosByNombreUsuario(nombreUsuario);
+    public List<Anuncio> findAnunciosPublicadosByNombreUsuario(String nombreUsuario, Pageable pageable) {
+        return this.anuncioRepository.findAnunciosPublicadosByNombreUsuario(nombreUsuario, pageable);
     }
 }

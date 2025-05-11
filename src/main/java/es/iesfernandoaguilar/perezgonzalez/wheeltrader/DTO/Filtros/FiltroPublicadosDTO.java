@@ -1,6 +1,7 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros;
 
-public class FiltroPublicadosDTO {private String nombreUsuario;
+public class FiltroPublicadosDTO {
+    private String nombreUsuario;
     private int pagina;
     private int cantidadPorPagina;
     private String tipoFiltro;
