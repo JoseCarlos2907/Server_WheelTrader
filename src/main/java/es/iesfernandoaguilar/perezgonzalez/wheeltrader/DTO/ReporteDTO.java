@@ -67,6 +67,7 @@ public class ReporteDTO {
     public void parse(Reporte reporte) {
         this.idReporte = reporte.getIdReporte();
         this.motivo = reporte.getMotivo();
+        this.explicacion = reporte.getExplicacion();
 
         this.usuarioEnvia = null;
         this.usuarioRecibe = null;

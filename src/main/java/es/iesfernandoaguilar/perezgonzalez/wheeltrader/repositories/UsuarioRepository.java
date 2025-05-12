@@ -1,9 +1,13 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories;
 
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Auxiliares.UsuarioReportadosModDTO;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,4 +51,16 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
         where u.idUsuario = ?1 and a.idAnuncio = ?2
     """)
     Optional<Usuario> findUsuarioQueHaGuardadoAnuncio(Long idUsuario, Long idAnuncio);
+
+    @Query(value = "select new es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod(" +
+            "u, " +
+            "count(distinct r.idReporte), " +
+            "coalesce(avg(v.valoracion), 0)) " +
+            "FROM Usuario u " +
+            "left join u.reportesRecibidos r " +
+            "left join u.valoracionesRecibidas v " +
+            "where (:cadena is null or u.nombreUsuario like %:cadena%) " +
+            "group by u " +
+            "order by count(distinct r.idReporte) desc, coalesce(avg(v.valoracion), 0) desc")
+    List<UsuarioReportadosMod> findUsuariosReportadosMod(@Param("cadena") String cadena, Pageable pageable);
 }

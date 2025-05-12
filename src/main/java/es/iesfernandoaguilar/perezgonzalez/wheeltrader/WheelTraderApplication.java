@@ -3,6 +3,7 @@ package es.iesfernandoaguilar.perezgonzalez.wheeltrader;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.FiltroTodoDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.SecureUtils;
@@ -735,6 +736,22 @@ public class WheelTraderApplication {
                 Optional<Usuario> usuarioOpt = usuarioService.findUsuarioQueHaGuardadoAnuncio(1, anuncio.getIdAnuncio());
                 System.out.println("Guardado: " + usuarioOpt.isPresent());
                 System.out.println("-------------------");
+            }
+        };
+    }*/
+
+    // Prueba para recoger a los usuarios reportados
+    /*@Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            UsuarioService usuarioService = context.getBean(UsuarioService.class);
+
+            Pageable pageable = PageRequest.of(0, 10);
+
+            List<UsuarioReportadosMod> usuariosReportadosMod = usuarioService.findUsuariosReportadosMod("", pageable);
+
+            for (UsuarioReportadosMod usuarioReportadosMod : usuariosReportadosMod) {
+                System.out.println(usuarioReportadosMod.getUsuario().getIdUsuario());
             }
         };
     }*/

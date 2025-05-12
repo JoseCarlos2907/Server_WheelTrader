@@ -1,13 +1,14 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.handlers;
 
-import ch.qos.logback.core.joran.spi.NoAutoStartUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.*;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Auxiliares.UsuarioReportadosModDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Mensaje;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Serializador;
@@ -20,7 +21,6 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.Socket;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +36,7 @@ public class UsuarioHandler implements Runnable {
     ValorCaracteristicaService VCService;
     AnuncioService anuncioService;
     UsuarioService usuarioService;
+    ReporteService reporteService;
 
     public UsuarioHandler(Socket cliente, ApplicationContext context) {
         this.cliente = cliente;
@@ -50,6 +51,7 @@ public class UsuarioHandler implements Runnable {
         this.VCService = context.getBean(ValorCaracteristicaService.class);
         this.anuncioService = context.getBean(AnuncioService.class);
         this.usuarioService = context.getBean(UsuarioService.class);
+        this.reporteService = context.getBean(ReporteService.class);
         ObjectMapper mapper = new ObjectMapper();
 
         DataInputStream dis = null;
@@ -171,6 +173,72 @@ public class UsuarioHandler implements Runnable {
                             dos.write(imagen);
                             dos.flush();
                         }
+
+                        break;
+
+                    case "OBTENER_REPORTES_MOD":
+                        // System.out.println("OBTENER_REPORTES_MOD");
+                        FiltroUsuarioConReportesDTO filtroUsuarioConReportesDTO = mapper.readValue(msgUsuario.getParams().get(0), FiltroUsuarioConReportesDTO.class);
+
+                        Pageable pageableUsuarioConReportes = PageRequest.of(filtroUsuarioConReportesDTO.getPagina(), filtroUsuarioConReportesDTO.getCantidadPorPagina());
+
+                        List<UsuarioReportadosMod> usuariosReportadosMod = this.usuarioService.findUsuariosReportadosMod(filtroUsuarioConReportesDTO.getCadena(), pageableUsuarioConReportes);
+
+                        List<UsuarioReportadosModDTO> usuariosReportadosModDTO = new ArrayList<>();
+                        for (UsuarioReportadosMod usuarioReportadosMod : usuariosReportadosMod) {
+                            UsuarioReportadosModDTO usuarioReportadosModDTO = new UsuarioReportadosModDTO();
+
+                            UsuarioDTO usuarioDTO = new UsuarioDTO();
+                            usuarioDTO.parse(usuarioReportadosMod.getUsuario());
+                            usuarioReportadosModDTO.setUsuario(usuarioDTO);
+
+                            usuarioReportadosModDTO.setCantReportes(usuarioReportadosMod.getCantReportes());
+                            usuarioReportadosModDTO.setMediaValoraciones(usuarioReportadosMod.getMediaValoraciones());
+
+                            usuariosReportadosModDTO.add(usuarioReportadosModDTO);
+                        }
+
+                        String usuariosReportadosModJSON = mapper.writeValueAsString(usuariosReportadosModDTO);
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_REPORTES_MOD");
+                        msgRespuesta.addParam(usuariosReportadosModJSON);
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+
+                        break;
+
+                    case "OBTENER_ULTIMOS_REPORTES_MOD":
+                        FiltroReportesDTO filtroReportesDTO = mapper.readValue(msgUsuario.getParams().get(0), FiltroReportesDTO.class);
+
+                        Pageable pageableReportes = PageRequest.of(filtroReportesDTO.getPagina(), filtroReportesDTO.getCantidadPorPagina());
+
+                        List<Reporte> reportes = this.reporteService.findUltimosReportes(pageableReportes);
+
+                        List<ReporteDTO> reportesDTO = new ArrayList<>();
+                        for (Reporte reporte : reportes) {
+                            ReporteDTO reporteDTO = new ReporteDTO();
+                            reporteDTO.parse(reporte);
+                            reportesDTO.add(reporteDTO);
+
+                            UsuarioDTO usuarioRecibeDTO = new UsuarioDTO();
+                            usuarioRecibeDTO.parse(reporte.getUsuarioRecibe());
+                            reporteDTO.setUsuarioRecibe(usuarioRecibeDTO);
+
+                            UsuarioDTO usuarioEnviaDTO = new UsuarioDTO();
+                            usuarioEnviaDTO.parse(reporte.getUsuarioEnvia());
+                            reporteDTO.setUsuarioEnvia(usuarioEnviaDTO);
+                        }
+
+                        String reportesJSON = mapper.writeValueAsString(reportesDTO);
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_ULTIMOS_REPORTES_MOD");
+                        msgRespuesta.addParam(reportesJSON);
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
 
                         break;
                 }

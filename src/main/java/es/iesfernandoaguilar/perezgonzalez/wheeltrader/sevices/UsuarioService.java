@@ -1,8 +1,11 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices;
 
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Auxiliares.UsuarioReportadosModDTO;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,5 +70,9 @@ public class UsuarioService {
 
     public Optional<Usuario> findUsuarioQueHaGuardadoAnuncio(long idUsuario, long idAnuncio) {
         return this.usuarioRepository.findUsuarioQueHaGuardadoAnuncio(idUsuario, idAnuncio);
+    }
+
+    public List<UsuarioReportadosMod> findUsuariosReportadosMod(String cadena, Pageable pageable){
+        return this.usuarioRepository.findUsuariosReportadosMod(cadena, pageable);
     }
 }
