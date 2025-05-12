@@ -340,6 +340,7 @@ public class UsuarioHandler implements Runnable {
         System.out.println(filtroJSON);
 
         switch (tipoFiltro){
+            case "Moderador":
             case "Todo":
                 // Recojo el JSON del filtro del protocolo
                 FiltroTodoDTO filtroTodoDTO = mapper.readValue(filtroJSON, FiltroTodoDTO.class);
