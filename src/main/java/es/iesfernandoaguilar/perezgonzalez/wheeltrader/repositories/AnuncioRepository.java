@@ -106,4 +106,35 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
 
     @Query("select a from Anuncio a where a.vendedor.nombreUsuario = ?1 order by a.fechaPublicacion desc")
     List<Anuncio> findAnunciosPublicadosByNombreUsuario(String nombreUsuario, Pageable pageable);
+
+    @EntityGraph(attributePaths = {
+            "vendedor",
+            "usuariosGuardan",
+            "tipoVehiculo"
+    })
+    @Query("""
+            select a from Anuncio a
+            join a.tipoVehiculo t
+            join a.valoresCaracteristicas anio
+            left join a.valoresCaracteristicas marca
+            left join a.valoresCaracteristicas modelo
+            where t.tipo in :tiposVehiculo
+            and anio.caracteristica.nombre like 'Anio_%' and cast(anio.valor as int) >= :anioMinimo and cast(anio.valor as int) <= :anioMaximo
+            and (concat(lower(marca.valor), ' ', lower(modelo.valor) ) like concat('%', lower(:cadena), '%') or :cadena is null)
+            and (lower(a.provincia) = lower(:provincia) or :provincia is null)
+            and (lower(a.ciudad) = lower(:ciudad) or :ciudad is null)
+            and a.precio between :precioMinimo and :precioMaximo
+            order by a.fechaPublicacion desc
+    """)
+    List<Anuncio> findAllByString(
+            @Param("cadena") String cadena,
+            @Param("anioMinimo") int anioMinimo,
+            @Param("anioMaximo") int anioMaximo,
+            @Param("precioMinimo") double precioMinimo,
+            @Param("precioMaximo") double precioMaximo,
+            @Param("provincia") String provincia,
+            @Param("ciudad") String ciudad,
+            @Param("tiposVehiculo") List<String> tiposVehiculo,
+            Pageable pageable
+    );
 }

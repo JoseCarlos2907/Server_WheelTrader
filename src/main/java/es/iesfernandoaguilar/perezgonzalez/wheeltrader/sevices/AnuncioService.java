@@ -245,4 +245,19 @@ public class AnuncioService {
     public List<Anuncio> findAnunciosPublicadosByNombreUsuario(String nombreUsuario, Pageable pageable) {
         return this.anuncioRepository.findAnunciosPublicadosByNombreUsuario(nombreUsuario, pageable);
     }
+
+    @Transactional
+    public List<Anuncio> findAllByString(List<String> tiposVehiculo, int anioMinimo, int anioMaximo, String cadena, String provincia, String ciudad, double precioMinimo, double precioMaximo, Pageable pageable) {
+        return this.anuncioRepository.findAllByString(
+                cadena,
+                anioMinimo,
+                anioMaximo,
+                precioMinimo,
+                precioMaximo,
+                provincia,
+                ciudad,
+                tiposVehiculo,
+                pageable
+        );
+    }
 }

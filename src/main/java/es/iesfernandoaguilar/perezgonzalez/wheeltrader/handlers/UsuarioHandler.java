@@ -64,7 +64,7 @@ public class UsuarioHandler implements Runnable {
 
             while (!cierraSesion) {
                 String linea = dis.readUTF();
-                // System.out.println(linea);
+                System.out.println(linea);
                 Mensaje msgUsuario = Serializador.decodificarMensaje(linea);
 
                 Mensaje msgRespuesta;
@@ -241,6 +241,35 @@ public class UsuarioHandler implements Runnable {
                         dos.flush();
 
                         break;
+
+
+                    case "OBTENER_VALORACION_MEDIA_USUARIO":
+                        break;
+
+                    case "OBTENER_VALORACIONES_USUARIO":
+                        break;
+
+                    case "OBTENER_ANUNCIOS_USUARIO":
+                        break;
+
+                    case "REPORTAR_USUARIO":
+                        ReporteDTO reporteDTO = mapper.readValue(msgUsuario.getParams().get(0), ReporteDTO.class);
+
+                        Reporte reporte = this.reporteService.findByIdReportaAndReportado(reporteDTO.getUsuarioEnvia().getIdUsuario(), reporteDTO.getUsuarioRecibe().getIdUsuario());
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("REPORTE_REALIZADO");
+                        if(reporte == null) {
+                            this.reporteService.reportarUsuario(reporteDTO.getUsuarioEnvia().getIdUsuario(), reporteDTO.getUsuarioRecibe().getIdUsuario(), reporteDTO.getExplicacion(), reporteDTO.getMotivo());
+                            msgRespuesta.addParam("si");
+                        }else{
+                            msgRespuesta.addParam("no");
+                        }
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+
+                        break;
                 }
             }
 
@@ -340,7 +369,6 @@ public class UsuarioHandler implements Runnable {
         System.out.println(filtroJSON);
 
         switch (tipoFiltro){
-            case "Moderador":
             case "Todo":
                 // Recojo el JSON del filtro del protocolo
                 FiltroTodoDTO filtroTodoDTO = mapper.readValue(filtroJSON, FiltroTodoDTO.class);
@@ -512,6 +540,27 @@ public class UsuarioHandler implements Runnable {
                 anunciosEncontrados = this.anuncioService.findAnunciosPublicadosByNombreUsuario(filtroPublicadosDTO.getNombreUsuario(), pageablePublicados);
 
                 break;
+
+            case "BarraBusqueda":
+            case "BarraBusquedaMod":
+                FiltroBarraBusquedaDTO filtroBarraBusquedaDTO = mapper.readValue(filtroJSON, FiltroBarraBusquedaDTO.class);
+
+                Pageable pageableBarraBusqueda = PageRequest.of(filtroBarraBusquedaDTO.getPagina(), filtroBarraBusquedaDTO.getCantidadPorPagina());
+
+                anunciosEncontrados = this.anuncioService.findAllByString(
+                        filtroBarraBusquedaDTO.getTiposVehiculo(),
+                        filtroBarraBusquedaDTO.getAnioMinimo(),
+                        filtroBarraBusquedaDTO.getAnioMaximo(),
+                        filtroBarraBusquedaDTO.getCadena(),
+                        filtroBarraBusquedaDTO.getProvincia(),
+                        filtroBarraBusquedaDTO.getCiudad(),
+                        filtroBarraBusquedaDTO.getPrecioMinimo(),
+                        filtroBarraBusquedaDTO.getPrecioMaximo(),
+                        pageableBarraBusqueda
+                );
+
+                break;
+
         }
 
         // Convierto los anuncios encontrados a un formato que permita la aplicación (sin relaciones)

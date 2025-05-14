@@ -2,7 +2,7 @@ package es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros;
 
 import java.util.List;
 
-public class FiltroBarraBusqueda {
+public class FiltroBarraBusquedaDTO {
     private String cadena;
     private int anioMinimo;
     private int anioMaximo;
@@ -15,10 +15,10 @@ public class FiltroBarraBusqueda {
     private int cantidadPorPagina;
     private String tipoFiltro;
 
-    public FiltroBarraBusqueda() {
+    public FiltroBarraBusquedaDTO() {
     }
 
-    public FiltroBarraBusqueda(String cadena, int anioMinimo, int anioMaximo, String provincia, String ciudad, double precioMinimo, double precioMaximo, List<String> tiposVehiculo, int pagina, int cantidadPorPagina, String tipoFiltro) {
+    public FiltroBarraBusquedaDTO(String cadena, int anioMinimo, int anioMaximo, String provincia, String ciudad, double precioMinimo, double precioMaximo, List<String> tiposVehiculo, int pagina, int cantidadPorPagina, String tipoFiltro) {
         this.cadena = cadena;
         this.anioMinimo = anioMinimo;
         this.anioMaximo = anioMaximo;
