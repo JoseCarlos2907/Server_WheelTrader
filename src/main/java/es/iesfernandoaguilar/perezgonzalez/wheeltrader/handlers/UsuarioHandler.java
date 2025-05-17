@@ -8,7 +8,10 @@ import com.itextpdf.text.pdf.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Auxiliares.UsuarioReportadosModDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.*;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.EstadoAnuncio;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.EstadoNotificacion;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoNotificacion;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
@@ -23,6 +26,7 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +44,7 @@ public class UsuarioHandler implements Runnable {
     AnuncioService anuncioService;
     UsuarioService usuarioService;
     ReporteService reporteService;
+    NotificacionService notificacionService;
 
     public UsuarioHandler(Socket cliente, ApplicationContext context) {
         this.cliente = cliente;
@@ -55,6 +60,7 @@ public class UsuarioHandler implements Runnable {
         this.anuncioService = context.getBean(AnuncioService.class);
         this.usuarioService = context.getBean(UsuarioService.class);
         this.reporteService = context.getBean(ReporteService.class);
+        this.notificacionService = context.getBean(NotificacionService.class);
         ObjectMapper mapper = new ObjectMapper();
 
         DataInputStream dis = null;
@@ -267,10 +273,24 @@ public class UsuarioHandler implements Runnable {
                         break;
 
                     case "OBTENER_NOTIFICACIONES":
+                        FiltroNotificaciones filtroNotificaciones = mapper.readValue(msgUsuario.getParams().get(0), FiltroNotificaciones.class);
+
+                        List<NotificacionDTO> notificaciones = obtenerNotificaciones(filtroNotificaciones);
+
+                        String notificacionesJSON = mapper.writeValueAsString(notificaciones);
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_NOTIFICACIONES");
+                        msgRespuesta.addParam(notificacionesJSON);
+                        msgRespuesta.addParam(msgUsuario.getParams().get(1));
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+
+                        System.out.println("Se envia todo");
                         break;
 
                     case "OBTENER_PDF_ACUERDO":
-
                         byte[] bytesDocumentoGenerado = rellenarPlantilla(msgUsuario.getParams().get(2), Integer.parseInt(msgUsuario.getParams().get(1)), Integer.parseInt(msgUsuario.getParams().get(0)));
 
                         msgRespuesta = new Mensaje();
@@ -285,12 +305,52 @@ public class UsuarioHandler implements Runnable {
 
                         break;
 
-                    case "COMPRADOR_OFRECE_COMPRA":
+                    case "OBTENER_PDF_ACUERDO_VENDEDOR":
 
-                        // TODO: Generar una notificación para el vendedor donde se asocie el anuncio, comprador y vendedor
+                        String idCompradorAcuerdo = msgUsuario.getParams().get(0);
+                        String idAnuncioAcuerdo = msgUsuario.getParams().get(1);
+                        byte[] pdfRelleno = Files.readAllBytes(Paths.get("acuerdos/acuerdo_" + idAnuncioAcuerdo + "-" + idCompradorAcuerdo + "/acuerdo_" + idAnuncioAcuerdo + "-" + idCompradorAcuerdo + ".pdf"));
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_PDF_ACUERDO_VENDEDOR");
+                        msgRespuesta.addParam(String.valueOf(pdfRelleno.length));
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+
+                        dos.write(pdfRelleno);
+                        dos.flush();
+
+                        break;
+
+                    case "COMPRADOR_OFRECE_COMPRA":
+                        int longitudPDFOferta = Integer.valueOf(msgUsuario.getParams().get(0));
+                        byte[] pdfOferta = new byte[longitudPDFOferta];
+                        dis.readFully(pdfOferta);
+
+                        llegaOfertaAnuncio(pdfOferta, Long.valueOf(msgUsuario.getParams().get(2)), Long.valueOf(msgUsuario.getParams().get(1)), Long.valueOf(msgUsuario.getParams().get(3)));
+
                         break;
 
                     case "VENDEDOR_CONFIRMA_COMPRA":
+                        int longitudPDFConfirmado = Integer.valueOf(msgUsuario.getParams().get(0));
+                        byte[] pdfConfirmado = new byte[longitudPDFConfirmado];
+                        dis.readFully(pdfConfirmado);
+
+                        confirmarCompra(pdfConfirmado, Long.valueOf(msgUsuario.getParams().get(2)), Long.valueOf(msgUsuario.getParams().get(1)), Long.valueOf(msgUsuario.getParams().get(3)), Long.valueOf(msgUsuario.getParams().get(4)));
+
+                        break;
+
+                    case "CAMBIAR_ESTADO_NOTIFICACION":
+
+                        EstadoNotificacion estadoCambiado = null;
+                        if("LEIDO".equals(msgUsuario.getParams().get(1))){
+                            estadoCambiado = EstadoNotificacion.LEIDO;
+                        }else{
+                            estadoCambiado = EstadoNotificacion.NO_LEIDO;
+                        }
+
+                        this.notificacionService.actualizarEstadoNotificacion(Long.valueOf(msgUsuario.getParams().get(0)), estadoCambiado);
                         break;
                 }
             }
@@ -720,8 +780,6 @@ public class UsuarioHandler implements Runnable {
         PdfStamper stamper = new PdfStamper(reader, baos);
         AcroFields documento = stamper.getAcroFields();
 
-        documento.setField("Precio", "Vacío");
-
         LocalDateTime fecha = LocalDateTime.now();
 
         switch (tipoVehiculo){
@@ -783,8 +841,6 @@ public class UsuarioHandler implements Runnable {
         documento.setField("NombreCompleto_Comprador", usuario.getNombre() + " " + usuario.getApellidos());
         documento.setField("DNI_Comprador", usuario.getDni());
 
-        // Con esta linea se puede decir que no se pueda editar una vez se marca esta variable a true
-//        stamper.setFormFlattening(true);
         stamper.close();
         reader.close();
 
@@ -804,5 +860,115 @@ public class UsuarioHandler implements Runnable {
         baos.close();
 
         return pdfBytes;
+    }
+
+    public void llegaOfertaAnuncio(byte[] bytesPDF, long idAnuncio, long idUsuario, long idVendedor) throws IOException {
+        Path directorio = Paths.get("acuerdos", "acuerdo_" + idAnuncio + "-" + idUsuario);
+        Files.createDirectories(directorio);
+
+        Path pdfPath = directorio.resolve("acuerdo_" + idAnuncio + "-" + idUsuario + ".pdf");
+
+        Files.deleteIfExists(pdfPath);
+
+        Files.write(pdfPath, bytesPDF, StandardOpenOption.CREATE);
+
+        Anuncio anuncio = this.anuncioService.findByIdAnuncioWithValoresCaracteristicas(idAnuncio);
+        Usuario usuario = this.usuarioService.findById(idUsuario);
+
+        String marca = "";
+        String modelo = "";
+        for (ValorCaracteristica vc: anuncio.getValoresCaracteristicas()){
+            if(vc.getCaracteristica().getNombre().contains("Marca")){
+                marca = vc.getValor();
+            }else if (vc.getCaracteristica().getNombre().contains("Modelo")){
+                modelo = vc.getValor();
+            }
+        }
+
+        this.notificacionService.crearNotificacion(
+                idUsuario,
+                idAnuncio,
+                idVendedor,
+                EstadoNotificacion.NO_LEIDO,
+                "Oferta recibida",
+                "Se ha recibido una oferta por parte del usuario " + usuario.getNombreUsuario() + " para tu anuncio sobre el vehículo " + marca + " " + modelo,
+                TipoNotificacion.OFERTA_ANUNCIO
+        );
+    }
+
+    public List<NotificacionDTO> obtenerNotificaciones(FiltroNotificaciones filtro){
+        Usuario usuario = this.usuarioService.findByIdWithNotificacionesRecibidas(filtro.getIdUsuario());
+
+        List<NotificacionDTO> notificacionesDTO = new ArrayList<>();
+        for (Notificacion notificacion: usuario.getNotificacionesRecibidas()){
+            NotificacionDTO notificacionDTO = new NotificacionDTO();
+            notificacionDTO.parse(notificacion);
+
+            AnuncioDTO anuncioDTO = new AnuncioDTO();
+            anuncioDTO.parse(notificacion.getAnuncio());
+
+            UsuarioDTO usuarioDTO = new UsuarioDTO();
+            usuarioDTO.parse(notificacion.getUsuarioEnvia());
+
+            notificacionDTO.setAnuncio(anuncioDTO);
+            notificacionDTO.setUsuarioEnvia(usuarioDTO);
+
+            notificacionesDTO.add(notificacionDTO);
+        }
+
+        return notificacionesDTO;
+    }
+
+    public void confirmarCompra(byte[] bytesPDF, long idAnuncio, long idUsuario, long idVendedor, long idNotificacion) throws IOException, DocumentException {
+        Path pdfPath = Paths.get("acuerdos/acuerdo_" + idAnuncio + "-" + idUsuario + "/acuerdo_" + idAnuncio + "-" + idUsuario + ".pdf");
+
+        Files.deleteIfExists(pdfPath);
+
+        Files.write(pdfPath, bytesPDF, StandardOpenOption.CREATE);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfReader reader = new PdfReader(Files.newInputStream(pdfPath));
+        PdfStamper stamper = new PdfStamper(reader, baos);
+        AcroFields documento = stamper.getAcroFields();
+
+
+        Anuncio anuncio = this.anuncioService.findByIdAnuncioWithValoresCaracteristicas(idAnuncio);
+        Usuario vendedor = this.usuarioService.findById(idVendedor);
+
+        documento.setField("NombreCompleto_Vendedor",vendedor.getNombre() + " " + vendedor.getApellidos());
+        documento.setField("DNI_Vendedor",vendedor.getDni());
+        documento.setField("DNI_VendedorFirma",vendedor.getDni());
+
+        // Con esta linea se puede decir que no se pueda editar una vez se marca esta variable a true
+        stamper.setFormFlattening(true);
+        stamper.close();
+        reader.close();
+
+        baos.flush();
+        Files.write(pdfPath, baos.toByteArray());
+        baos.close();
+
+        String marca = "";
+        String modelo = "";
+        for (ValorCaracteristica vc: anuncio.getValoresCaracteristicas()){
+            if(vc.getCaracteristica().getNombre().contains("Marca")){
+                marca = vc.getValor();
+            }else if (vc.getCaracteristica().getNombre().contains("Modelo")){
+                modelo = vc.getValor();
+            }
+        }
+
+        this.notificacionService.crearNotificacion(
+                idVendedor,
+                idAnuncio,
+                idUsuario,
+                EstadoNotificacion.NO_LEIDO,
+                "Oferta aceptada",
+                "El usuario" + vendedor.getNombreUsuario() + " ha aceptado la oferta que hiciste sobre el vehículo " + marca + " " + modelo + ", en caso de que el otro usuario no quiera enviar el vehículo o reunirse contigo, hay una cláusula donde deberá entregarlo en menos de 15 días.",
+                TipoNotificacion.OFERTA_ACEPTADA
+        );
+
+        this.notificacionService.actualizarEstadoNotificacion(idNotificacion, EstadoNotificacion.RESPONDIDO);
+        this.anuncioService.actualizarEstadoAnuncio(idAnuncio, EstadoAnuncio.VENDIDO);
     }
 }

@@ -94,3 +94,17 @@ REPORTE_REALIZADO;si/no
 OBTENER_PDF_ACUERDO;idUsuarioComprador;idAnuncio;tipoAnuncio
 ENVIA_PDF_ACUERDO;longitudPDF
     bytesPDF
+
+COMPRADOR_OFRECE_COMPRA;longitudPDF;idUsuario;idAnuncio;idVendedor
+    bytesPDF
+VENDEDOR_CONFIRMA_COMPRA;longitudPDF;idUsuario;idAnuncio;idVendedor;idNotificacion
+    bytesPDF
+
+OBTENER_PDF_ACUERDO_VENDEDOR;idUsuarioComprador;idAnuncio
+ENVIA_PDF_ACUERDO_VENDEDOR;longitudPDF;
+    bytesPDF
+
++Notificaciones:
+OBTENER_NOTIFICACIONES;{JSON_FILTRO_NOTIS};si/no
+ENVIA_NOTIFICACIONES;{JSON_NOTIFICACIONES};si/no
+CAMBIAR_ESTADO_NOTIFICACION;idNotificacion;estado

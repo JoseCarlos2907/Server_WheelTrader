@@ -101,6 +101,13 @@ public class Notificacion {
         this.usuarioRecibe = usuarioRecibe;
     }
 
+    public Anuncio getAnuncio() {
+        return anuncio;
+    }
+
+    public void setAnuncio(Anuncio anuncio) {
+        this.anuncio = anuncio;
+    }
 
     // *-- Métodos --* //
 }

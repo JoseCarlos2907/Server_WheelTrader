@@ -253,6 +253,20 @@ public class Anuncio {
         valorCaracteristica.setAnuncio(this);
     }
 
+    public List<Notificacion> getNotificaciones() {
+        return notificaciones;
+    }
+
+    public void setNotificaciones(List<Notificacion> notificaciones) {
+        this.notificaciones = notificaciones;
+    }
+
+    public void addNotificacion(Notificacion notificacion) {
+        if(!this.notificaciones.contains(notificacion)) {
+            this.notificaciones.add(notificacion);
+        }
+        notificacion.setAnuncio(this);
+    }
 
     // *-- Métodos --* //
 

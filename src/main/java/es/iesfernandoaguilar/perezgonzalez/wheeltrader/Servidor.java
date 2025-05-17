@@ -57,7 +57,7 @@ public class Servidor implements Runnable {
 
             this.usuariosHandlers = new ConcurrentHashMap<>();
 
-            System.out.println("Servidor escuchando en el puerto " + serverProperties.getProperty("PORT") + " y en la IP 192.168.1.66");
+            System.out.println("Servidor escuchando en el puerto " + serverProperties.getProperty("PORT") + " y en la IP 192.168.1.101");
         } catch (IOException e) {
             e.printStackTrace();
         }

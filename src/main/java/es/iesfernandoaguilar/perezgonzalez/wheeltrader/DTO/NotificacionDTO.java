@@ -106,5 +106,6 @@ public class NotificacionDTO {
 
         this.usuarioEnvia = null;
         this.usuarioRecibe = null;
+        this.anuncio = null;
     }
 }

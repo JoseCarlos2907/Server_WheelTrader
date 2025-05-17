@@ -1,10 +1,12 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories;
 
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.EstadoAnuncio;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Anuncio;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Imagen;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -19,7 +21,7 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
     Anuncio findByIdWithUsuariosGuardan(int idAnuncio);
 
     @Query("select a from Anuncio a left join fetch a.valoresCaracteristicas vc left join fetch vc.caracteristica where a.idAnuncio = ?1")
-    Anuncio findByIdAnuncioWithValoresCaracteristicas(int idAnuncio);
+    Anuncio findByIdAnuncioWithValoresCaracteristicas(long idAnuncio);
 
     @EntityGraph(attributePaths = {
             "vendedor",
@@ -140,4 +142,8 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
             @Param("tiposVehiculo") List<String> tiposVehiculo,
             Pageable pageable
     );
+
+    @Modifying
+    @Query(value = "update anuncios set estado = ?2 where id_anuncio = ?1", nativeQuery = true)
+    void actualizarEstadoAnuncio(long idAnuncio, EstadoAnuncio estadoAnuncio);
 }

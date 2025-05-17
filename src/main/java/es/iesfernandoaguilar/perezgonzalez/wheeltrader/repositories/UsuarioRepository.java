@@ -2,6 +2,7 @@ package es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories;
 
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Auxiliares.UsuarioReportadosModDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Notificacion;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -63,4 +64,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
             "group by u " +
             "order by count(distinct r.idReporte) desc, coalesce(avg(v.valoracion), 0) desc")
     List<UsuarioReportadosMod> findUsuariosReportadosMod(@Param("cadena") String cadena, Pageable pageable);
+
+    @Query("select u from Usuario u left join fetch u.notificacionesRecibidas nr left join fetch nr.usuarioEnvia left join fetch nr.anuncio where u.idUsuario = ?1")
+    Usuario findByIdWithNotificacionesRecibidas(long idUsuario);
 }

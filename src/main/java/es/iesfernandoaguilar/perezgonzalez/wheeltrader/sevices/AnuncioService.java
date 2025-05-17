@@ -1,5 +1,6 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices;
 
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.EstadoAnuncio;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Anuncio;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Caracteristica;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.TipoVehiculo;
@@ -109,6 +110,9 @@ public class AnuncioService {
 
         // Filtro por tipo de vehículo
         predicates.add(builder.equal(tipo.get("tipo"), tipoVehiculo));
+        predicates.add(builder.notEqual(anuncio.get("estado"), EstadoAnuncio.VENDIDO));
+        predicates.add(builder.notEqual(anuncio.get("estado"), EstadoAnuncio.CANCELADO));
+        predicates.add(builder.notEqual(anuncio.get("estado"), EstadoAnuncio.EXPIRADO));
 
         // Filtro de provincia y ciudad
         if (provincia != null) {
@@ -261,7 +265,12 @@ public class AnuncioService {
         );
     }
 
-    public Anuncio findByIdAnuncioWithValoresCaracteristicas(int idAnuncio){
+    public Anuncio findByIdAnuncioWithValoresCaracteristicas(long idAnuncio){
         return this.anuncioRepository.findByIdAnuncioWithValoresCaracteristicas(idAnuncio);
+    }
+
+    @Transactional
+    public void actualizarEstadoAnuncio(long idAnuncio, EstadoAnuncio estadoAnuncio){
+        this.anuncioRepository.actualizarEstadoAnuncio(idAnuncio, estadoAnuncio);
     }
 }
