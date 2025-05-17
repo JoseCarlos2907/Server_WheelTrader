@@ -60,6 +60,9 @@ public class Anuncio {
     @OneToMany(mappedBy = "anuncio")
     private List<ValorCaracteristica> valoresCaracteristicas;
 
+    @OneToMany(mappedBy = "anuncio")
+    private List<Notificacion> notificaciones;
+
     // *-- Constructores --* //
     public Anuncio() {}
 
@@ -78,6 +81,7 @@ public class Anuncio {
         this.imagenes = new ArrayList<>();
         this.reuniones = new ArrayList<>();
         this.valoresCaracteristicas = new ArrayList<>();
+        this.notificaciones = new ArrayList<>();
     }
     // *-- Getters, Setters --* //
 

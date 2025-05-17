@@ -3,6 +3,8 @@ package es.iesfernandoaguilar.perezgonzalez.wheeltrader.handlers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Auxiliares.UsuarioReportadosModDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.*;
@@ -16,11 +18,12 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.EOFException;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -193,7 +196,6 @@ public class UsuarioHandler implements Runnable {
                             usuarioReportadosModDTO.setUsuario(usuarioDTO);
 
                             usuarioReportadosModDTO.setCantReportes(usuarioReportadosMod.getCantReportes());
-                            usuarioReportadosModDTO.setMediaValoraciones(usuarioReportadosMod.getMediaValoraciones());
 
                             usuariosReportadosModDTO.add(usuarioReportadosModDTO);
                         }
@@ -242,13 +244,6 @@ public class UsuarioHandler implements Runnable {
 
                         break;
 
-
-                    case "OBTENER_VALORACION_MEDIA_USUARIO":
-                        break;
-
-                    case "OBTENER_VALORACIONES_USUARIO":
-                        break;
-
                     case "OBTENER_ANUNCIOS_USUARIO":
                         break;
 
@@ -270,6 +265,33 @@ public class UsuarioHandler implements Runnable {
                         dos.flush();
 
                         break;
+
+                    case "OBTENER_NOTIFICACIONES":
+                        break;
+
+                    case "OBTENER_PDF_ACUERDO":
+
+                        byte[] bytesDocumentoGenerado = rellenarPlantilla(msgUsuario.getParams().get(2), Integer.parseInt(msgUsuario.getParams().get(1)), Integer.parseInt(msgUsuario.getParams().get(0)));
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_PDF_ACUERDO");
+                        msgRespuesta.addParam(String.valueOf(bytesDocumentoGenerado.length));
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+
+                        dos.write(bytesDocumentoGenerado);
+                        dos.flush();
+
+                        break;
+
+                    case "COMPRADOR_OFRECE_COMPRA":
+
+                        // TODO: Generar una notificación para el vendedor donde se asocie el anuncio, comprador y vendedor
+                        break;
+
+                    case "VENDEDOR_CONFIRMA_COMPRA":
+                        break;
                 }
             }
 
@@ -277,6 +299,8 @@ public class UsuarioHandler implements Runnable {
             System.out.println("Se cerró el flujo con el puerto " + cliente.getPort());
         } catch (IOException e) {
             System.err.println(e.getMessage());
+        } catch (DocumentException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -645,5 +669,140 @@ public class UsuarioHandler implements Runnable {
         }
 
         return bytesImagenes;
+    }
+
+    public byte[] rellenarPlantilla(String tipoVehiculo, int idAnuncio, int idUsuario) throws IOException, DocumentException {
+
+        Anuncio anuncio = this.anuncioService.findByIdAnuncioWithValoresCaracteristicas(idAnuncio);
+
+        Usuario usuario = this.usuarioService.findById(idUsuario);
+
+        String marca = "";
+        String modelo = "";
+        String anio = "";
+        String km = "";
+        String cv = "";
+        String tipoCombustible = "";
+        String transmision = "";
+        String numeroMarchas = "";
+        String cantPuertas = "";
+        String cargaMaxima = "";
+        String tipoTraccion = "";
+
+        for (ValorCaracteristica vc : anuncio.getValoresCaracteristicas()) {
+            if(vc.getCaracteristica().getNombre().contains("Marca")){
+                marca = vc.getValor();
+            }else if(vc.getCaracteristica().getNombre().contains("Modelo")){
+                modelo = vc.getValor();
+            }else if(vc.getCaracteristica().getNombre().contains("Anio")){
+                anio = vc.getValor();
+            }else if(vc.getCaracteristica().getNombre().contains("KM")){
+                km = vc.getValor();
+            }else if(vc.getCaracteristica().getNombre().contains("CV") || vc.getCaracteristica().getNombre().contains("Cilindrada")){
+                cv = vc.getValor();
+            }else if(vc.getCaracteristica().getNombre().contains("TipoCombustible")){
+                tipoCombustible = vc.getValor();
+            }else if(vc.getCaracteristica().getNombre().contains("Transmision")){
+                transmision = vc.getValor();
+            }else if (vc.getCaracteristica().getNombre().contains("Marchas")){
+                numeroMarchas = vc.getValor();
+            }else if (vc.getCaracteristica().getNombre().contains("Puertas")){
+                cantPuertas = vc.getValor();
+            }else if (vc.getCaracteristica().getNombre().contains("CargaMaxima")){
+                cargaMaxima = vc.getValor();
+            }else if (vc.getCaracteristica().getNombre().contains("TipoTraccion")){
+                tipoTraccion = vc.getValor();
+            }
+        }
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PdfReader reader = new PdfReader(getClass().getResourceAsStream("/plantillas/Acuerdo" + tipoVehiculo + ".pdf"));
+        PdfStamper stamper = new PdfStamper(reader, baos);
+        AcroFields documento = stamper.getAcroFields();
+
+        documento.setField("Precio", "Vacío");
+
+        LocalDateTime fecha = LocalDateTime.now();
+
+        switch (tipoVehiculo){
+            case "Coche":
+                documento.setField("Km", km);
+                documento.setField("Cv", cv);
+                documento.setField("Tipo_Combustible", tipoCombustible);
+                documento.setField("Transmision", transmision);
+                documento.setField("NumeroMarchas", numeroMarchas);
+                documento.setField("CantidadPuertas", cantPuertas);
+                documento.setField("Matricula", anuncio.getMatricula());
+
+                break;
+
+            case "Moto":
+                documento.setField("Km", km);
+                documento.setField("Cilindrada", cv);
+                documento.setField("Tipo_Combustible", tipoCombustible);
+                documento.setField("NumeroMarchas", numeroMarchas);
+                documento.setField("Matricula", anuncio.getMatricula());
+                break;
+
+            case "Camion":
+                documento.setField("Km", km);
+                documento.setField("Cv", cv);
+                documento.setField("CargaMaxima", cargaMaxima);
+                documento.setField("Tipo_Combustible", tipoCombustible);
+                documento.setField("NumeroMarchas", numeroMarchas);
+                documento.setField("Matricula", anuncio.getMatricula());
+
+                break;
+
+            case "Camioneta":
+                documento.setField("Km", km);
+                documento.setField("Cv", cv);
+                documento.setField("CargaMaxima", cargaMaxima);
+                documento.setField("Tipo_Combustible", tipoCombustible);
+                documento.setField("TipoTraccion", tipoTraccion);
+                documento.setField("NumeroMarchas", numeroMarchas);
+                documento.setField("Matricula", anuncio.getMatricula());
+
+                break;
+
+            case "Maquinaria":
+                documento.setField("Tipo_Combustible", tipoCombustible);
+
+                break;
+        }
+
+        documento.setField("NumeroBastidor", anuncio.getNumSerieBastidor());
+        documento.setField("Ciudad", anuncio.getCiudad());
+        documento.setField("Fecha", fecha.getDayOfMonth() + "/" + fecha.getMonthValue() + "/" + fecha.getYear());
+        documento.setField("Marca", marca);
+        documento.setField("Modelo", modelo);
+        documento.setField("Anio", anio);
+        documento.setField("Precio", String.format("%.2f" , anuncio.getPrecio()));
+        documento.setField("DireccionComprador", usuario.getDireccion());
+        documento.setField("DNI_CompradorFirma", usuario.getDni());
+        documento.setField("NombreCompleto_Comprador", usuario.getNombre() + " " + usuario.getApellidos());
+        documento.setField("DNI_Comprador", usuario.getDni());
+
+        // Con esta linea se puede decir que no se pueda editar una vez se marca esta variable a true
+//        stamper.setFormFlattening(true);
+        stamper.close();
+        reader.close();
+
+        baos.flush();
+        byte[] pdfBytes = baos.toByteArray();
+
+        File carpeta = new File("acuerdos/acuerdo_" + idAnuncio + "-" + idUsuario);
+        carpeta.mkdirs();
+
+        File pdf = new File("acuerdos/acuerdo_" + idAnuncio + "-" + idUsuario + "/acuerdo_" + idAnuncio + "-" + idUsuario + ".pdf");
+        pdf.createNewFile();
+
+        try (FileOutputStream fos = new FileOutputStream(pdf)) {
+            fos.write(pdfBytes);
+        }
+
+        baos.close();
+
+        return pdfBytes;
     }
 }

@@ -18,6 +18,9 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
     @Query("select a from Anuncio a left join fetch a.usuariosGuardan where a.idAnuncio = ?1")
     Anuncio findByIdWithUsuariosGuardan(int idAnuncio);
 
+    @Query("select a from Anuncio a left join fetch a.valoresCaracteristicas vc left join fetch vc.caracteristica where a.idAnuncio = ?1")
+    Anuncio findByIdAnuncioWithValoresCaracteristicas(int idAnuncio);
+
     @EntityGraph(attributePaths = {
             "vendedor",
             "usuariosGuardan",

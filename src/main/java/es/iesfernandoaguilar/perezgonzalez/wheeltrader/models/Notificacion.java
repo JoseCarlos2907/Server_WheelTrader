@@ -29,6 +29,10 @@ public class Notificacion {
     @JoinColumn(name = "usuario_recibe_id")
     private Usuario usuarioRecibe;
 
+    @ManyToOne
+    @JoinColumn(name = "anuncio_id")
+    private Anuncio anuncio;
+
     // *-- Constructores --* //
     public Notificacion() {}
 

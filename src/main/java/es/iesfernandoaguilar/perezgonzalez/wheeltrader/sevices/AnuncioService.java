@@ -260,4 +260,8 @@ public class AnuncioService {
                 pageable
         );
     }
+
+    public Anuncio findByIdAnuncioWithValoresCaracteristicas(int idAnuncio){
+        return this.anuncioRepository.findByIdAnuncioWithValoresCaracteristicas(idAnuncio);
+    }
 }

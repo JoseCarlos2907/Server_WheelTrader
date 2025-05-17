@@ -24,6 +24,8 @@ public class NotificacionDTO {
 
     private UsuarioDTO usuarioRecibe;
 
+    private AnuncioDTO anuncio;
+
 
     // *-- Constructores --* //
     public NotificacionDTO() {}
@@ -86,6 +88,13 @@ public class NotificacionDTO {
         this.usuarioRecibe = usuarioRecibe;
     }
 
+    public AnuncioDTO getAnuncio() {
+        return anuncio;
+    }
+
+    public void setAnuncio(AnuncioDTO anuncio) {
+        this.anuncio = anuncio;
+    }
 
     // *-- Métodos --* //
     public void parse(Notificacion notificacion) {
