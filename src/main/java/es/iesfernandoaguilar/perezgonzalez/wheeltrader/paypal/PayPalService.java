@@ -10,6 +10,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Locale;
+import java.util.Map;
 
 public class PayPalService {
     public static boolean realizarPagoACliente(String accessToken, String correoVendedor, double cantidad) throws UnirestException, IOException {
@@ -43,7 +44,7 @@ public class PayPalService {
         }
     }
 
-    public static String realizarPagoABusiness(String accessToken, String correoComprador, double cantidad) throws Exception {
+    public static Map<String, Object> realizarPagoABusiness(String accessToken, String correoComprador, double cantidad) throws Exception {
         String orderJson = String.format(Locale.US, """
         {
             "intent": "CAPTURE",
@@ -85,10 +86,13 @@ public class PayPalService {
             }
         }
 
+        Map<String, Object> mapa = Map.of(
+                "url", approveUrl,
+                "response", response,
+                "orderId", orderId
+        );
         // Enviar el correo al usuario
-        return approveUrl;
-
-        // Comprobacion de si esta aprovada en otra peticion
+        return mapa;
     }
 
     public static boolean isOrderApproved(String orderId, String accessToken) throws Exception {

@@ -112,5 +112,5 @@ CAMBIAR_ESTADO_NOTIFICACION;idNotificacion;estado
 +Pago:
 USUARIO_PAGA;idComprador;idVendedor;cantPrecio
 ENVIA_URL_PAGO;urlPago
-OBTENER_ESTADO_PAGO
+OBTENER_ESTADO_PAGO;idNotificacion;cantPrecio
 ENVIA_ESTADO_PAGO;si/no/error

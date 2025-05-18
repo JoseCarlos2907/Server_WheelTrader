@@ -19,6 +19,8 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.paypal.PayPalService;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Mensaje;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Serializador;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +34,7 @@ import java.nio.file.StandardOpenOption;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class UsuarioHandler implements Runnable {
@@ -79,6 +82,7 @@ public class UsuarioHandler implements Runnable {
             String orderId = null;
             // El correo del vendedor al que le tengo que pasar el dinero
             String correoVendedor = null;
+            HttpResponse<String> response = null;
 
             while (!cierraSesion) {
                 String linea = dis.readUTF();
@@ -368,23 +372,63 @@ public class UsuarioHandler implements Runnable {
                     case "USUARIO_PAGA":
                         String correoComprador = this.usuarioService.findCorreoPPByIdUsuario(Long.valueOf(msgUsuario.getParams().get(0)));
                         correoVendedor = this.usuarioService.findCorreoPPByIdUsuario(Long.valueOf(msgUsuario.getParams().get(1)));
-                        String urlPago = PayPalService.realizarPagoABusiness(tokenPP, correoComprador, Double.valueOf(msgUsuario.getParams().get(2)));
+                        Map<String, Object> mapa = PayPalService.realizarPagoABusiness(tokenPP, correoComprador, Double.valueOf(msgUsuario.getParams().get(2)));
+
+                        response = (HttpResponse<String>) mapa.get("response");
+                        orderId = (String) mapa.get("orderId");
 
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_URL_PAGO");
 //                        msgRespuesta.addParam("http://google.com/");
-                        msgRespuesta.addParam(urlPago);
+                        msgRespuesta.addParam((String) mapa.get("url"));
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         dos.flush();
+
+                        System.out.println("Pago creado");
                         break;
 
                     case "OBTENER_ESTADO_PAGO":
-                        // TODO: Cuando esté validado tengo que hacer lo siguente
-                        // Avisar al usuario que esta pagando a que cambie de pantalla (con el "si")
-                        // Pagar al vendedor (entiendo que tengo guardado el correo de paypal del vendedor)
-                        // Asignar la notificacion desde la que vengo a respondida
-                        // TODO: Si da un codigo de error chungo devolver el dinero al comprador
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_ESTADO_PAGO");
+                        try{
+                            if(response.getStatus() == 201){
+                                if(PayPalService.isOrderApproved(orderId, tokenPP)){
+                                    System.out.println("Approved");
+                                    String captureUrl = "https://api-m.sandbox.paypal.com/v2/checkout/orders/" + orderId + "/capture";
+
+                                    HttpResponse<String> captureResponse = Unirest.post(captureUrl)
+                                            .header("Authorization", "Bearer " + tokenPP)
+                                            .header("Content-Type", "application/json")
+                                            .body("{}")
+                                            .asString();
+
+                                    if(captureResponse.getStatus() == 201) {
+                                        System.out.println("Pagado con exito");
+                                        PayPalService.realizarPagoACliente(tokenPP, correoVendedor, Double.valueOf(msgUsuario.getParams().get(1)));
+
+                                        this.notificacionService.actualizarEstadoNotificacion(Long.valueOf(msgUsuario.getParams().get(0)), EstadoNotificacion.RESPONDIDO);
+
+                                        msgRespuesta.addParam("si");
+                                    } else {
+                                        System.out.println("Ha dado otro codigo al capturar");
+                                        msgRespuesta.addParam("error");
+                                    }
+                                }else{
+                                    System.out.println("No approved");
+                                    msgRespuesta.addParam("no");
+                                }
+                            }else{
+                                System.out.println("El pago principal ha venido mal");
+                                msgRespuesta.addParam("error");
+                            }
+                        } catch (Exception e) {
+                            System.err.println(e.getMessage());
+                            msgRespuesta.addParam("error");
+                        }
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
                         break;
                 }
             }
