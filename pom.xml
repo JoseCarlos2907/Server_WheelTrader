@@ -93,6 +93,11 @@
             <artifactId>itext-pdfa</artifactId>
             <version>5.5.13.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.konghq</groupId>
+            <artifactId>unirest-java</artifactId>
+            <version>3.14.1</version>
+        </dependency>
     </dependencies>
 
     <build>

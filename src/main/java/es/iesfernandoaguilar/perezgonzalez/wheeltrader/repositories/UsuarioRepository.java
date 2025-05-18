@@ -67,4 +67,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     @Query("select u from Usuario u left join fetch u.notificacionesRecibidas nr left join fetch nr.usuarioEnvia left join fetch nr.anuncio where u.idUsuario = ?1")
     Usuario findByIdWithNotificacionesRecibidas(long idUsuario);
+
+    @Query("select u.correoPP from Usuario u where u.idUsuario = ?1")
+    String findCorreoPPByIdUsuario(long idUsuario);
 }

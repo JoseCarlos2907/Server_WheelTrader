@@ -80,4 +80,8 @@ public class UsuarioService {
     public Usuario findByIdWithNotificacionesRecibidas(long idUsuario){
         return this.usuarioRepository.findByIdWithNotificacionesRecibidas(idUsuario);
     }
+
+    public String findCorreoPPByIdUsuario(long idUsuario){
+        return this.usuarioRepository.findCorreoPPByIdUsuario(idUsuario);
+    }
 }

@@ -14,6 +14,8 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracterist
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoNotificacion;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.paypal.PayPalClient;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.paypal.PayPalService;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Mensaje;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Serializador;
@@ -70,6 +72,13 @@ public class UsuarioHandler implements Runnable {
         try {
             dos = new DataOutputStream(cliente.getOutputStream());
             dis = new DataInputStream(cliente.getInputStream());
+
+            // Token para pagos en PayPal
+            String tokenPP = PayPalClient.obtenerAccessToken();
+            // El id del pago como comprador en PayPal
+            String orderId = null;
+            // El correo del vendedor al que le tengo que pasar el dinero
+            String correoVendedor = null;
 
             while (!cierraSesion) {
                 String linea = dis.readUTF();
@@ -341,6 +350,9 @@ public class UsuarioHandler implements Runnable {
 
                         break;
 
+                    case "VENDEDOR_RECHAZA_COMPRA":
+                        break;
+
                     case "CAMBIAR_ESTADO_NOTIFICACION":
 
                         EstadoNotificacion estadoCambiado = null;
@@ -352,6 +364,28 @@ public class UsuarioHandler implements Runnable {
 
                         this.notificacionService.actualizarEstadoNotificacion(Long.valueOf(msgUsuario.getParams().get(0)), estadoCambiado);
                         break;
+
+                    case "USUARIO_PAGA":
+                        String correoComprador = this.usuarioService.findCorreoPPByIdUsuario(Long.valueOf(msgUsuario.getParams().get(0)));
+                        correoVendedor = this.usuarioService.findCorreoPPByIdUsuario(Long.valueOf(msgUsuario.getParams().get(1)));
+                        String urlPago = PayPalService.realizarPagoABusiness(tokenPP, correoComprador, Double.valueOf(msgUsuario.getParams().get(2)));
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_URL_PAGO");
+//                        msgRespuesta.addParam("http://google.com/");
+                        msgRespuesta.addParam(urlPago);
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+                        break;
+
+                    case "OBTENER_ESTADO_PAGO":
+                        // TODO: Cuando esté validado tengo que hacer lo siguente
+                        // Avisar al usuario que esta pagando a que cambie de pantalla (con el "si")
+                        // Pagar al vendedor (entiendo que tengo guardado el correo de paypal del vendedor)
+                        // Asignar la notificacion desde la que vengo a respondida
+                        // TODO: Si da un codigo de error chungo devolver el dinero al comprador
+                        break;
                 }
             }
 
@@ -360,6 +394,8 @@ public class UsuarioHandler implements Runnable {
         } catch (IOException e) {
             System.err.println(e.getMessage());
         } catch (DocumentException e) {
+            System.out.println(e.getMessage());
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
