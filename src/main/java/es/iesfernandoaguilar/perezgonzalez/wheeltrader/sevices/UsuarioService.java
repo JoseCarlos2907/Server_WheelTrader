@@ -1,6 +1,7 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices;
 
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Auxiliares.UsuarioReportadosModDTO;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.EstadoUsuario;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Notificacion;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
@@ -77,11 +78,12 @@ public class UsuarioService {
         return this.usuarioRepository.findUsuariosReportadosMod(cadena, pageable);
     }
 
-    public Usuario findByIdWithNotificacionesRecibidas(long idUsuario){
-        return this.usuarioRepository.findByIdWithNotificacionesRecibidas(idUsuario);
-    }
-
     public String findCorreoPPByIdUsuario(long idUsuario){
         return this.usuarioRepository.findCorreoPPByIdUsuario(idUsuario);
+    }
+
+    @Transactional
+    public void actualizarEstadoUsuario(long idUsuario, EstadoUsuario estado){
+        this.usuarioRepository.actualizarEstadoUsuario(idUsuario, estado);
     }
 }

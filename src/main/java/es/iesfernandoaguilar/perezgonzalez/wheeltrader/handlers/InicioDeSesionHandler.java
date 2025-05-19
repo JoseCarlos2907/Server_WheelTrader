@@ -70,7 +70,9 @@ public class InicioDeSesionHandler implements Runnable {
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("INICIA_SESION");
 
-                        if (usuario.isPresent() && (usuario.get().getNombreUsuario().equals(msgUsuario.getParams().get(0)) || usuario.get().getCorreo().equals(msgUsuario.getParams().get(0))) && usuario.get().getContrasenia().equals(msgUsuario.getParams().get(1))) {
+                        if(usuario.isPresent() && !usuario.get().estaActivo()){
+                            msgRespuesta.addParam("baneado");
+                        }else if (usuario.isPresent() && (usuario.get().getNombreUsuario().equals(msgUsuario.getParams().get(0)) || usuario.get().getCorreo().equals(msgUsuario.getParams().get(0))) && usuario.get().getContrasenia().equals(msgUsuario.getParams().get(1))) {
                             iniciaSesion = true;
 
                             msgRespuesta.addParam("si");

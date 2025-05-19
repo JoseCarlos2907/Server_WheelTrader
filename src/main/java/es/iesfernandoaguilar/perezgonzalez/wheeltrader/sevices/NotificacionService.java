@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class NotificacionService {
     @Autowired
@@ -21,6 +23,10 @@ public class NotificacionService {
     @Transactional
     public void crearNotificacion(long idUsuarioEnvia, long idAnuncio, long idUsuarioRecibe, EstadoNotificacion estado, String titulo, String mensaje, TipoNotificacion tipo){
         this.notificacionRepository.crearNotificacion(idUsuarioEnvia, idAnuncio, idUsuarioRecibe, estado, titulo, mensaje, tipo);
+    }
+
+    public List<Notificacion> obtenerNotificacionesByIdUsuario(long idUsuario){
+        return this.notificacionRepository.obtenerNotificacionesByIdUsuario(idUsuario);
     }
 
     @Transactional

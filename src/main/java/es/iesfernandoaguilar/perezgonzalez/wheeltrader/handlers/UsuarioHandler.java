@@ -8,10 +8,7 @@ import com.itextpdf.text.pdf.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Auxiliares.UsuarioReportadosModDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.*;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.EstadoAnuncio;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.EstadoNotificacion;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoNotificacion;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.paypal.PayPalClient;
@@ -263,7 +260,12 @@ public class UsuarioHandler implements Runnable {
 
                         break;
 
-                    case "OBTENER_ANUNCIOS_USUARIO":
+                    case "BANEAR_USUARIO":
+                        this.usuarioService.actualizarEstadoUsuario(Long.valueOf(msgUsuario.getParams().get(0)), EstadoUsuario.BANEADO);
+                        break;
+
+                    case "DESBANEAR_USUARIO":
+                        this.usuarioService.actualizarEstadoUsuario(Long.valueOf(msgUsuario.getParams().get(0)), EstadoUsuario.ACTIVO);
                         break;
 
                     case "REPORTAR_USUARIO":
@@ -351,10 +353,10 @@ public class UsuarioHandler implements Runnable {
                         dis.readFully(pdfConfirmado);
 
                         confirmarCompra(pdfConfirmado, Long.valueOf(msgUsuario.getParams().get(2)), Long.valueOf(msgUsuario.getParams().get(1)), Long.valueOf(msgUsuario.getParams().get(3)), Long.valueOf(msgUsuario.getParams().get(4)));
-
                         break;
 
                     case "VENDEDOR_RECHAZA_COMPRA":
+                        rechazarCompra(Long.valueOf(msgUsuario.getParams().get(1)), Long.valueOf(msgUsuario.getParams().get(0)), Long.valueOf(msgUsuario.getParams().get(2)), Long.valueOf(msgUsuario.getParams().get(3)));
                         break;
 
                     case "CAMBIAR_ESTADO_NOTIFICACION":
@@ -379,7 +381,6 @@ public class UsuarioHandler implements Runnable {
 
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_URL_PAGO");
-//                        msgRespuesta.addParam("http://google.com/");
                         msgRespuesta.addParam((String) mapa.get("url"));
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
@@ -686,18 +687,16 @@ public class UsuarioHandler implements Runnable {
                 break;
 
             case "Guardados":
+                FiltroPorNombreUsuarioDTO filtroPorNombreUsuarioDTO = mapper.readValue(filtroJSON, FiltroPorNombreUsuarioDTO.class);
+                Pageable pageablePorNombreUsuario = PageRequest.of(filtroPorNombreUsuarioDTO.getPagina(), filtroPorNombreUsuarioDTO.getCantidadPorPagina());
 
-                FiltroGuardadosDTO filtroGuardadosDTO  = mapper.readValue(filtroJSON, FiltroGuardadosDTO.class);
-
-                Pageable pageableGuardados = PageRequest.of(filtroGuardadosDTO.getPagina(), filtroGuardadosDTO.getCantidadPorPagina());
-
-                anunciosEncontrados = this.anuncioService.findAnunciosGuardadosByNombreUsuario(filtroGuardadosDTO.getNombreUsuario(), pageableGuardados);
-
+                anunciosEncontrados = this.anuncioService.findAnunciosGuardadosByNombreUsuario(filtroPorNombreUsuarioDTO.getNombreUsuario(), pageablePorNombreUsuario);
                 break;
 
+            case "PerfilUsuario":
             case "Publicados":
 
-                FiltroPublicadosDTO filtroPublicadosDTO = mapper.readValue(filtroJSON, FiltroPublicadosDTO.class);
+                FiltroPorNombreUsuarioDTO filtroPublicadosDTO = mapper.readValue(filtroJSON, FiltroPorNombreUsuarioDTO.class);
 
                 Pageable pageablePublicados = PageRequest.of(filtroPublicadosDTO.getPagina(), filtroPublicadosDTO.getCantidadPorPagina());
 
@@ -977,10 +976,10 @@ public class UsuarioHandler implements Runnable {
     }
 
     public List<NotificacionDTO> obtenerNotificaciones(FiltroNotificaciones filtro){
-        Usuario usuario = this.usuarioService.findByIdWithNotificacionesRecibidas(filtro.getIdUsuario());
+        List<Notificacion> notificaciones = this.notificacionService.obtenerNotificacionesByIdUsuario(filtro.getIdUsuario());
 
         List<NotificacionDTO> notificacionesDTO = new ArrayList<>();
-        for (Notificacion notificacion: usuario.getNotificacionesRecibidas()){
+        for (Notificacion notificacion: notificaciones){
             NotificacionDTO notificacionDTO = new NotificacionDTO();
             notificacionDTO.parse(notificacion);
 
@@ -1050,5 +1049,38 @@ public class UsuarioHandler implements Runnable {
 
         this.notificacionService.actualizarEstadoNotificacion(idNotificacion, EstadoNotificacion.RESPONDIDO);
         this.anuncioService.actualizarEstadoAnuncio(idAnuncio, EstadoAnuncio.VENDIDO);
+    }
+
+    public void rechazarCompra(long idAnuncio, long idUsuario, long idVendedor, long idNotificacion) throws IOException {
+        Path pathAcuerdo = Paths.get("acuerdos/acuerdo_" + idAnuncio + "-" + idUsuario + "/acuerdo_" + idAnuncio + "-" + idUsuario + ".pdf");
+        Files.deleteIfExists(pathAcuerdo);
+        Path pathCarpetaAcuerdo = Paths.get("acuerdos/acuerdo_" + idAnuncio + "-" + idUsuario);
+        Files.deleteIfExists(pathCarpetaAcuerdo);
+
+        Anuncio anuncio = this.anuncioService.findByIdAnuncioWithValoresCaracteristicas(idAnuncio);
+        Usuario vendedor = this.usuarioService.findById(idVendedor);
+
+        String marca = "";
+        String modelo = "";
+        for (ValorCaracteristica vc: anuncio.getValoresCaracteristicas()){
+            if(vc.getCaracteristica().getNombre().contains("Marca")){
+                marca = vc.getValor();
+            }else if (vc.getCaracteristica().getNombre().contains("Modelo")){
+                modelo = vc.getValor();
+            }
+        }
+
+        this.notificacionService.crearNotificacion(
+                idVendedor,
+                idAnuncio,
+                idUsuario,
+                EstadoNotificacion.NO_LEIDO,
+                "Oferta rechazada",
+                "El usuario" + vendedor.getNombreUsuario() + " ha rechazado la oferta que hiciste sobre el vehículo " + marca + " " + modelo + ". El documento de acuerdo se ha borrado del servidor por seguridad",
+                TipoNotificacion.OFERTA_RECHAZADA
+        );
+
+        this.notificacionService.actualizarEstadoNotificacion(idNotificacion, EstadoNotificacion.RESPONDIDO);
+        this.anuncioService.actualizarEstadoAnuncio(idAnuncio, EstadoAnuncio.EN_VENTA);
     }
 }

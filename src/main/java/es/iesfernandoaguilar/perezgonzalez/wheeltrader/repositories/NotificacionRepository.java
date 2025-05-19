@@ -27,6 +27,9 @@ public interface NotificacionRepository extends JpaRepository<Notificacion, Long
             @Param("tipo") TipoNotificacion tipo
     );
 
+    @Query("select n from Notificacion n left join n.usuarioRecibe u where u.idUsuario = ?1 order by n.idNotificacion desc")
+    List<Notificacion> obtenerNotificacionesByIdUsuario(long idUsuario);
+
     @Modifying
     @Query(value = "update notificaciones set estado = ?2 where id_notificacion = ?1", nativeQuery = true)
     void actualizarEstadoNotificacion(long idNotificacion, EstadoNotificacion estado);

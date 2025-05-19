@@ -5,7 +5,7 @@
 OBTENER_SALT;nombreUsuario/correo (Usuario -> Servidor)
 ENVIAR_SALT;salt (Servidor -> Usuario)
 INICIAR_SESION;usuario;contra (Usuario -> Servidor)
-INICIA_SESION;si/no;{JSON_DATOS_USUARIO} (Servidor -> Usuario)
+INICIA_SESION;si/no/baneado;{JSON_DATOS_USUARIO} (Servidor -> Usuario)
 
 +Registro:
 COMPROBAR_DNI;dni (Usuario -> Servidor)
@@ -89,6 +89,8 @@ ENVIA_ANUNCIOS_USUARIO;{JSON_LISTA_ANUNCIOS};cantAnuncios (Servidor -> Usuario)
 +Reportar usuario:
 REPORTAR_USUARIO;{JSON_REPORTE}
 REPORTE_REALIZADO;si/no
+BANEAR_USUARIO;idUsuario
+DESBANEAR_USUARIO;idUsuario
 
 +Compra:
 OBTENER_PDF_ACUERDO;idUsuarioComprador;idAnuncio;tipoAnuncio
@@ -99,6 +101,7 @@ COMPRADOR_OFRECE_COMPRA;longitudPDF;idUsuario;idAnuncio;idVendedor
     bytesPDF
 VENDEDOR_CONFIRMA_COMPRA;longitudPDF;idUsuario;idAnuncio;idVendedor;idNotificacion
     bytesPDF
+VENDEDOR_RECHAZA_COMPRA;idUsuario;idAnuncio;idVendedor;idNotificacion
 
 OBTENER_PDF_ACUERDO_VENDEDOR;idUsuarioComprador;idAnuncio
 ENVIA_PDF_ACUERDO_VENDEDOR;longitudPDF;

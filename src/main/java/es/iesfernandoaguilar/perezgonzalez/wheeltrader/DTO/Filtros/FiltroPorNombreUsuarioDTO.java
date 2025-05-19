@@ -1,14 +1,14 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros;
 
-public class FiltroPublicadosDTO {
+public class FiltroPorNombreUsuarioDTO {
     private String nombreUsuario;
     private int pagina;
     private int cantidadPorPagina;
     private String tipoFiltro;
 
-    public FiltroPublicadosDTO() {}
+    public FiltroPorNombreUsuarioDTO() {}
 
-    public FiltroPublicadosDTO(String nombreUsuario, int pagina, int cantidadPorPagina) {
+    public FiltroPorNombreUsuarioDTO(String nombreUsuario, int pagina, int cantidadPorPagina) {
         this.nombreUsuario = nombreUsuario;
         this.pagina = pagina;
         this.cantidadPorPagina = cantidadPorPagina;
@@ -45,5 +45,4 @@ public class FiltroPublicadosDTO {
     public void setTipoFiltro(String tipoFiltro) {
         this.tipoFiltro = tipoFiltro;
     }
-
 }
