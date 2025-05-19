@@ -755,4 +755,20 @@ public class WheelTraderApplication {
             }
         };
     }*/
+
+    // Prueba obtener notificaciones de un usuario (me sacan null)
+    /*@Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            NotificacionService notificacionService = context.getBean(NotificacionService.class);
+
+            Pageable pageable = PageRequest.of(0, 10);
+
+            List<Notificacion> notificaciones = notificacionService.obtenerNotificacionesByIdUsuario(2, pageable);
+
+            for (Notificacion notificacion : notificaciones) {
+                System.out.println(notificacion.getTitulo());
+            }
+        };
+    }*/
 }

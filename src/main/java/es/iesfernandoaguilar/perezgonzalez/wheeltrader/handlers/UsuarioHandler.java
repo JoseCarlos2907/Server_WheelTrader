@@ -294,6 +294,7 @@ public class UsuarioHandler implements Runnable {
 
                         String notificacionesJSON = mapper.writeValueAsString(notificaciones);
 
+                        System.out.println(notificacionesJSON);
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_NOTIFICACIONES");
                         msgRespuesta.addParam(notificacionesJSON);
@@ -301,8 +302,6 @@ public class UsuarioHandler implements Runnable {
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         dos.flush();
-
-                        System.out.println("Se envia todo");
                         break;
 
                     case "OBTENER_PDF_ACUERDO":
@@ -984,7 +983,9 @@ public class UsuarioHandler implements Runnable {
     }
 
     public List<NotificacionDTO> obtenerNotificaciones(FiltroNotificaciones filtro){
-        List<Notificacion> notificaciones = this.notificacionService.obtenerNotificacionesByIdUsuario(filtro.getIdUsuario());
+        Pageable pageable = PageRequest.of(filtro.getPagina(), filtro.getCantidadPorPagina());
+
+        List<Notificacion> notificaciones = this.notificacionService.obtenerNotificacionesByIdUsuario(filtro.getIdUsuario(), pageable);
 
         List<NotificacionDTO> notificacionesDTO = new ArrayList<>();
         for (Notificacion notificacion: notificaciones){

@@ -6,6 +6,7 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Notificacion;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.NotificacionRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Service;
 
@@ -25,8 +26,8 @@ public class NotificacionService {
         this.notificacionRepository.crearNotificacion(idUsuarioEnvia, idAnuncio, idUsuarioRecibe, estado, titulo, mensaje, tipo);
     }
 
-    public List<Notificacion> obtenerNotificacionesByIdUsuario(long idUsuario){
-        return this.notificacionRepository.obtenerNotificacionesByIdUsuario(idUsuario);
+    public List<Notificacion> obtenerNotificacionesByIdUsuario(long idUsuario, Pageable pageable){
+        return this.notificacionRepository.obtenerNotificacionesByIdUsuario(idUsuario, pageable);
     }
 
     @Transactional

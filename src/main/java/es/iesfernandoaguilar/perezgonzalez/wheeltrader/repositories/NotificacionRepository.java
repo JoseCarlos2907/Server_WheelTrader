@@ -3,6 +3,7 @@ package es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.EstadoNotificacion;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoNotificacion;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Notificacion;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -28,7 +29,7 @@ public interface NotificacionRepository extends JpaRepository<Notificacion, Long
     );
 
     @Query("select n from Notificacion n left join n.usuarioRecibe u where u.idUsuario = ?1 order by n.idNotificacion desc")
-    List<Notificacion> obtenerNotificacionesByIdUsuario(long idUsuario);
+    List<Notificacion> obtenerNotificacionesByIdUsuario(long idUsuario, Pageable pageable);
 
     @Modifying
     @Query(value = "update notificaciones set estado = ?2 where id_notificacion = ?1", nativeQuery = true)
