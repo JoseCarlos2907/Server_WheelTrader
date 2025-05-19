@@ -109,7 +109,7 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
     @Query("select a from Anuncio a join a.usuariosGuardan u where u.nombreUsuario = ?1 order by a.fechaPublicacion desc")
     List<Anuncio> findAnunciosGuardadosByNombreUsuario(String nombreUsuario, Pageable pageable);
 
-    @Query("select a from Anuncio a where a.vendedor.nombreUsuario = ?1 order by a.fechaPublicacion desc")
+    @Query("select a from Anuncio a left join fetch a.vendedor v where v.nombreUsuario = ?1 order by a.fechaPublicacion desc")
     List<Anuncio> findAnunciosPublicadosByNombreUsuario(String nombreUsuario, Pageable pageable);
 
     @EntityGraph(attributePaths = {

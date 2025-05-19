@@ -431,6 +431,14 @@ public class UsuarioHandler implements Runnable {
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         dos.flush();
                         break;
+
+                    case "CANCELAR_ANUNCIO":
+                        this.anuncioService.actualizarEstadoAnuncio(Long.valueOf(msgUsuario.getParams().get(0)), EstadoAnuncio.CANCELADO);
+                        break;
+
+                    case "REANUDAR_ANUNCIO":
+                        this.anuncioService.actualizarEstadoAnuncio(Long.valueOf(msgUsuario.getParams().get(0)), EstadoAnuncio.EN_VENTA);
+                        break;
                 }
             }
 

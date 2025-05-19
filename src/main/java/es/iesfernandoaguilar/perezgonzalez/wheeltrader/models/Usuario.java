@@ -191,7 +191,7 @@ public class Usuario {
     }
 
     public boolean estaActivo() {
-        return estado == EstadoUsuario.ACTIVO;
+        return estado.name().equals(EstadoUsuario.ACTIVO.name());
     }
 
     public void setEstado(EstadoUsuario estado) {
