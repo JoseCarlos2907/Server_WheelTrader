@@ -995,11 +995,15 @@ public class UsuarioHandler implements Runnable {
             AnuncioDTO anuncioDTO = new AnuncioDTO();
             anuncioDTO.parse(notificacion.getAnuncio());
 
-            UsuarioDTO usuarioDTO = new UsuarioDTO();
-            usuarioDTO.parse(notificacion.getUsuarioEnvia());
+            UsuarioDTO usuarioDTOEnvia = new UsuarioDTO();
+            usuarioDTOEnvia.parse(notificacion.getUsuarioEnvia());
+
+            UsuarioDTO usuarioDTORecibe = new UsuarioDTO();
+            usuarioDTORecibe.parse(notificacion.getUsuarioRecibe());
 
             notificacionDTO.setAnuncio(anuncioDTO);
-            notificacionDTO.setUsuarioEnvia(usuarioDTO);
+            notificacionDTO.setUsuarioEnvia(usuarioDTOEnvia);
+            notificacionDTO.setUsuarioRecibe(usuarioDTORecibe);
 
             notificacionesDTO.add(notificacionDTO);
         }

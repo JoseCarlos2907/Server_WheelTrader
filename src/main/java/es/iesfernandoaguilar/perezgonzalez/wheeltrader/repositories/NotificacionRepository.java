@@ -28,7 +28,7 @@ public interface NotificacionRepository extends JpaRepository<Notificacion, Long
             @Param("tipo") TipoNotificacion tipo
     );
 
-    @Query("select n from Notificacion n left join n.usuarioRecibe u where u.idUsuario = ?1 order by n.idNotificacion desc")
+    @Query("select n from Notificacion n left join fetch n.usuarioRecibe u left join n.usuarioEnvia where u.idUsuario = ?1 order by n.idNotificacion desc")
     List<Notificacion> obtenerNotificacionesByIdUsuario(long idUsuario, Pageable pageable);
 
     @Modifying

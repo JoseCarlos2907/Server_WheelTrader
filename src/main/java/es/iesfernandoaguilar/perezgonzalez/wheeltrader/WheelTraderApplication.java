@@ -1,9 +1,14 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader;
 
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.AnuncioDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.FiltroTodoDTO;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.NotificacionDTO;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.UsuarioDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.TipoDatoCaracteristica;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.paypal.PayPalClient;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.paypal.PayPalService;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.SecureUtils;
@@ -15,6 +20,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -768,6 +774,51 @@ public class WheelTraderApplication {
 
             for (Notificacion notificacion : notificaciones) {
                 System.out.println(notificacion.getTitulo());
+            }
+        };
+    }*/
+
+    // Prueba para enviar dinero al vendedor desde la cuenta de empresa
+    /*@Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            String token = PayPalClient.obtenerAccessToken();
+            PayPalService.realizarPagoACliente(token, "vendedor-WheelTrader@personal.example.com",4000);
+        };
+    }*/
+
+    // Notificaciones
+    /*@Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            NotificacionService notificacionService = context.getBean(NotificacionService.class);
+            Pageable pageable = PageRequest.of(0, 3);
+            List<Notificacion> notificaciones = notificacionService.obtenerNotificacionesByIdUsuario(2, pageable);
+
+            List<NotificacionDTO> notificacionesDTO = new ArrayList<>();
+            for (Notificacion notificacion: notificaciones){
+                NotificacionDTO notificacionDTO = new NotificacionDTO();
+                notificacionDTO.parse(notificacion);
+
+                AnuncioDTO anuncioDTO = new AnuncioDTO();
+                anuncioDTO.parse(notificacion.getAnuncio());
+
+                UsuarioDTO usuarioDTO = new UsuarioDTO();
+                usuarioDTO.parse(notificacion.getUsuarioEnvia());
+
+                UsuarioDTO usuarioDTO2 = new UsuarioDTO();
+                usuarioDTO2.parse(notificacion.getUsuarioRecibe());
+
+                notificacionDTO.setAnuncio(anuncioDTO);
+                notificacionDTO.setUsuarioEnvia(usuarioDTO);
+                notificacionDTO.setUsuarioRecibe(usuarioDTO2);
+
+                notificacionesDTO.add(notificacionDTO);
+            }
+
+            for (NotificacionDTO notificacion : notificacionesDTO) {
+                System.out.println("Envia: " + notificacion.getUsuarioEnvia());
+                System.out.println("Recibe: " + notificacion.getUsuarioRecibe());
             }
         };
     }*/

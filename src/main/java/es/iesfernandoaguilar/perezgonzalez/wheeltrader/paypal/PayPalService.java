@@ -31,6 +31,8 @@ public class PayPalService {
             }
         """, System.currentTimeMillis(), correoVendedor, cantidad);
 
+        System.out.println(jsonPayload);
+
         HttpResponse<String> response = Unirest.post(PayPalClient.PAYPAL_API_URL + "/v1/payments/payouts")
                 .header("Authorization", "Bearer " + accessToken)
                 .header("Content-Type", "application/json")
