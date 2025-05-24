@@ -86,4 +86,9 @@ public class UsuarioService {
     public void actualizarEstadoUsuario(long idUsuario, EstadoUsuario estado){
         this.usuarioRepository.actualizarEstadoUsuario(idUsuario, estado);
     }
+
+    @Transactional
+    public void actualizarContraseniaUsuario(String nombreUsuario, String contrasena){
+        this.usuarioRepository.actualizarContrasenia(nombreUsuario, contrasena);
+    }
 }

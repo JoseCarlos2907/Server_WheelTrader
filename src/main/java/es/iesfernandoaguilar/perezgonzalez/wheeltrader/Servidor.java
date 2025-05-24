@@ -11,7 +11,10 @@ import org.springframework.context.annotation.Bean;
 
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -72,7 +75,7 @@ public class Servidor implements Runnable {
     }
 
     public void usuarioIniciaSesion(Long usuarioId, Socket socket, ApplicationContext context) {
-        UsuarioHandler uHandler = new UsuarioHandler(socket, context);
+        UsuarioHandler uHandler = new UsuarioHandler(socket, context, this);
         this.usuariosHandlers.put(usuarioId, uHandler);
         this.handlersExecutor.submit(uHandler);
     }
@@ -118,6 +121,8 @@ public class Servidor implements Runnable {
 
         String texto = "Hola %s,%n%n" +
                 "¡Gracias por registrarte en WheelTrader! Esperamos que disfrutes de la experiencia y que encuentres lo que buscas.%n%n"+
+                "A partir de ahora si encuentras un vehículo o empiezas a negociar gracias a nuestra aplicación, deberá seguir el procedimiento de compra desde la aplicación," +
+                "en caso de que se detecte actividad inusual, será completamente baneado de la plataforma y tendrá consecuencias legales." +
                 "¡Bienvenido a WheelTrader!%n%n"+
                 "Saludos,%n"+
                 "El equipo de WheelTrader%n";
@@ -144,6 +149,22 @@ public class Servidor implements Runnable {
         System.out.println("Correo recuperación contraseña enviado con éxito.");
     }
 
+    public void enviarCorreoCompra(String correo, String nombreCompleto, String rutaPdf){
+        String asunto = "Confirmación de compra en WheelTrader";
+
+        String texto = "Hola %s,%n%n" +
+                "Gracias por usar nuestra aplicación para comprar/vender vehículos.%n"+
+                "Adjunto a este correo encontrará una copia del documento de su último acuerdo.%n"+
+                "%n%n" +
+                "Saludos,%n"+
+                "El equipo de WheelTrader%n";
+        String contenido = String.format(texto, nombreCompleto);
+
+        this.enviarCorreoPDF(asunto, contenido, correo, rutaPdf);
+
+        System.out.println("Correo confirmación compra enviado con éxito.");
+    }
+
     // Este código se repite cada vez que se envía un correo, entonces lo tengo en una función aparte para no repetir código
     private void enviarCorreo(String asunto, String contenido, String correo){
         // Con esto compruebo las credenciales del correo de la aplicación y creo una sesión para posteriormente crear un mensaje
@@ -160,13 +181,63 @@ public class Servidor implements Runnable {
             msg.setFrom(new InternetAddress(correoApp));
             msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(correo));
             msg.setSubject(asunto);
-            msg.setText(contenido);
 
+            // Creo un cuerpo con varias partes
+            Multipart multipart = new MimeMultipart();
+
+            // Creo la parte del texto y la añado al cuerpo
+            MimeBodyPart parteTexto = new MimeBodyPart();
+            parteTexto.setText(contenido);
+            multipart.addBodyPart(parteTexto);
+
+            // Asigno el cuerpo con muchas partes como contenido del mensaje
+            msg.setContent(multipart);
 
             // Envío el correo
             Transport.send(msg);
         } catch (MessagingException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void enviarCorreoPDF(String asunto, String contenido, String correo, String rutaPDF){
+        // Con esto compruebo las credenciales del correo de la aplicación y creo una sesión para posteriormente crear un mensaje
+        Session session = Session.getInstance(this.correoProperties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(correoApp, contraseniaApp);
+            }
+        });
+
+        try {
+            // Creo el mensaje
+            Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress(correoApp));
+            msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(correo));
+            msg.setSubject(asunto);
+
+            // Creo un cuerpo con varias partes
+            Multipart multipart = new MimeMultipart();
+
+            // Creo la parte del texto y la añado al cuerpo
+            MimeBodyPart parteTexto = new MimeBodyPart();
+            parteTexto.setText(contenido);
+            multipart.addBodyPart(parteTexto);
+
+            // En caso de que sea con archivo adjunto creo su parte correspondiente y la añado al cuerpo
+            MimeBodyPart partePDF = new MimeBodyPart();
+            partePDF.attachFile(rutaPDF);
+            multipart.addBodyPart(partePDF);
+
+            // Asigno el cuerpo con muchas partes como contenido del mensaje
+            msg.setContent(multipart);
+
+            // Envío el correo
+            Transport.send(msg);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 

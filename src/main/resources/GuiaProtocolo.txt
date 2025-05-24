@@ -68,15 +68,15 @@ ENVIA_IMAGENES;cantImagenes (Servidor -> Usuario)
     imagenN
 
 +Home del Moderador:
-OBTENER_REPORTES_MOD;{FILTRO_USUARIOSCONREPORTES}
-ENVIA_REPORTES_MOD;{OBJETOS_USUARIOCONREPORTES}
+OBTENER_REPORTES_MOD;{FILTRO_USUARIOSCONREPORTES} (Usuario -> Servidor)
+ENVIA_REPORTES_MOD;{OBJETOS_USUARIOCONREPORTES} (Servidor -> Usuario)
 
 +Últimos reportes Moderador:
-OBTENER_ULTIMOS_REPORTES_MOD;{FILTRO_REPORTES}
-ENVIA_ULTIMOS_REPORTES_MOD;{OBJETOS_REPORTES}
+OBTENER_ULTIMOS_REPORTES_MOD;{FILTRO_REPORTES} (Usuario -> Servidor)
+ENVIA_ULTIMOS_REPORTES_MOD;{OBJETOS_REPORTES} (Servidor -> Usuario)
 
 +Perfil usuario:
-OBTENER_ANUNCIOS_USUARIO;{JSON_FILTRO_ANUNIOS_USUARIO}
+OBTENER_ANUNCIOS_USUARIO;{JSON_FILTRO_ANUNIOS_USUARIO} (Usuario -> Servidor)
 ENVIA_ANUNCIOS_USUARIO;{JSON_LISTA_ANUNCIOS};cantAnuncios (Servidor -> Usuario)
     longitudImg1
     imagenAnuncio1
@@ -87,33 +87,39 @@ ENVIA_ANUNCIOS_USUARIO;{JSON_LISTA_ANUNCIOS};cantAnuncios (Servidor -> Usuario)
     imagenAnuncioN
 
 +Reportar usuario:
-REPORTAR_USUARIO;{JSON_REPORTE}
-REPORTE_REALIZADO;si/no
-BANEAR_USUARIO;idUsuario
-DESBANEAR_USUARIO;idUsuario
+REPORTAR_USUARIO;{JSON_REPORTE} (Usuario -> Servidor)
+REPORTE_REALIZADO;si/no (Servidor -> Usuario)
+BANEAR_USUARIO;idUsuario (Usuario -> Servidor)
+DESBANEAR_USUARIO;idUsuario (Servidor -> Usuario)
 
 +Compra:
-OBTENER_PDF_ACUERDO;idUsuarioComprador;idAnuncio;tipoAnuncio
-ENVIA_PDF_ACUERDO;longitudPDF
+OBTENER_PDF_ACUERDO;idUsuarioComprador;idAnuncio;tipoAnuncio (Usuario -> Servidor)
+ENVIA_PDF_ACUERDO;longitudPDF (Servidor -> Usuario)
     bytesPDF
 
-COMPRADOR_OFRECE_COMPRA;longitudPDF;idUsuario;idAnuncio;idVendedor
+COMPRADOR_OFRECE_COMPRA;longitudPDF;idUsuario;idAnuncio;idVendedor (Usuario -> Servidor)
     bytesPDF
-VENDEDOR_CONFIRMA_COMPRA;longitudPDF;idUsuario;idAnuncio;idVendedor;idNotificacion
+VENDEDOR_CONFIRMA_COMPRA;longitudPDF;idUsuario;idAnuncio;idVendedor;idNotificacion (Usuario -> Servidor)
     bytesPDF
-VENDEDOR_RECHAZA_COMPRA;idUsuario;idAnuncio;idVendedor;idNotificacion
+VENDEDOR_RECHAZA_COMPRA;idUsuario;idAnuncio;idVendedor;idNotificacion (Usuario -> Servidor)
 
-OBTENER_PDF_ACUERDO_VENDEDOR;idUsuarioComprador;idAnuncio
-ENVIA_PDF_ACUERDO_VENDEDOR;longitudPDF;
+OBTENER_PDF_ACUERDO_VENDEDOR;idUsuarioComprador;idAnuncio (Usuario -> Servidor)
+ENVIA_PDF_ACUERDO_VENDEDOR;longitudPDF; (Servidor -> Usuario)
     bytesPDF
 
 +Notificaciones:
-OBTENER_NOTIFICACIONES;{JSON_FILTRO_NOTIS};si/no
-ENVIA_NOTIFICACIONES;{JSON_NOTIFICACIONES};si/no
-CAMBIAR_ESTADO_NOTIFICACION;idNotificacion;estado
+OBTENER_NOTIFICACIONES;{JSON_FILTRO_NOTIS};si/no (Usuario -> Servidor)
+ENVIA_NOTIFICACIONES;{JSON_NOTIFICACIONES};si/no (Usuario -> Servidor)
+CAMBIAR_ESTADO_NOTIFICACION;idNotificacion;estado (Usuario -> Servidor)
 
 +Pago:
-USUARIO_PAGA;idComprador;idVendedor;cantPrecio
-ENVIA_URL_PAGO;urlPago
-OBTENER_ESTADO_PAGO;idNotificacion;cantPrecio
-ENVIA_ESTADO_PAGO;si/no/error
+USUARIO_PAGA;idComprador;idVendedor;cantPrecio (Usuario -> Servidor)
+ENVIA_URL_PAGO;urlPago (Servidor -> Usuario)
+OBTENER_ESTADO_PAGO;idNotificacion;cantPrecio (Usuario -> Servidor)
+ENVIA_ESTADO_PAGO;si/no/error (Servidor -> Usuario)
+
++Cambiar contraseña
+OBTENER_SALT_REINICIO;nombreUsuario (Usuario -> Servidor)
+ENVIA_SALT_REINICIO;salt (Servidor -> Usuario)
+REINICIAR_CONTRASENIA;nombreUsuario;hash (Usuario -> Servidor)
+CONTRASENIA_REINICIADA (Servidor -> Usuario)

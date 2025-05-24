@@ -34,4 +34,7 @@ public interface NotificacionRepository extends JpaRepository<Notificacion, Long
     @Modifying
     @Query(value = "update notificaciones set estado = ?2 where id_notificacion = ?1", nativeQuery = true)
     void actualizarEstadoNotificacion(long idNotificacion, EstadoNotificacion estado);
+
+    @Query("select n from Notificacion n left join fetch n.anuncio where n.idNotificacion = ?1")
+    Notificacion findByIdNotificacionWithAnuncio(long idNotificacion);
 }

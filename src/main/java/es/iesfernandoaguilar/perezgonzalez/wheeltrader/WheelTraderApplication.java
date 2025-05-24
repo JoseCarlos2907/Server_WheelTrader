@@ -20,10 +20,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.List;
-import java.util.Optional;
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.IOException;
+import java.util.*;
 
 @SpringBootApplication
 public class WheelTraderApplication {
@@ -819,6 +822,53 @@ public class WheelTraderApplication {
             for (NotificacionDTO notificacion : notificacionesDTO) {
                 System.out.println("Envia: " + notificacion.getUsuarioEnvia());
                 System.out.println("Recibe: " + notificacion.getUsuarioRecibe());
+            }
+        };
+    }*/
+
+    // Prueba de mandar correo con documento
+    /*@Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            final String correoApp = "wheeltraderapp@gmail.com";
+            final String contraseniaApp = "hrwd pvon rhrz yzoj";
+
+            Properties prop = new Properties();
+            prop.put("mail.smtp.host", "smtp.gmail.com");
+            prop.put("mail.smtp.port", "587");
+            prop.put("mail.smtp.auth", "true");
+            prop.put("mail.smtp.starttls.enable", "true");
+
+            Session session = Session.getInstance(prop, new Authenticator() {
+                @Override
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(correoApp, contraseniaApp);
+                }
+            });
+
+            try {
+                Message msg = new MimeMessage(session);
+                msg.setFrom(new InternetAddress(correoApp));
+                msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse("prueba1portalgp@gmail.com"));
+                msg.setSubject("Asunto prueba con documento");
+
+                Multipart multipart = new MimeMultipart();
+
+                MimeBodyPart parteTexto = new MimeBodyPart();
+                parteTexto.setText("Contenido prueba con documento");
+                multipart.addBodyPart(parteTexto);
+
+                MimeBodyPart partePDF = new MimeBodyPart();
+                partePDF.attachFile("acuerdos/acuerdo_11-3/acuerdo_11-3.pdf");
+                multipart.addBodyPart(partePDF);
+
+                msg.setContent(multipart);
+
+                Transport.send(msg);
+            } catch (MessagingException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
         };
     }*/

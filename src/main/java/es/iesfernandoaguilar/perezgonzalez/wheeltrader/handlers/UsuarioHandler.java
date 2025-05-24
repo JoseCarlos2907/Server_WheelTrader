@@ -8,6 +8,7 @@ import com.itextpdf.text.pdf.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Auxiliares.UsuarioReportadosModDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Filtros.*;
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.Servidor;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
@@ -38,6 +39,7 @@ public class UsuarioHandler implements Runnable {
 
     private Socket cliente;
     private ApplicationContext context;
+    private Servidor server;
 
     private CaracteristicaService caracteristicaService;
     ImagenService imagenService;
@@ -48,9 +50,10 @@ public class UsuarioHandler implements Runnable {
     ReporteService reporteService;
     NotificacionService notificacionService;
 
-    public UsuarioHandler(Socket cliente, ApplicationContext context) {
+    public UsuarioHandler(Socket cliente, ApplicationContext context, Servidor server) {
         this.cliente = cliente;
         this.context = context;
+        this.server = server;
     }
 
     @Override
@@ -78,7 +81,8 @@ public class UsuarioHandler implements Runnable {
             // El id del pago como comprador en PayPal
             String orderId = null;
             // El correo del vendedor al que le tengo que pasar el dinero
-            String correoVendedor = null;
+            Usuario vendedorCompra = null;
+            Usuario compradorCompra = null;
             HttpResponse<String> response = null;
 
             while (!cierraSesion) {
@@ -371,9 +375,9 @@ public class UsuarioHandler implements Runnable {
                         break;
 
                     case "USUARIO_PAGA":
-                        String correoComprador = this.usuarioService.findCorreoPPByIdUsuario(Long.valueOf(msgUsuario.getParams().get(0)));
-                        correoVendedor = this.usuarioService.findCorreoPPByIdUsuario(Long.valueOf(msgUsuario.getParams().get(1)));
-                        Map<String, Object> mapa = PayPalService.realizarPagoABusiness(tokenPP, correoComprador, Double.valueOf(msgUsuario.getParams().get(2)));
+                        compradorCompra = this.usuarioService.findById(Long.valueOf(msgUsuario.getParams().get(0)));
+                        vendedorCompra = this.usuarioService.findById(Long.valueOf(msgUsuario.getParams().get(1)));
+                        Map<String, Object> mapa = PayPalService.realizarPagoABusiness(tokenPP, compradorCompra.getCorreoPP(), Double.valueOf(msgUsuario.getParams().get(2)));
 
                         response = (HttpResponse<String>) mapa.get("response");
                         orderId = (String) mapa.get("orderId");
@@ -381,6 +385,7 @@ public class UsuarioHandler implements Runnable {
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_URL_PAGO");
                         msgRespuesta.addParam((String) mapa.get("url"));
+                        // msgRespuesta.addParam("https://google.com");
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         dos.flush();
@@ -405,11 +410,21 @@ public class UsuarioHandler implements Runnable {
 
                                     if(captureResponse.getStatus() == 201) {
                                         System.out.println("Pagado con exito");
-                                        PayPalService.realizarPagoACliente(tokenPP, correoVendedor, Double.valueOf(msgUsuario.getParams().get(1)));
+                                        PayPalService.realizarPagoACliente(tokenPP, vendedorCompra.getCorreoPP(), Double.valueOf(msgUsuario.getParams().get(1)));
+
+                                        Notificacion notificacionEstadoPago = this.notificacionService.findByIdNotificacionWithAnuncio(Long.valueOf(msgUsuario.getParams().get(0)));
+
+                                        String rutaPDFAcuerdo = "acuerdos/acuerdo_" + notificacionEstadoPago.getAnuncio().getIdAnuncio() + "-" + compradorCompra.getIdUsuario() + "/acuerdo_" + notificacionEstadoPago.getAnuncio().getIdAnuncio() + "-" + compradorCompra.getIdUsuario() + ".pdf";
+
+                                        this.server.enviarCorreoCompra(vendedorCompra.getCorreo(), vendedorCompra.getNombre() + " " + vendedorCompra.getApellidos(), rutaPDFAcuerdo);
+                                        this.server.enviarCorreoCompra(compradorCompra.getCorreo(), compradorCompra.getNombre() + " " + compradorCompra.getApellidos(), rutaPDFAcuerdo);
 
                                         this.notificacionService.actualizarEstadoNotificacion(Long.valueOf(msgUsuario.getParams().get(0)), EstadoNotificacion.RESPONDIDO);
 
                                         msgRespuesta.addParam("si");
+
+                                        compradorCompra = null;
+                                        vendedorCompra = null;
                                     } else {
                                         System.out.println("Ha dado otro codigo al capturar");
                                         msgRespuesta.addParam("error");
@@ -437,6 +452,28 @@ public class UsuarioHandler implements Runnable {
 
                     case "REANUDAR_ANUNCIO":
                         this.anuncioService.actualizarEstadoAnuncio(Long.valueOf(msgUsuario.getParams().get(0)), EstadoAnuncio.EN_VENTA);
+                        break;
+
+                    case "OBTENER_SALT_REINICIO":
+                        //System.out.println("OBTENER_SALT");
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_SALT_REINICIO");
+                        Optional<Usuario> usuarioSalt = this.usuarioService.iniciarSesion(msgUsuario.getParams().get(0));
+                        msgRespuesta.addParam(usuarioSalt.isPresent() ? usuarioSalt.get().getSalt(): "nada");
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+                        break;
+
+                    case "REINICIAR_CONTRASENIA":
+                        this.usuarioService.actualizarContraseniaUsuario(msgUsuario.getParams().get(0), msgUsuario.getParams().get(1));
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("CONTRASENIA_REINICIADA");
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+
                         break;
                 }
             }

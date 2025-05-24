@@ -34,4 +34,8 @@ public class NotificacionService {
     public void actualizarEstadoNotificacion(long idNotificacion, EstadoNotificacion estado) {
         this.notificacionRepository.actualizarEstadoNotificacion(idNotificacion, estado);
     }
+
+    public Notificacion findByIdNotificacionWithAnuncio(long idNotificacion){
+        return this.notificacionRepository.findByIdNotificacionWithAnuncio(idNotificacion);
+    }
 }
