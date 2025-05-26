@@ -6,14 +6,14 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Venta;
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 public class VentaDTO {
     // *-- Atributos --* //
     private Long idVenta;
 
-    private LocalDateTime fechaFinGarantia;
+    private String fechaFinGarantia;
 
     // *-- Relaciones --* //
     private AnuncioDTO anuncio;
@@ -37,11 +37,11 @@ public class VentaDTO {
         this.idVenta = idVenta;
     }
 
-    public LocalDateTime getFechaFinGarantia() {
+    public String getFechaFinGarantia() {
         return fechaFinGarantia;
     }
 
-    public void setFechaFinGarantia(LocalDateTime fechaFinGarantia) {
+    public void setFechaFinGarantia(String fechaFinGarantia) {
         this.fechaFinGarantia = fechaFinGarantia;
     }
 
@@ -84,8 +84,10 @@ public class VentaDTO {
 
     // *-- Métodos --* //
     public void parse(Venta venta) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
         this.idVenta = venta.getIdVenta();
-        this.fechaFinGarantia = venta.getFechaFinGarantia();
+        this.fechaFinGarantia = venta.getFechaFinGarantia().format(formatter);
 
         this.anuncio = null;
         this.vendedor = null;

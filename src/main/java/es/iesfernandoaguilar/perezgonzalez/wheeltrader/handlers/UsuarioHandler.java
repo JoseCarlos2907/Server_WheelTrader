@@ -19,6 +19,8 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Mensaje;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Serializador;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -37,6 +39,7 @@ import java.util.Optional;
 
 public class UsuarioHandler implements Runnable {
 
+    private static final Logger log = LoggerFactory.getLogger(UsuarioHandler.class);
     private Socket cliente;
     private ApplicationContext context;
     private Servidor server;
@@ -49,6 +52,8 @@ public class UsuarioHandler implements Runnable {
     UsuarioService usuarioService;
     ReporteService reporteService;
     NotificacionService notificacionService;
+    VentaService ventaService;
+    PagoService pagoService;
 
     public UsuarioHandler(Socket cliente, ApplicationContext context, Servidor server) {
         this.cliente = cliente;
@@ -66,6 +71,8 @@ public class UsuarioHandler implements Runnable {
         this.usuarioService = context.getBean(UsuarioService.class);
         this.reporteService = context.getBean(ReporteService.class);
         this.notificacionService = context.getBean(NotificacionService.class);
+        this.ventaService = context.getBean(VentaService.class);
+        this.pagoService = context.getBean(PagoService.class);
         ObjectMapper mapper = new ObjectMapper();
 
         DataInputStream dis = null;
@@ -355,6 +362,8 @@ public class UsuarioHandler implements Runnable {
                         byte[] pdfConfirmado = new byte[longitudPDFConfirmado];
                         dis.readFully(pdfConfirmado);
 
+                        this.ventaService.crearVenta(LocalDateTime.now().plusYears(3), Long.valueOf(msgUsuario.getParams().get(1)), Long.valueOf(msgUsuario.getParams().get(0)), Long.valueOf(msgUsuario.getParams().get(2)));
+
                         confirmarCompra(pdfConfirmado, Long.valueOf(msgUsuario.getParams().get(2)), Long.valueOf(msgUsuario.getParams().get(1)), Long.valueOf(msgUsuario.getParams().get(3)), Long.valueOf(msgUsuario.getParams().get(4)));
                         break;
 
@@ -378,6 +387,16 @@ public class UsuarioHandler implements Runnable {
                         compradorCompra = this.usuarioService.findById(Long.valueOf(msgUsuario.getParams().get(0)));
                         vendedorCompra = this.usuarioService.findById(Long.valueOf(msgUsuario.getParams().get(1)));
                         Map<String, Object> mapa = PayPalService.realizarPagoABusiness(tokenPP, compradorCompra.getCorreoPP(), Double.valueOf(msgUsuario.getParams().get(2)));
+
+                        Venta ventaAnuncioComprador = this.ventaService.findVentaWithPagosByIdAnuncio(Long.valueOf(msgUsuario.getParams().get(3)));
+
+                        Pago pagoComprador = new Pago();
+                        pagoComprador.setFechaPago(LocalDateTime.now());
+                        pagoComprador.setCantidad(Double.valueOf(msgUsuario.getParams().get(2)));
+
+                        ventaAnuncioComprador.addPago(pagoComprador);
+
+                        this.ventaService.save(ventaAnuncioComprador);
 
                         response = (HttpResponse<String>) mapa.get("response");
                         orderId = (String) mapa.get("orderId");
@@ -411,6 +430,16 @@ public class UsuarioHandler implements Runnable {
                                     if(captureResponse.getStatus() == 201) {
                                         System.out.println("Pagado con exito");
                                         PayPalService.realizarPagoACliente(tokenPP, vendedorCompra.getCorreoPP(), Double.valueOf(msgUsuario.getParams().get(1)));
+
+                                        Venta ventaAnuncioVendedor = this.ventaService.findVentaWithPagosByIdAnuncio(Long.valueOf(msgUsuario.getParams().get(3)));
+
+                                        Pago pagoVendedor = new Pago();
+                                        pagoVendedor.setFechaPago(LocalDateTime.now());
+                                        pagoVendedor.setCantidad(Double.valueOf(msgUsuario.getParams().get(1)));
+
+                                        ventaAnuncioVendedor.addPago(pagoVendedor);
+
+                                        this.ventaService.save(ventaAnuncioVendedor);
 
                                         Notificacion notificacionEstadoPago = this.notificacionService.findByIdNotificacionWithAnuncio(Long.valueOf(msgUsuario.getParams().get(0)));
 
@@ -470,6 +499,39 @@ public class UsuarioHandler implements Runnable {
 
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("CONTRASENIA_REINICIADA");
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+
+                        break;
+
+                    case "OBTENER_VENTAS":
+                        FiltroPorNombreUsuarioDTO filtroVentas = mapper.readValue(msgUsuario.getParams().get(0), FiltroPorNombreUsuarioDTO.class);
+                        List<VentaDTO> ventasObtenerVentas = obtenerVentas(filtroVentas);
+
+                        String ventasObtenidasJSON = mapper.writeValueAsString(ventasObtenerVentas);
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_VENTAS");
+                        msgRespuesta.addParam(ventasObtenidasJSON);
+                        msgRespuesta.addParam(msgUsuario.getParams().get(1));
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
+
+                        break;
+
+
+                    case "OBTENER_PAGOS":
+                        FiltroPorNombreUsuarioDTO filtroPagos = mapper.readValue(msgUsuario.getParams().get(0), FiltroPorNombreUsuarioDTO.class);
+                        List<PagoDTO> pagosObtenerPagos = obtenerPagos(filtroPagos);
+
+                        String pagosObtenidosJSON = mapper.writeValueAsString(pagosObtenerPagos);
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("ENVIA_PAGOS");
+                        msgRespuesta.addParam(pagosObtenidosJSON);
+                        msgRespuesta.addParam(msgUsuario.getParams().get(1));
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         dos.flush();
@@ -1132,5 +1194,56 @@ public class UsuarioHandler implements Runnable {
 
         this.notificacionService.actualizarEstadoNotificacion(idNotificacion, EstadoNotificacion.RESPONDIDO);
         this.anuncioService.actualizarEstadoAnuncio(idAnuncio, EstadoAnuncio.EN_VENTA);
+    }
+
+    public List<VentaDTO> obtenerVentas(FiltroPorNombreUsuarioDTO filtro){
+        Pageable pageable = PageRequest.of(filtro.getPagina(), filtro.getCantidadPorPagina());
+
+        List<Venta> ventas = this.ventaService.findVentasByNombreUsuario(filtro.getNombreUsuario(), pageable);
+
+        List<VentaDTO> ventasDTO = new ArrayList<>();
+        for (Venta venta: ventas){
+            VentaDTO ventaDTO = new VentaDTO();
+            ventaDTO.parse(venta);
+
+            AnuncioDTO anuncioDTO = new AnuncioDTO();
+            anuncioDTO.parse(venta.getAnuncio());
+
+
+            for (ValorCaracteristica vc : venta.getAnuncio().getValoresCaracteristicas()){
+                ValorCaracteristicaDTO vcDTO = new ValorCaracteristicaDTO();
+                vcDTO.parse(vc);
+                vcDTO.setNombreCaracteristica(vc.getCaracteristica().getNombre());
+
+                anuncioDTO.addValorCaracteristica(vcDTO);
+            }
+
+            UsuarioDTO usuarioDTO = new UsuarioDTO();
+            usuarioDTO.parse(venta.getAnuncio().getVendedor());
+
+            anuncioDTO.setVendedor(usuarioDTO);
+
+            ventaDTO.setAnuncio(anuncioDTO);
+
+            ventasDTO.add(ventaDTO);
+        }
+
+        return ventasDTO;
+    }
+
+    public List<PagoDTO> obtenerPagos(FiltroPorNombreUsuarioDTO filtro){
+        Pageable pageable = PageRequest.of(filtro.getPagina(), filtro.getCantidadPorPagina());
+
+        List<Pago> pagos = this.pagoService.findPagosByNombreUsuario(filtro.getNombreUsuario(), pageable);
+
+        List<PagoDTO> pagosDTO = new ArrayList<>();
+        for (Pago pago: pagos){
+            PagoDTO pagoDTO = new PagoDTO();
+            pagoDTO.parse(pago);
+
+            pagosDTO.add(pagoDTO);
+        }
+
+        return pagosDTO;
     }
 }

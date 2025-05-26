@@ -113,9 +113,9 @@ ENVIA_NOTIFICACIONES;{JSON_NOTIFICACIONES};si/no (Usuario -> Servidor)
 CAMBIAR_ESTADO_NOTIFICACION;idNotificacion;estado (Usuario -> Servidor)
 
 +Pago:
-USUARIO_PAGA;idComprador;idVendedor;cantPrecio (Usuario -> Servidor)
+USUARIO_PAGA;idComprador;idVendedor;cantPrecio;idAnuncio (Usuario -> Servidor)
 ENVIA_URL_PAGO;urlPago (Servidor -> Usuario)
-OBTENER_ESTADO_PAGO;idNotificacion;cantPrecio (Usuario -> Servidor)
+OBTENER_ESTADO_PAGO;idNotificacion;cantPrecio;idAnuncio (Usuario -> Servidor)
 ENVIA_ESTADO_PAGO;si/no/error (Servidor -> Usuario)
 
 +Cambiar contraseña
@@ -123,3 +123,11 @@ OBTENER_SALT_REINICIO;nombreUsuario (Usuario -> Servidor)
 ENVIA_SALT_REINICIO;salt (Servidor -> Usuario)
 REINICIAR_CONTRASENIA;nombreUsuario;hash (Usuario -> Servidor)
 CONTRASENIA_REINICIADA (Servidor -> Usuario)
+
++Compras/Ventas:
+OBTENER_VENTAS;{JSON_FILTRO_NOMBRE_USUARIO};si/no
+ENVIA_VENTAS;{JSON_VENTAS};si/no
+
++Pagos:
+OBTENER_PAGOS;{JSON_FILTRO_NOMBRE_USUARIO};si/no
+ENVIA_PAGOS;{JSON_PAGOS};si/no

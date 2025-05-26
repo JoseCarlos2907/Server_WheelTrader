@@ -129,6 +129,7 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
             and (lower(a.provincia) = lower(:provincia) or :provincia is null)
             and (lower(a.ciudad) = lower(:ciudad) or :ciudad is null)
             and a.precio between :precioMinimo and :precioMaximo
+            and a.estado < 2
             order by a.fechaPublicacion desc
     """)
     List<Anuncio> findAllByString(
