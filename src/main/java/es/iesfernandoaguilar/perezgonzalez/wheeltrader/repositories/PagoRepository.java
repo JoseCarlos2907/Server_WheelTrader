@@ -10,6 +10,4 @@ import java.util.List;
 
 @Repository
 public interface PagoRepository extends JpaRepository<Pago, Long> {
-    @Query("select p from Pago p left join p.venta v where v.comprador.nombreUsuario = ?1")
-    List<Pago> findPagosByNombreUsuario(String nombreUsuario, Pageable pageable);
 }

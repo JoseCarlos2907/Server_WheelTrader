@@ -16,8 +16,4 @@ public class PagoService {
     public void save(Pago pago) {
         this.pagoRepository.save(pago);
     }
-
-    public List<Pago> findPagosByNombreUsuario(String nombreUsuario, Pageable pageable){
-        return this.pagoRepository.findPagosByNombreUsuario(nombreUsuario, pageable);
-    }
 }

@@ -520,23 +520,6 @@ public class UsuarioHandler implements Runnable {
                         dos.flush();
 
                         break;
-
-
-                    case "OBTENER_PAGOS":
-                        FiltroPorNombreUsuarioDTO filtroPagos = mapper.readValue(msgUsuario.getParams().get(0), FiltroPorNombreUsuarioDTO.class);
-                        List<PagoDTO> pagosObtenerPagos = obtenerPagos(filtroPagos);
-
-                        String pagosObtenidosJSON = mapper.writeValueAsString(pagosObtenerPagos);
-
-                        msgRespuesta = new Mensaje();
-                        msgRespuesta.setTipo("ENVIA_PAGOS");
-                        msgRespuesta.addParam(pagosObtenidosJSON);
-                        msgRespuesta.addParam(msgUsuario.getParams().get(1));
-
-                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
-                        dos.flush();
-
-                        break;
                 }
             }
 
@@ -1229,21 +1212,5 @@ public class UsuarioHandler implements Runnable {
         }
 
         return ventasDTO;
-    }
-
-    public List<PagoDTO> obtenerPagos(FiltroPorNombreUsuarioDTO filtro){
-        Pageable pageable = PageRequest.of(filtro.getPagina(), filtro.getCantidadPorPagina());
-
-        List<Pago> pagos = this.pagoService.findPagosByNombreUsuario(filtro.getNombreUsuario(), pageable);
-
-        List<PagoDTO> pagosDTO = new ArrayList<>();
-        for (Pago pago: pagos){
-            PagoDTO pagoDTO = new PagoDTO();
-            pagoDTO.parse(pago);
-
-            pagosDTO.add(pagoDTO);
-        }
-
-        return pagosDTO;
     }
 }
