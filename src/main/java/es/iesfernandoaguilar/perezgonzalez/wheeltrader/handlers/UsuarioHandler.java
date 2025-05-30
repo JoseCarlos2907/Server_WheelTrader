@@ -104,6 +104,7 @@ public class UsuarioHandler implements Runnable {
                         msgRespuesta.setTipo("SESION_CERRADA");
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+                        dos.flush();
 
                         break;
                     case "COMPROBAR_DATOS_VEHICULO":

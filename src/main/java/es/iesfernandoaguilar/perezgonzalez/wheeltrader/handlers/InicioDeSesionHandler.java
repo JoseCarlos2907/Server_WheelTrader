@@ -91,6 +91,7 @@ public class InicioDeSesionHandler implements Runnable {
                             msgRespuesta.addParam("no");
                         }
 
+                        System.out.println(Serializador.codificarMensaje(msgRespuesta));
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         dos.flush();
                         break;
