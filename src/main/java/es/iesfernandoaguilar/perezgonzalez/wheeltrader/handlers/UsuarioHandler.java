@@ -19,8 +19,6 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Mensaje;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.Serializador;
 import kong.unirest.HttpResponse;
 import kong.unirest.Unirest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +37,6 @@ import java.util.Optional;
 
 public class UsuarioHandler implements Runnable {
 
-    private static final Logger log = LoggerFactory.getLogger(UsuarioHandler.class);
     private Socket cliente;
     private ApplicationContext context;
     private Servidor server;
@@ -99,6 +96,16 @@ public class UsuarioHandler implements Runnable {
 
                 Mensaje msgRespuesta;
                 switch (msgUsuario.getTipo()){
+                    case "CERRAR_SESION":
+                        this.server.usuarioCierraSesion(Long.valueOf(msgUsuario.getParams().get(0)), this.cliente, this.context);
+                        cierraSesion = true;
+
+                        msgRespuesta = new Mensaje();
+                        msgRespuesta.setTipo("SESION_CERRADA");
+
+                        dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
+
+                        break;
                     case "COMPROBAR_DATOS_VEHICULO":
                         System.out.println("COMPROBAR_DATOS_VEHICULO");
                         List<ValorCaracteristicaDTO> valoresDTO = mapper.readValue(msgUsuario.getParams().get(0), new TypeReference<List<ValorCaracteristicaDTO>>(){});
@@ -519,6 +526,10 @@ public class UsuarioHandler implements Runnable {
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         dos.flush();
 
+                        break;
+
+                    default:
+                        System.out.println("No debe entrar aqui");
                         break;
                 }
             }

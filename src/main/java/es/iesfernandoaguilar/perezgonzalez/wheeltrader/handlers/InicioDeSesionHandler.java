@@ -50,6 +50,7 @@ public class InicioDeSesionHandler implements Runnable {
             String correoRecuperarContrasenia = "";
             while (!iniciaSesion) {
                 String linea = dis.readUTF();
+                System.out.println(linea);
                 Mensaje msgUsuario = Serializador.decodificarMensaje(linea);
 
                 Mensaje msgRespuesta;
@@ -89,6 +90,7 @@ public class InicioDeSesionHandler implements Runnable {
                         } else {
                             msgRespuesta.addParam("no");
                         }
+
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         dos.flush();
                         break;

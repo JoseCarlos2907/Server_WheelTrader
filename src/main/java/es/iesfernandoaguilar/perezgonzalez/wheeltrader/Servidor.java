@@ -80,6 +80,11 @@ public class Servidor implements Runnable {
         this.handlersExecutor.submit(uHandler);
     }
 
+    public void usuarioCierraSesion(Long usuarioId, Socket socket, ApplicationContext context) {
+        this.usuariosHandlers.remove(usuarioId);
+        this.executor.submit(new InicioDeSesionHandler(socket, context, this));
+    }
+
     public void listen(ApplicationContext context) {
         while (!parar){
             try {
