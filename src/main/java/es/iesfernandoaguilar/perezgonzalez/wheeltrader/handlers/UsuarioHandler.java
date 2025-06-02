@@ -148,7 +148,7 @@ public class UsuarioHandler implements Runnable {
                     case "OBTENER_ANUNCIOS":
                         // System.out.println("OBTENER_ANUNCIOS");
                         List<byte[]> imagenesListaAnuncios = new ArrayList<>();
-                        List<AnuncioDTO> anuncios = obtenerAnuncios(mapper, imagenesListaAnuncios, msgUsuario.getParams().get(0), msgUsuario.getParams().get(1), Integer.parseInt(msgUsuario.getParams().get(3)));
+                        List<AnuncioDTO> anuncios = obtenerAnuncios(mapper, imagenesListaAnuncios, msgUsuario.getParams().get(0), msgUsuario.getParams().get(1), Long.parseLong(msgUsuario.getParams().get(3)));
 
                         // Convierto los anuncios parseados a JSON para pasarselo a la aplicación
                         String anunciosJSON = mapper.writeValueAsString(anuncios);

@@ -75,17 +75,6 @@ ENVIA_REPORTES_MOD;{OBJETOS_USUARIOCONREPORTES} (Servidor -> Usuario)
 OBTENER_ULTIMOS_REPORTES_MOD;{FILTRO_REPORTES} (Usuario -> Servidor)
 ENVIA_ULTIMOS_REPORTES_MOD;{OBJETOS_REPORTES} (Servidor -> Usuario)
 
-+Perfil usuario:
-OBTENER_ANUNCIOS_USUARIO;{JSON_FILTRO_ANUNIOS_USUARIO} (Usuario -> Servidor)
-ENVIA_ANUNCIOS_USUARIO;{JSON_LISTA_ANUNCIOS};cantAnuncios (Servidor -> Usuario)
-    longitudImg1
-    imagenAnuncio1
-    longitudImg2
-    imagenAnuncio2
-    ...
-    longitudImgN
-    imagenAnuncioN
-
 +Reportar usuario:
 REPORTAR_USUARIO;{JSON_REPORTE} (Usuario -> Servidor)
 REPORTE_REALIZADO;si/no (Servidor -> Usuario)
@@ -113,7 +102,7 @@ ENVIA_NOTIFICACIONES;{JSON_NOTIFICACIONES};si/no (Usuario -> Servidor)
 CAMBIAR_ESTADO_NOTIFICACION;idNotificacion;estado (Usuario -> Servidor)
 
 +Pago:
-USUARIO_PAGA;idComprador;idVendedor;cantPrecio;idAnuncio (Usuario -> Servidor)
+USUARIO_PAGA;idComprador;idVendedor;idAnuncio;cantPrecio (Usuario -> Servidor)
 ENVIA_URL_PAGO;urlPago (Servidor -> Usuario)
 OBTENER_ESTADO_PAGO;idNotificacion;cantPrecio;idAnuncio (Usuario -> Servidor)
 ENVIA_ESTADO_PAGO;si/no/error (Servidor -> Usuario)
