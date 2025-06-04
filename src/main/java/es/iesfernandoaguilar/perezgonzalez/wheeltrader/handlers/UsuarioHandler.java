@@ -173,7 +173,7 @@ public class UsuarioHandler implements Runnable {
 
                     case "GUARDAR_ANUNCIO":
 
-                        this.guardarAnuncio(Integer.parseInt(msgUsuario.getParams().getFirst()), msgUsuario.getParams().get(1));
+                        this.guardarAnuncio(Long.parseLong(msgUsuario.getParams().getFirst()), msgUsuario.getParams().get(1));
 
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ANUNCIO_GUARDADO");
@@ -184,7 +184,7 @@ public class UsuarioHandler implements Runnable {
 
                     case "ELIMINAR_ANUNCIO_GUARDADOS":
 
-                        this.eliminarAnuncioGuardado(Integer.parseInt(msgUsuario.getParams().getFirst()), msgUsuario.getParams().get(1));
+                        this.eliminarAnuncioGuardado(Long.parseLong(msgUsuario.getParams().getFirst()), msgUsuario.getParams().get(1));
 
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ANUNCIO_ELIMINADO_GUARDADOS");
@@ -195,7 +195,7 @@ public class UsuarioHandler implements Runnable {
 
                     case "OBTENER_IMAGENES":
 
-                        List<byte[]> bytesImagenes = this.enviarImagenesAnuncio(Integer.parseInt(msgUsuario.getParams().getFirst()));
+                        List<byte[]> bytesImagenes = this.enviarImagenesAnuncio(Long.parseLong(msgUsuario.getParams().getFirst()));
 
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_IMAGENES");
@@ -324,7 +324,7 @@ public class UsuarioHandler implements Runnable {
                         break;
 
                     case "OBTENER_PDF_ACUERDO":
-                        byte[] bytesDocumentoGenerado = rellenarPlantilla(msgUsuario.getParams().get(2), Integer.parseInt(msgUsuario.getParams().get(1)), Integer.parseInt(msgUsuario.getParams().get(0)));
+                        byte[] bytesDocumentoGenerado = rellenarPlantilla(msgUsuario.getParams().get(2), Long.parseLong(msgUsuario.getParams().get(1)), Long.parseLong(msgUsuario.getParams().get(0)));
 
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("ENVIA_PDF_ACUERDO");
@@ -879,7 +879,7 @@ public class UsuarioHandler implements Runnable {
         return anunciosParseados;
     }
 
-    public void guardarAnuncio(int idAnuncio, String nombreUsuario){
+    public void guardarAnuncio(long idAnuncio, String nombreUsuario){
         Anuncio anuncio = this.anuncioService.findByIdWithUsuariosGuardan(idAnuncio);
 
         Usuario usuario = this.usuarioService.findByNombreUsuarioWithAnunciosGuardados(nombreUsuario);
@@ -889,7 +889,7 @@ public class UsuarioHandler implements Runnable {
         this.usuarioService.save(usuario);
     }
 
-    public void eliminarAnuncioGuardado(int idAnuncio, String nombreUsuario){
+    public void eliminarAnuncioGuardado(long idAnuncio, String nombreUsuario){
         Anuncio anuncio = this.anuncioService.findByIdWithUsuariosGuardan(idAnuncio);
 
         Usuario usuario = this.usuarioService.findByNombreUsuarioWithAnunciosGuardados(nombreUsuario);
@@ -899,7 +899,7 @@ public class UsuarioHandler implements Runnable {
         this.usuarioService.save(usuario);
     }
 
-    public List<byte[]> enviarImagenesAnuncio(int idAnuncio){
+    public List<byte[]> enviarImagenesAnuncio(long idAnuncio){
         List<Imagen> imagenes = this.imagenService.findByIdAnuncio(idAnuncio);
 
         List<byte[]> bytesImagenes = new ArrayList<>();
@@ -911,7 +911,7 @@ public class UsuarioHandler implements Runnable {
         return bytesImagenes;
     }
 
-    public byte[] rellenarPlantilla(String tipoVehiculo, int idAnuncio, int idUsuario) throws IOException, DocumentException {
+    public byte[] rellenarPlantilla(String tipoVehiculo, long idAnuncio, long idUsuario) throws IOException, DocumentException {
 
         Anuncio anuncio = this.anuncioService.findByIdAnuncioWithValoresCaracteristicas(idAnuncio);
 

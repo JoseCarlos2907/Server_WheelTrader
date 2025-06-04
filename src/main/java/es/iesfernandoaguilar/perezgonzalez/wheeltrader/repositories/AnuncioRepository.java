@@ -18,7 +18,7 @@ public interface AnuncioRepository extends JpaRepository<Anuncio, Long> {
     Anuncio findById(long id);
 
     @Query("select a from Anuncio a left join fetch a.usuariosGuardan where a.idAnuncio = ?1")
-    Anuncio findByIdWithUsuariosGuardan(int idAnuncio);
+    Anuncio findByIdWithUsuariosGuardan(long idAnuncio);
 
     @Query("select a from Anuncio a left join fetch a.valoresCaracteristicas vc left join fetch vc.caracteristica where a.idAnuncio = ?1")
     Anuncio findByIdAnuncioWithValoresCaracteristicas(long idAnuncio);

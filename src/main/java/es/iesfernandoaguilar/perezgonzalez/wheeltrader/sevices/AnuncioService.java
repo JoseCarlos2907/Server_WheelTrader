@@ -35,7 +35,7 @@ public class AnuncioService {
     }
 
     @Transactional
-    public Anuncio findByIdWithUsuariosGuardan(int idAnuncio) {
+    public Anuncio findByIdWithUsuariosGuardan(long idAnuncio) {
         return this.anuncioRepository.findByIdWithUsuariosGuardan(idAnuncio);
     }
 
