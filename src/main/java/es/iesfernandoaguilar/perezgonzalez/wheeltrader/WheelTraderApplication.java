@@ -31,9 +31,9 @@ import java.util.*;
 @SpringBootApplication
 public class WheelTraderApplication {
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         SpringApplication.run(WheelTraderApplication.class, args);
-    }
+    }*/
 
     // Prueba para registrar un usuario
     /*@Bean

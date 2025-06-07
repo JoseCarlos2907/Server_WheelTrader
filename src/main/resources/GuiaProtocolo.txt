@@ -102,7 +102,7 @@ ENVIA_NOTIFICACIONES;{JSON_NOTIFICACIONES};si/no (Usuario -> Servidor)
 CAMBIAR_ESTADO_NOTIFICACION;idNotificacion;estado (Usuario -> Servidor)
 
 +Pago:
-USUARIO_PAGA;idComprador;idVendedor;idAnuncio;cantPrecio (Usuario -> Servidor)
+USUARIO_PAGA;idComprador;idVendedor;cantPrecio;idAnuncio (Usuario -> Servidor)
 ENVIA_URL_PAGO;urlPago (Servidor -> Usuario)
 OBTENER_ESTADO_PAGO;idNotificacion;cantPrecio;idAnuncio (Usuario -> Servidor)
 ENVIA_ESTADO_PAGO;si/no/error (Servidor -> Usuario)

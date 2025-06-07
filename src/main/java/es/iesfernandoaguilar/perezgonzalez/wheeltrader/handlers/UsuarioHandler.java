@@ -370,7 +370,7 @@ public class UsuarioHandler implements Runnable {
                         byte[] pdfConfirmado = new byte[longitudPDFConfirmado];
                         dis.readFully(pdfConfirmado);
 
-                        this.ventaService.crearVenta(LocalDateTime.now().plusYears(3), Long.valueOf(msgUsuario.getParams().get(1)), Long.valueOf(msgUsuario.getParams().get(0)), Long.valueOf(msgUsuario.getParams().get(2)));
+                        this.ventaService.crearVenta(LocalDateTime.now().plusYears(3), Long.valueOf(msgUsuario.getParams().get(2)), Long.valueOf(msgUsuario.getParams().get(1)), Long.valueOf(msgUsuario.getParams().get(3)));
 
                         confirmarCompra(pdfConfirmado, Long.valueOf(msgUsuario.getParams().get(2)), Long.valueOf(msgUsuario.getParams().get(1)), Long.valueOf(msgUsuario.getParams().get(3)), Long.valueOf(msgUsuario.getParams().get(4)));
                         break;
@@ -439,7 +439,7 @@ public class UsuarioHandler implements Runnable {
                                         System.out.println("Pagado con exito");
                                         PayPalService.realizarPagoACliente(tokenPP, vendedorCompra.getCorreoPP(), Double.valueOf(msgUsuario.getParams().get(1)));
 
-                                        Venta ventaAnuncioVendedor = this.ventaService.findVentaWithPagosByIdAnuncio(Long.valueOf(msgUsuario.getParams().get(3)));
+                                        Venta ventaAnuncioVendedor = this.ventaService.findVentaWithPagosByIdAnuncio(Long.valueOf(msgUsuario.getParams().get(2)));
 
                                         Pago pagoVendedor = new Pago();
                                         pagoVendedor.setFechaPago(LocalDateTime.now());
@@ -453,8 +453,15 @@ public class UsuarioHandler implements Runnable {
 
                                         String rutaPDFAcuerdo = "acuerdos/acuerdo_" + notificacionEstadoPago.getAnuncio().getIdAnuncio() + "-" + compradorCompra.getIdUsuario() + "/acuerdo_" + notificacionEstadoPago.getAnuncio().getIdAnuncio() + "-" + compradorCompra.getIdUsuario() + ".pdf";
 
-                                        this.server.enviarCorreoCompra(vendedorCompra.getCorreo(), vendedorCompra.getNombre() + " " + vendedorCompra.getApellidos(), rutaPDFAcuerdo);
-                                        this.server.enviarCorreoCompra(compradorCompra.getCorreo(), compradorCompra.getNombre() + " " + compradorCompra.getApellidos(), rutaPDFAcuerdo);
+                                        Usuario finalVendedorCompra = vendedorCompra;
+                                        Usuario finalCompradorCompra = compradorCompra;
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                server.enviarCorreoCompra(finalVendedorCompra.getCorreo(), finalVendedorCompra.getNombre() + " " + finalVendedorCompra.getApellidos(), rutaPDFAcuerdo);
+                                                server.enviarCorreoCompra(finalCompradorCompra.getCorreo(), finalCompradorCompra.getNombre() + " " + finalCompradorCompra.getApellidos(), rutaPDFAcuerdo);
+                                            }
+                                        }).start();
 
                                         this.notificacionService.actualizarEstadoNotificacion(Long.valueOf(msgUsuario.getParams().get(0)), EstadoNotificacion.RESPONDIDO);
 

@@ -3,6 +3,7 @@ package es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Venta;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Repository
 public interface VentaRepository extends JpaRepository<Venta, Long> {
+    @Modifying
     @Query(value = "insert into ventas(fecha_fin_garantia, anuncio_id, comprador_id, vendedor_id) values(:fechaFinGarantia, :idAnuncio, :idComprador, :idVendedor);", nativeQuery = true)
     void crearVenta(
             @Param("fechaFinGarantia") LocalDateTime fechaFinGarantia,
