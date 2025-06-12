@@ -10,7 +10,7 @@
     </parent>
     <groupId>es.iesfernandoaguilar.perezgonzalez</groupId>
     <artifactId>WheelTrader</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
     <name>WheelTrader</name>
     <description>WheelTrader</description>
     <url/>
@@ -105,6 +105,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>es.iesfernandoaguilar.perezgonzalez.wheeltrader.Servidor</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>

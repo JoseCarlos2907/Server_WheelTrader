@@ -51,7 +51,7 @@ public class Servidor implements Runnable {
         this.correoProperties.put("mail.smtp.starttls.enable", "true");    // Especifico que sea segura la conexión
 
         try {
-            this.serverProperties.load(new FileInputStream("src/main/resources/conf.properties"));
+            this.serverProperties.load(new FileInputStream("/etc/wheeltrader_server/conf.properties"));
 
             this.server = new ServerSocket(Integer.parseInt(serverProperties.getProperty("PORT")));
 
@@ -60,7 +60,7 @@ public class Servidor implements Runnable {
 
             this.usuariosHandlers = new ConcurrentHashMap<>();
 
-            System.out.println("Servidor escuchando en el puerto " + serverProperties.getProperty("PORT") + " y en la IP 192.168.1.101");
+            System.out.println("Servidor escuchando en el puerto " + serverProperties.getProperty("PORT"));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -42,6 +42,7 @@ public class PayPalService {
         if (response.getStatus() == 201) {
             return true;
         } else {
+            System.out.println(response.getBody());
             return false;
         }
     }

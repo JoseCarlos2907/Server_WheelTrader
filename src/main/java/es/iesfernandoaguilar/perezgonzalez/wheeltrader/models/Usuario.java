@@ -1,5 +1,6 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.models;
 
+import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.UsuarioDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.EstadoUsuario;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.RolUsuario;
 import jakarta.persistence.*;
@@ -407,7 +408,7 @@ public class Usuario {
 
     // Este métoodo transforma un usuario de la interfaz a uno de la BD, la diferencia es que al crear una instancia de este es que se genera el id automáticamente,
     // por eso creo uno nuevo en este métoodo, porque el que viene no puede generarlo y viene con un -1
-    public void parseUsuario(Usuario usuario2) {
+    public void parseUsuario(UsuarioDTO usuario2) {
         this.setNombre(usuario2.getNombre());
         this.setApellidos(usuario2.getApellidos());
         this.setDni(usuario2.getDni());
@@ -416,8 +417,8 @@ public class Usuario {
         this.setContrasenia(usuario2.getContrasenia());
         this.setCorreo(usuario2.getCorreo());
         this.setCorreoPP(usuario2.getCorreoPP());
-        this.setRol(usuario2.esModerador() ? RolUsuario.MODERADOR: RolUsuario.USUARIO);
-        this.setEstado(usuario2.estaActivo()? EstadoUsuario.ACTIVO: EstadoUsuario.BANEADO);
+        this.setRol(usuario2.getRol() != null && "MODERADOR".equals(usuario2.getRol()) ? RolUsuario.MODERADOR: RolUsuario.USUARIO);
+        this.setEstado(usuario2.getEstado() != null && "BANEADO".equals(usuario2.getEstado())? EstadoUsuario.BANEADO: EstadoUsuario.ACTIVO);
         this.setSalt(usuario2.getSalt());
     }
 }

@@ -127,18 +127,24 @@ public class InicioDeSesionHandler implements Runnable {
                         break;
 
                     case "REGISTRAR_USUARIO":
+                        System.out.println("REGISTRAR_USUARIO");
                         msgRespuesta = new Mensaje();
                         msgRespuesta.setTipo("USUARIO_REGISTRADO");
 
                         ObjectMapper mapper = new ObjectMapper();
-                        Usuario usuarioMapped = mapper.readValue(msgUsuario.getParams().get(0), Usuario.class);
+                        UsuarioDTO usuarioMapped = mapper.readValue(msgUsuario.getParams().get(0), UsuarioDTO.class);
 
                         Usuario usuarioRegistrar = new Usuario();
                         usuarioRegistrar.parseUsuario(usuarioMapped);
 
                         this.usuarioService.save(usuarioRegistrar);
 
-                        this.server.enviarCorreoRegistro(usuarioRegistrar.getCorreo(), usuarioRegistrar.getNombre() + " " + usuarioRegistrar.getApellidos());
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                server.enviarCorreoRegistro(usuarioRegistrar.getCorreo(), usuarioRegistrar.getNombre() + " " + usuarioRegistrar.getApellidos());
+                            }
+                        }).start();
 
                         dos.writeUTF(Serializador.codificarMensaje(msgRespuesta));
                         break;

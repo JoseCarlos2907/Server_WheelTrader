@@ -1,9 +1,7 @@
 package es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories;
 
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.DTO.Auxiliares.UsuarioReportadosModDTO;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.enums.EstadoUsuario;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Auxiliares.UsuarioReportadosMod;
-import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Notificacion;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.models.Usuario;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,6 +17,8 @@ import java.util.Optional;
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Usuario findById(long idUsuario);
+
+    Usuario save(Usuario usuario);
 
     @Query("select u from Usuario u where u.nombreUsuario = ?1 OR u.correo = ?1")
     @Transactional(readOnly = true)

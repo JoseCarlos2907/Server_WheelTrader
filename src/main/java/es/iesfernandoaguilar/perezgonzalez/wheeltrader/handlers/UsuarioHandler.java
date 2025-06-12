@@ -963,7 +963,7 @@ public class UsuarioHandler implements Runnable {
         }
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PdfReader reader = new PdfReader(getClass().getResourceAsStream("/plantillas/Acuerdo" + tipoVehiculo + ".pdf"));
+        PdfReader reader = new PdfReader("/etc/wheeltrader_server/plantillas/Acuerdo" + tipoVehiculo + ".pdf");
         PdfStamper stamper = new PdfStamper(reader, baos);
         AcroFields documento = stamper.getAcroFields();
 

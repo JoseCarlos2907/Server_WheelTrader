@@ -12,6 +12,8 @@ import es.iesfernandoaguilar.perezgonzalez.wheeltrader.paypal.PayPalService;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.repositories.UsuarioRepository;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.sevices.*;
 import es.iesfernandoaguilar.perezgonzalez.wheeltrader.utils.SecureUtils;
+import kong.unirest.HttpResponse;
+import kong.unirest.Unirest;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -870,6 +872,19 @@ public class WheelTraderApplication {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+        };
+    }*/
+
+    // Prueba para ver el estado de un payout
+    /*@Bean
+    CommandLineRunner commandLineRunner(ApplicationContext context) {
+        return args -> {
+            HttpResponse<String> statusResponse = Unirest.get(PayPalClient.PAYPAL_API_URL + "/v1/payments/payouts/DUFFN2CBL3MSS")
+                    .header("Authorization", "Bearer " + PayPalClient.obtenerAccessToken())
+                    .asString();
+
+            System.out.println("Estado del payout:");
+            System.out.println(statusResponse.getBody());
         };
     }*/
 }
